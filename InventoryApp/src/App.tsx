@@ -5,6 +5,7 @@ import { AuthProvider } from "./context/AuthContext";
 import Home from "./components/Home";
 import SignIn from "./components/SignIn"; // Import your SignIn component
 import "./App.css"; // Import your CSS file
+import ProductTable from "./components/Product/ProductTable";
 
 const queryClient = new QueryClient();
 
@@ -15,7 +16,7 @@ const App: React.FC = () => (
         <div className="center-container">
           <Routes>
             <Route path="/" element={<SignIn />} /> {/* Centered SignIn */}
-            <Route path="/home" element={<Home />} />
+            <Route path="/home" element={<ProductTable />} />
           </Routes>
         </div>
       </BrowserRouter>
