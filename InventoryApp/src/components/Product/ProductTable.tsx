@@ -6,6 +6,7 @@ import {
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import MainLayout from '../../MainLayout';
 
 // Define the type for a row
 interface DataRow {
@@ -54,7 +55,8 @@ const ProductTable: React.FC = () => {
   };
 
   return (
-    <Paper sx={{ width: '100%', overflow: 'hidden' }}>
+    <MainLayout>
+    <Paper>
       <TableContainer>
         <Table>
           <TableHead>
@@ -96,6 +98,7 @@ const ProductTable: React.FC = () => {
         rowsPerPageOptions={[5, 10, 25]}
       />
     </Paper>
+    </MainLayout>
   );
 };
 
