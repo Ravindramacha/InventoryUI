@@ -3,9 +3,13 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider } from "./context/AuthContext";
 import SignIn from "./components/SignIn"; // Import your SignIn component
-import "./App.css"; // Import your CSS file
-import ProductTable from "./components/Product/ProductTable";
-import MaterialForm from "./components/Product/MaterialForm";
+import Products from "./components/Products"; // Import your Products component
+import ApplicationFormPage from "./components/ApplicationForm";
+import Home from "./components/Home"; // Import your Home component
+import MainLayout from "./MainLayout";
+import Dashboard from "./components/Dashboard"; // Import your Dashboard component
+import NotificationList from "./NotificationList";
+import Profile from "./components/Profile";
 
 const queryClient = new QueryClient();
 
@@ -14,9 +18,15 @@ const App: React.FC = () => (
     <AuthProvider>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<SignIn />} /> {/* Centered SignIn */}
-          <Route path="/home" element={<ProductTable />} />
-           <Route path="/Product" element={<MaterialForm />} />
+          <Route path="/" element={<SignIn />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/notifications" element={<NotificationList />} />
+          <Route element={<MainLayout />}>
+            <Route path="/home" element={<Home />} />
+            <Route path="/form" element={<ApplicationFormPage />} />
+            <Route path="/dashboard" element={<Dashboard/>} />
+            <Route path="/products" element={<Products />} />
+          </Route>
         </Routes>
       </BrowserRouter>
     </AuthProvider>

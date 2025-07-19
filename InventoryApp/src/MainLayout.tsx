@@ -1,107 +1,66 @@
-import React from "react";
-import {
-  AppBar,
-  Toolbar,
-  IconButton,
-  Typography,
-  Drawer,
-  List,
-  ListItem,
-  ListItemText,
-  Box,
-  Button,
-  ListItemButton,
-  CssBaseline,
-} from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu";
-import { useAuth } from "./context/AuthContext";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from 'react';
+import { Outlet } from 'react-router-dom';
+import { Box, useTheme, useMediaQuery, Paper } from '@mui/material';
+import MenuBar from './MenuBar';
+import DrawerApp from './DrawerApp';
 
-const drawerWidth = 240;
+const drawerWidth = 250;
 
-const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { logout } = useAuth();
-  const navigate = useNavigate();
-  const [mobileOpen, setMobileOpen] = React.useState(false);
+export default function MainLayout() {
+  const theme = useTheme();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const [drawerOpen, setDrawerOpen] = useState(!isSmallScreen);
 
-  const handleDrawerToggle = () => {
-    setMobileOpen(!mobileOpen);
+  // Keep drawer open on large screens, close on small screens
+  React.useEffect(() => {
+  setDrawerOpen(!isSmallScreen);
+}, [isSmallScreen]); // ✅ correct
+
+
+  const toggleDrawer = () => {
+    setDrawerOpen((prev) => !prev);
   };
 
-  const handleLogout = () => {
-    logout();
-    navigate("/");
+  const handleDrawerClose = () => {
+    if (isSmallScreen) setDrawerOpen(false);
   };
-
-  const drawer = (
-    <div>
-      <Toolbar />
-      <List>
-        {["Home", "Products", "Profile"].map((text) => (
-          <ListItem key={text} disablePadding>
-            <ListItemButton>
-              <ListItemText primary={text} />
-            </ListItemButton>
-          </ListItem>
-        ))}
-        <ListItem>
-          <Button color="error" variant="outlined" onClick={handleLogout}>
-            Logout
-          </Button>
-        </ListItem>
-      </List>
-    </div>
-  );
 
   return (
-    <Box sx={{ display: "flex" }}>
-      <CssBaseline />
-      {/* AppBar */}
-      <AppBar
-        position="fixed"
+    <Box sx={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
+      <MenuBar onMenuClick={toggleDrawer} />
+
+      <DrawerApp
+        open={drawerOpen}
+        onClose={handleDrawerClose}
+        isSmallScreen={isSmallScreen}
+      />
+
+      <Box
+        component="main"
         sx={{
-          zIndex: (theme) => theme.zIndex.drawer + 1,
+          flexGrow: 1,
+          p: 3,
+          mt: 8,
+          width: '100%',
+          transition: 'margin 0.3s',
+          // overflowY: 'auto',
+          overflowX: 'hidden',
+          minWidth: 0,
         }}
       >
-        <Toolbar>
-          <IconButton
-            color="inherit"
-            edge="start"
-            onClick={handleDrawerToggle}
-            sx={{ mr: 2 }}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" noWrap>
-            Product
-          </Typography>
-        </Toolbar>
-      </AppBar>
-
-      {/* Drawer */}
-      <Drawer
-        variant="permanent"
+        <Box
+        component={Paper}
         sx={{
-          width: drawerWidth,
-          flexShrink: 0,
-          [`& .MuiDrawer-paper`]: {
-            width: drawerWidth,
-            boxSizing: "border-box",
-          },
+          p: 4,
+          bgcolor: '#ffffff',
+          pr: 2,
+          width: '100%',
+          boxSizing: 'border-box',
         }}
       >
-        {drawer}
-      </Drawer>
-
-      {/* Main Content */}
-   
-      <Box>
-        <Toolbar />
-        {children}
+        <Outlet/>
+      </Box>
       </Box>
     </Box>
-   
   );
-};
-
-export default MainLayout;
+}

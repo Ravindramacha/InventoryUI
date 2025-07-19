@@ -9,11 +9,12 @@ import {
   Typography,
   Paper,
 } from "@mui/material";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 // import { loginUser } from "../api/authApi";
 // import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
-export default function SignIn() {
+export default function Register() {
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -57,7 +58,9 @@ export default function SignIn() {
             alignItems: "center",
           }}
         >
-          <Avatar sx={{ m: 1, bgcolor: "secondary.main", width: 56, height: 56 }} alt="Remy Sharp" src="/1.jpg" />
+          <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
+            <LockOutlinedIcon />
+          </Avatar>
           <Typography component="h1" variant="h5">
             Sign in
           </Typography>
