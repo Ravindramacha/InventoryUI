@@ -14,8 +14,12 @@
     "@emotion/styled": "^11.14.1",
     "@mui/icons-material": "^6.5.0",
     "@mui/material": "^6.5.0",
+    "@mui/x-charts": "^8.9.0",
+    "@mui/x-data-grid": "^8.8.0",
+    "@mui/x-date-pickers": "^8.8.0",
     "@tanstack/react-query": "^5.83.0",
     "axios": "^1.10.0",
+    "date-fns": "^4.1.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-router-dom": "^7.6.3"
