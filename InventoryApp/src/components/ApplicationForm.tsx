@@ -17,11 +17,11 @@ import {
 //  Slider,
   Grid,
   InputLabel,
-  Select
-} from '@mui/material';
+  Select,} from '@mui/material';
 import { useLanguages, useProductTypes } from '../api/ApiQueries';
 import type { SelectChangeEvent } from '@mui/material/Select';
-
+import  DynamicAttributes   from "../components/common/DynamicAttributes";
+import DynamicDateFields from "../components/common/DynamicDateFields";
 interface FormData {
   productId: string;
   email: string;
@@ -36,6 +36,9 @@ interface FormData {
 }
 
 const ApplicationFormPage = () => {
+ 
+    const [attributes, setAttributes] = useState([]);
+ 
   const [formData, setFormData] = useState<FormData>({
     productId: '',
     email: '',
@@ -128,6 +131,23 @@ const ApplicationFormPage = () => {
                 </FormControl>
             
             </Grid>
+             <Grid item xs={12} sm={12} md={6} lg={3}></Grid>
+              <Grid item xs={12} sm={12} md={6} lg={5}>
+               <DynamicAttributes
+              maxFields={5}
+              onChange={setAttributes}
+            />
+          </Grid>
+          <Grid item xs={12} sm={12} md={6} lg={5}>
+            <DynamicDateFields
+              maxFields={5}
+              onChange={(fields) => {
+                console.log("Date Fields:", fields);
+              }}
+             />
+           </Grid>
+             {/* Confirmation Dialog */}
+     
             {/* <Grid item xs={12} sm={12} md={6} lg={3}>
               <TextField
                 fullWidth
