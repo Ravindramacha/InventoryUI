@@ -9,22 +9,22 @@ import {
   Typography,
   Paper,
 } from "@mui/material";
-// import { loginUser } from "../api/authApi";
-// import { useAuth } from "../context/AuthContext";
+ import { loginUser } from "../api/authApi";
+import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
 export default function SignIn() {
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-   // const { login } = useAuth();
+    const { login } = useAuth();
     const navigate = useNavigate();
   
     const handleSubmit = async (e: React.FormEvent) => {
       e.preventDefault();
       try {
-        //const data = await loginUser({ client_id: email, secret: password  });
-        //login(data.token);
+        const data = await loginUser({ client_id: email, secret: password  });
+        login(data.token);
         navigate("/home");
       } catch (err) {
         console.error("Login failed", err);
