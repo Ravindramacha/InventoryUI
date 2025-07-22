@@ -1,12 +1,13 @@
-import React from 'react';
+import { Edit } from '@mui/icons-material';
 import {
   Avatar,
   Box,
-  Grid,
   Typography,
-  Paper,
   Divider,
+  Button,
+  Grid,
 } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 type UserProfile = {
   avatarUrl?: string;
@@ -31,15 +32,16 @@ const userData: UserProfile = {
 };
 
 export default function Profile() {
+  const navigate = useNavigate();
+
   return (
-    <Paper elevation={3} sx={{ p: 4, maxWidth: 800, mx: 'auto', mt: 5 }}>
-      <Grid container spacing={4} alignItems="center">
+      <Grid container spacing={4}>
         {/* Avatar */}
-        <Grid item xs={12} md={4} sx={{ textAlign: 'center' }}>
+        <Grid size={{xs:12, md:4}} sx={{ textAlign: 'center' }}>
           <Avatar
             alt={userData.name}
             src={userData.avatarUrl}
-            sx={{ width: 160, height: 160, mx: 'auto' }}
+            sx={{ width: '20vw', height: '20vw', mx: 'auto' }}
           />
           <Typography variant="h6" mt={2}>
             {userData.name}
@@ -47,7 +49,7 @@ export default function Profile() {
         </Grid>
 
         {/* Info fields */}
-        <Grid item xs={12} md={8}>
+        <Grid size={{xs:12, md:8}}>
           <Box>
             <InfoField label="Email" value={userData.email} />
             <InfoField label="Date of Birth" value={userData.dob} />
@@ -55,10 +57,19 @@ export default function Profile() {
             <InfoField label="Address" value={userData.address} />
             <InfoField label="Occupation" value={userData.occupation} />
             <InfoField label="Gender" value={userData.gender} />
+            {/* Update button */}
+            <Button
+              variant="contained"
+              color="primary"
+              sx={{ mt: 2 }}
+              startIcon={<Edit />}
+              onClick={() => navigate('/profile/update')}
+            >
+              Edit
+            </Button>
           </Box>
         </Grid>
       </Grid>
-    </Paper>
   );
 }
 

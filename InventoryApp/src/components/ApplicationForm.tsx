@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
 import type { ChangeEvent, FormEvent } from 'react';
+import { useState } from 'react';
 import {
-  Box,
   TextField,
   MenuItem,
   FormControl,
@@ -13,7 +12,6 @@ import {
   Switch,
   Button,
   Typography,
-  Paper,
   Slider,
   Grid,
 } from '@mui/material';
@@ -71,7 +69,7 @@ const ApplicationFormPage = () => {
         </Typography>
         <form onSubmit={handleSubmit}>
           <Grid container spacing={3}>
-            <Grid item xs={12} sm={12} md={6} lg={3}>
+            <Grid size={{xs:12, sm:12, md:6, lg:3}}>
               <TextField
                 fullWidth
                 label="Full Name"
@@ -81,7 +79,7 @@ const ApplicationFormPage = () => {
                 required
               />
             </Grid>
-            <Grid item xs={12} sm={12} md={6} lg={3}>
+            <Grid size={{xs:12, sm:12, md:6, lg:3}}>
               <TextField
                 fullWidth
                 label="Email"
@@ -91,7 +89,7 @@ const ApplicationFormPage = () => {
                 required
               />
             </Grid>
-            <Grid item xs={12} sm={12} md={6} lg={3}>
+            <Grid size={{xs:12, sm:12, md:6, lg:3}}>
               <TextField
                 fullWidth
                 label="Age"
@@ -100,18 +98,22 @@ const ApplicationFormPage = () => {
                 onChange={handleChange}
               />
             </Grid>
-            <Grid item xs={12} sm={12} md={6} lg={3}>
+            <Grid size={{xs:12, sm:12, md:6, lg:3}}>
               <TextField
                 fullWidth
                 label="Birth Date"
                 name="birthDate"
                 type="date"
-                InputLabelProps={{ shrink: true }}
+                slotProps={{
+                  inputLabel: {
+                    shrink: true
+                  }
+                }}
                 value={formData.birthDate || '00-00-0000'} 
                 onChange={handleChange}
               />
             </Grid>
-            <Grid item xs={12} sm={12} md={6} lg={3}>
+            <Grid size={{xs:12, sm:12, md:6, lg:3}}>
               <TextField
                 fullWidth
                 label="Full Name"
@@ -121,7 +123,7 @@ const ApplicationFormPage = () => {
                 required
               />
             </Grid>
-            <Grid item xs={12} sm={12} md={6} lg={3}>
+            <Grid size={{xs:12, sm:12, md:6, lg:3}}>
               <TextField
                 fullWidth
                 label="Email"
@@ -131,7 +133,7 @@ const ApplicationFormPage = () => {
                 required
               />
             </Grid>
-            <Grid item xs={12} sm={12} md={6} lg={3}>
+            <Grid size={{xs:12, sm:12, md:6, lg:3}}>
               <TextField
                 fullWidth
                 label="Age"
@@ -140,19 +142,23 @@ const ApplicationFormPage = () => {
                 onChange={handleChange}
               />
             </Grid>
-            <Grid item xs={12} sm={12} md={6} lg={3}>
+            <Grid size={{xs:12, sm:12, md:6, lg:3}}>
               <TextField
                 fullWidth
                 label="Birth Date"
                 name="birthDate"
                 type="date"
-                InputLabelProps={{ shrink: true }}
+                slotProps={{
+                  inputLabel: {
+                    shrink: true
+                  }
+                }}
                 value={formData.birthDate || '00-00-0000'}
                 onChange={handleChange}
               />
             </Grid> 
 
-            <Grid item xs={12}>
+            <Grid size={{xs:12}}>
               <FormControl component="fieldset">
                 <FormLabel>Gender</FormLabel>
                 <RadioGroup
@@ -168,7 +174,7 @@ const ApplicationFormPage = () => {
               </FormControl>
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid size={12}>
               <TextField
                 select
                 fullWidth
@@ -184,7 +190,7 @@ const ApplicationFormPage = () => {
               </TextField>
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid size={12}>
               <FormControlLabel
                 control={
                   <Checkbox
@@ -197,7 +203,7 @@ const ApplicationFormPage = () => {
               />
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid size={12}>
               <FormControlLabel
                 control={
                   <Switch
@@ -210,7 +216,7 @@ const ApplicationFormPage = () => {
               />
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid size={12}>
               <Button variant="outlined" component="label">
                 Upload Resume
                 <input
@@ -228,11 +234,11 @@ const ApplicationFormPage = () => {
               )}
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid size={12}>
               <Typography gutterBottom>Experience Level (0-10)</Typography>
               <Slider
                 value={formData.experienceLevel}
-                onChange={(e, newValue) =>
+                onChange={(newValue) =>
                   setFormData((prev) => ({
                     ...prev,
                     experienceLevel: typeof newValue === 'number' ? newValue : Number(newValue),
@@ -246,7 +252,7 @@ const ApplicationFormPage = () => {
               />
             </Grid> 
 
-            <Grid item xs={12}>
+            <Grid size={12}>
               <Button variant="contained" color="primary" type="submit">
                 Submit Application
               </Button>

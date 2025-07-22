@@ -7,12 +7,15 @@ import {
   Typography,
   Menu,
   MenuItem,
+  Badge,
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
-import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from './context/AuthContext'; // adjust path as needed
+import { useAuth } from './context/AuthContext'; 
+import { useNotification } from './context/NotificationContext';
+import { deepPurple } from '@mui/material/colors';
+
 
 interface MenuBarProps {
   onMenuClick: () => void;
@@ -22,6 +25,7 @@ const MenuBar: React.FC<MenuBarProps> = ({ onMenuClick }) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const { logout } = useAuth();
   const navigate = useNavigate();
+  const { notifications} = useNotification();
 
   const handleAccountMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -68,7 +72,9 @@ const MenuBar: React.FC<MenuBarProps> = ({ onMenuClick }) => {
           onClick={() => navigate('/notifications')}
           color="inherit"
         >
-          <NotificationsActiveIcon/>
+          <Badge badgeContent={notifications.length} color="error">
+            <NotificationsActiveIcon color="action" />
+          </Badge>
         </IconButton>
         <IconButton
           size="large"
@@ -78,7 +84,9 @@ const MenuBar: React.FC<MenuBarProps> = ({ onMenuClick }) => {
           onClick={handleAccountMenu}
           color="inherit"
         >
-          <Avatar alt="Remy Sharp" src="/1.jpg" />
+          <Avatar sx={{ backgroundColor: deepPurple[500] }}>
+            {localStorage.getItem('userName')?.[0]?.toUpperCase() || 'U'}
+          </Avatar>
         </IconButton>
 
         <Menu

@@ -4,8 +4,6 @@ import { Box, useTheme, useMediaQuery, Paper } from '@mui/material';
 import MenuBar from './MenuBar';
 import DrawerApp from './DrawerApp';
 
-const drawerWidth = 250;
-
 export default function MainLayout() {
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
@@ -14,7 +12,7 @@ export default function MainLayout() {
   // Keep drawer open on large screens, close on small screens
   React.useEffect(() => {
   setDrawerOpen(!isSmallScreen);
-}, [isSmallScreen]); // ✅ correct
+}, [isSmallScreen]); 
 
 
   const toggleDrawer = () => {

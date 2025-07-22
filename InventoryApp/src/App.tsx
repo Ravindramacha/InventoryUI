@@ -10,6 +10,7 @@ import MainLayout from "./MainLayout";
 import Dashboard from "./components/Dashboard"; // Import your Dashboard component
 import NotificationList from "./NotificationList";
 import Profile from "./components/Profile";
+import ProfileUpdate from "./components/ProfileUpdate";
 
 const queryClient = new QueryClient();
 
@@ -19,10 +20,11 @@ const App: React.FC = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<SignIn />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/notifications" element={<NotificationList />} />
           <Route element={<MainLayout />}>
             <Route path="/home" element={<Home />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/profile/update" element={<ProfileUpdate />} />
+            <Route path="/notifications" element={<NotificationList />} />
             <Route path="/form" element={<ApplicationFormPage />} />
             <Route path="/dashboard" element={<Dashboard/>} />
             <Route path="/products" element={<Products />} />
