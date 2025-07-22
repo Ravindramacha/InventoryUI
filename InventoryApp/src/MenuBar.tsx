@@ -9,7 +9,6 @@ import {
   MenuItem,
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
-import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from './context/AuthContext'; // adjust path as needed
@@ -57,7 +56,7 @@ const MenuBar: React.FC<MenuBarProps> = ({ onMenuClick }) => {
         </IconButton>
 
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-          App Name
+          Prodcut Master
         </Typography>
 
         <IconButton

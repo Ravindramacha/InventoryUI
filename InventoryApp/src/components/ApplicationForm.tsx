@@ -1,31 +1,35 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import type { ChangeEvent, FormEvent } from 'react';
 import {
-  Box,
+ // Box,
   TextField,
   MenuItem,
   FormControl,
-  FormLabel,
-  RadioGroup,
-  FormControlLabel,
-  Radio,
-  Checkbox,
-  Switch,
+ // FormLabel,
+//  RadioGroup,
+ // FormControlLabel,
+ // Radio,
+//  Checkbox,
+ // Switch,
   Button,
   Typography,
-  Paper,
-  Slider,
+ // Paper,
+//  Slider,
   Grid,
+  InputLabel,
+  Select
 } from '@mui/material';
+import { useLanguages, useProductTypes } from '../api/ApiQueries';
+import type { SelectChangeEvent } from '@mui/material/Select';
 
 interface FormData {
-  fullName: string;
+  productId: string;
   email: string;
   age: string;
   birthDate: Date | null;
   gender: string;
-  department: string;
-  termsAccepted: boolean;
+  languageId: string;
+  productTypeId: string;
   newsletter: boolean;
   resume: File | null;
   experienceLevel: number;
@@ -33,74 +37,98 @@ interface FormData {
 
 const ApplicationFormPage = () => {
   const [formData, setFormData] = useState<FormData>({
-    fullName: '',
+    productId: '',
     email: '',
     age: '',
     birthDate: null,
     gender: '',
-    department: '',
-    termsAccepted: false,
+    languageId: '',
+    productTypeId: '',
     newsletter: false,
     resume: null,
     experienceLevel: 0,
   });
 
-  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const { name, value, checked, type, files } = event.target;
+  const handleChange = (event: ChangeEvent<HTMLInputElement>)  => {
+    const { name, value } = event.target;
     setFormData((prev) => ({
       ...prev,
-      [name]:
-        type === 'checkbox'
-          ? checked
-          : type === 'file'
-          ? files?.[0] || null
-          : value,
+      [name]: value,
     }));
   };
+   const handleDropDownChange = (event:  SelectChangeEvent)  => {
+    const { name, value } = event.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+   const { data: languages } = useLanguages(); 
+   const { data: productTypes } = useProductTypes();
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+    e.preventDefault();   
     console.log(formData);
     alert('Form submitted! Check console for data.');
   };
 
   return (
     <>
-    <Typography variant="h4" gutterBottom>
-          Application Form
+    <Typography variant="h5" gutterBottom>
+         Material Master
         </Typography>
         <form onSubmit={handleSubmit}>
           <Grid container spacing={3}>
             <Grid item xs={12} sm={12} md={6} lg={3}>
               <TextField
                 fullWidth
-                label="Full Name"
-                name="fullName"
-                value={formData.fullName}
+                label="Product ID"
+                name="productId"
+                value={formData.productId}
                 onChange={handleChange}
                 required
               />
             </Grid>
+            
             <Grid item xs={12} sm={12} md={6} lg={3}>
-              <TextField
-                fullWidth
-                label="Email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                required
-              />
+              <FormControl fullWidth>
+                  <InputLabel id="demo-simple-select-label">Product Type</InputLabel>
+                  <Select
+                    labelId="demo-simple-select-label"
+                    label="Product Type"
+                    name="productTypeId"
+                    value={formData.productTypeId}
+                    onChange={handleDropDownChange}
+                  >
+                     {productTypes?.map((productType) => (
+                  <MenuItem key={productType.productTypeCode} value={productType.productTypeId}>
+                    {productType.productTypeDesc}
+                  </MenuItem>
+                ))}
+                  </Select>
+                </FormControl>
+            
             </Grid>
             <Grid item xs={12} sm={12} md={6} lg={3}>
-              <TextField
-                fullWidth
-                label="Age"
-                name="age"
-                value={formData.age}
-                onChange={handleChange}
-              />
+              <FormControl fullWidth>
+                  <InputLabel id="demo-simple-select-label">Language</InputLabel>
+                  <Select
+                    labelId="demo-simple-select-label"
+                    label="Language"
+                    name="languageId"
+                    value={formData.languageId}
+                    onChange={handleDropDownChange}
+                  >
+                     {languages?.map((lang) => (
+                  <MenuItem key={lang.languageCode} value={lang.languageId}>
+                    {lang.languageDesc}
+                  </MenuItem>
+                ))}
+                  </Select>
+                </FormControl>
+            
             </Grid>
-            <Grid item xs={12} sm={12} md={6} lg={3}>
+            {/* <Grid item xs={12} sm={12} md={6} lg={3}>
               <TextField
                 fullWidth
                 label="Birth Date"
@@ -244,11 +272,11 @@ const ApplicationFormPage = () => {
                 max={10}
                 valueLabelDisplay="auto"
               />
-            </Grid> 
+            </Grid>  */}
 
             <Grid item xs={12}>
               <Button variant="contained" color="primary" type="submit">
-                Submit Application
+                Submit 
               </Button>
             </Grid>
           </Grid>

@@ -3,8 +3,8 @@ import {
   CardContent,
   Typography,
   Grid,
-  useMediaQuery,
-  useTheme,
+ // useMediaQuery,
+ // useTheme,
 } from '@mui/material';
 import { BarPlot } from '@mui/x-charts/BarChart';
 import { LineHighlightPlot, LinePlot } from '@mui/x-charts/LineChart';
@@ -43,8 +43,8 @@ const series: AllSeriesType[] = [
 ];
 
 export default function StockDashboard() {
-  const theme = useTheme();
-  const isSmall = useMediaQuery(theme.breakpoints.down('sm'));
+//  const theme = useTheme();
+  //const isSmall = useMediaQuery(theme.breakpoints.down('sm'));
 
   return (
     <div style={{ padding: 16 }}>
@@ -96,7 +96,7 @@ export default function StockDashboard() {
                 <ChartsXAxis
                   label="Date"
                   axisId="date"
-                  tickInterval={(value, index) => index % 30 === 0}
+                  tickInterval={(index) => index % 30 === 0}
                   tickLabelStyle={{ fontSize: 10 }}
                 />
                 <ChartsYAxis
@@ -156,7 +156,7 @@ export default function StockDashboard() {
                 <ChartsXAxis
                   label="Date"
                   axisId="date"
-                  tickInterval={(value, index) => index % 30 === 0}
+                  tickInterval={(index) => index % 30 === 0}
                   tickLabelStyle={{ fontSize: 10 }}
                 />
                 <ChartsYAxis
@@ -216,7 +216,7 @@ export default function StockDashboard() {
                 <ChartsXAxis
                   label="Date"
                   axisId="date"
-                  tickInterval={(value, index) => index % 30 === 0}
+                  tickInterval={( index) => index % 30 === 0}
                   tickLabelStyle={{ fontSize: 10 }}
                 />
                 <ChartsYAxis
@@ -276,7 +276,7 @@ export default function StockDashboard() {
                 <ChartsXAxis
                   label="Date"
                   axisId="date"
-                  tickInterval={(value, index) => index % 30 === 0}
+                  tickInterval={( index) => index % 30 === 0}
                   tickLabelStyle={{ fontSize: 10 }}
                 />
                 <ChartsYAxis
