@@ -12,7 +12,7 @@ export default function MainLayout() {
   // Keep drawer open on large screens, close on small screens
   React.useEffect(() => {
   setDrawerOpen(!isSmallScreen);
-}, [isSmallScreen]); // ✅ correct
+}, [isSmallScreen]); 
 
 
   const toggleDrawer = () => {

@@ -43,6 +43,7 @@ const series: AllSeriesType[] = [
 ];
 
 export default function StockDashboard() {
+
 //  const theme = useTheme();
   //const isSmall = useMediaQuery(theme.breakpoints.down('sm'));
 
@@ -54,7 +55,7 @@ export default function StockDashboard() {
 
       <Grid container spacing={2}>
         {/* Chart Card */}
-        <Grid item xs={12} sm={12} md={6} lg={4}>
+        <Grid size={{xs:12, sm:12, md:6, lg:4}}>
           <Card sx={{ height: '100%' }}>
             <CardContent>
               <Typography variant="h6" gutterBottom>
@@ -114,7 +115,7 @@ export default function StockDashboard() {
             </CardContent>
           </Card>
         </Grid>
-        <Grid item xs={12} sm={12} md={6} lg={4}>
+        <Grid size={{xs:12, sm:12, md:6, lg:4}}>
           <Card sx={{ height: '100%' }}>
             <CardContent>
               <Typography variant="h6" gutterBottom>
@@ -174,7 +175,7 @@ export default function StockDashboard() {
             </CardContent>
           </Card>
         </Grid>
-        <Grid item xs={12} sm={12} md={6} lg={4}>
+        <Grid size={{xs:12, sm:12, md:6, lg:4}}>
           <Card sx={{ height: '100%' }}>
             <CardContent>
               <Typography variant="h6" gutterBottom>
@@ -234,7 +235,7 @@ export default function StockDashboard() {
             </CardContent>
           </Card>
         </Grid>
-        <Grid item xs={12} sm={12} md={6} lg={4}>
+        <Grid size={{xs:12, sm:12, md:6, lg:4}}>
           <Card sx={{ height: '100%' }}>
             <CardContent>
               <Typography variant="h6" gutterBottom>
@@ -276,7 +277,7 @@ export default function StockDashboard() {
                 <ChartsXAxis
                   label="Date"
                   axisId="date"
-                  tickInterval={( index) => index % 30 === 0}
+                  tickInterval={(index) => index % 30 === 0}
                   tickLabelStyle={{ fontSize: 10 }}
                 />
                 <ChartsYAxis

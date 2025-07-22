@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { Collapse } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 import {
   Drawer,
   Box,
@@ -10,16 +12,19 @@ import {
   Tooltip,
 } from '@mui/material';
 import {
+  Analytics,
+  ArrowUpward,
+  Article,
   ExpandLess,
   ExpandMore,
 } from '@mui/icons-material';
-import { Collapse } from '@mui/material';
-
-import HomeIcon from '@mui/icons-material/Home';
+import PreviewIcon from '@mui/icons-material/Preview';
 import Inventory2Icon from '@mui/icons-material/Inventory2';
+import CategoryIcon from '@mui/icons-material/Category';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import DashboardIcon from '@mui/icons-material/Dashboard';
-import { useNavigate } from 'react-router-dom';
+import HomeIcon from '@mui/icons-material/Home';
+import AddIcon from '@mui/icons-material/Add';
 
 const expandedWidth = 250;
 const collapsedWidth = 64;
@@ -31,9 +36,9 @@ const menuItems = [
     text: 'Products',
     icon: <Inventory2Icon />,
     children: [
-      { text: 'View All', path: '/products' },
-      { text: 'Categories', path: '/products/categories' },
-      { text: 'New Product', path: '/products/new' },
+      { text: 'View All', path: '/products',icon: <PreviewIcon /> },
+      { text: 'Categories', path: '/products/categories',icon: <CategoryIcon /> },
+      { text: 'New Product', path: '/products/new',icon: <AddIcon /> },
     ],
   },
 
@@ -41,8 +46,8 @@ const menuItems = [
     text: 'Application',
     icon: <AccountBoxIcon />,
     children: [
-      { text: 'New Application', path: '/form' },
-      { text: 'Submitted', path: '/form/submitted' },
+      { text: 'New Application', path: '/form' ,icon: <AddIcon />},
+      { text: 'Submitted', path: '/form/submitted',icon: <ArrowUpward /> },
     ],
   },
 
@@ -50,8 +55,8 @@ const menuItems = [
     text: 'Dashboard',
     icon: <DashboardIcon />,
     children: [
-      { text: 'Analytics', path: '/dashboard/analytics' },
-      { text: 'Reports', path: '/dashboard/reports' },
+      { text: 'Analytics', path: '/dashboard/analytics',icon: <Analytics /> },
+      { text: 'Reports', path: '/dashboard/reports',icon: <Article /> },
     ],
   },
 ];
@@ -116,67 +121,79 @@ export default function DrawerApp({
         <Box sx={(theme) => theme.mixins.toolbar} />
         <List>
           {menuItems.map(({ text, icon, path, children }) => (
-  <Box key={text}>
-    <ListItem disablePadding sx={{ display: 'block' }}>
-      <Tooltip title={!isExpanded ? text : ''} placement="right">
-        <ListItemButton
-          onClick={() =>
-            children ? toggleSubMenu(text) : handleNavigation(path!)
-          }
-          sx={{
-            minHeight: 48,
-            justifyContent: isExpanded ? 'initial' : 'center',
-            px: 2.5,
-          }}
-        >
-          <ListItemIcon
-            sx={{
-              minWidth: 0,
-              mr: isExpanded ? 2 : 'auto',
-              justifyContent: 'center',
-            }}
-          >
-            {icon}
-          </ListItemIcon>
-          {isExpanded && (
-            <>
-              <ListItemText primary={text} />
-              {children &&
-                (openSubMenus[text] ? <ExpandLess /> : <ExpandMore />)}
-            </>
-          )}
-        </ListItemButton>
-      </Tooltip>
-    </ListItem>
-
-    {/* Sub-items */}
-    {children && (
-      <Collapse in={openSubMenus[text]} timeout="auto" unmountOnExit>
-        <List component="div" disablePadding>
-          {children.map((child) => (
-            <ListItemButton
-              key={child.text}
-              sx={{
-                pl: isExpanded ? 6 : 2,
-                justifyContent: isExpanded ? 'initial' : 'center',
-              }}
-              onClick={() => handleNavigation(child.path)}
-            >
-              {isExpanded && (
-                <ListItemText primary={child.text} />
-              )}
-              {!isExpanded && (
-                <Tooltip title={child.text} placement="right">
-                  <ListItemText primary={''} />
+            <Box key={text}>
+              <ListItem disablePadding sx={{ display: 'block' }}>
+                <Tooltip title={!isExpanded ? text : ''} placement="right">
+                  <ListItemButton
+                    onClick={() =>
+                      children ? toggleSubMenu(text) : handleNavigation(path!)
+                    }
+                    sx={{
+                      minHeight: 48,
+                      justifyContent: isExpanded ? 'initial' : 'center',
+                      px: 2.5,
+                    }}
+                  >
+                    <ListItemIcon
+                      sx={{
+                        minWidth: 0,
+                        mr: isExpanded ? 2 : 'auto',
+                        justifyContent: 'center',
+                      }}
+                    >
+                      {icon}
+                    </ListItemIcon>
+                    {isExpanded && (
+                      <>
+                        <ListItemText primary={text} />
+                        {children &&
+                          (openSubMenus[text] ? <ExpandLess /> : <ExpandMore />)}
+                      </>
+                    )}
+                  </ListItemButton>
                 </Tooltip>
+              </ListItem>
+
+              {/* Sub-items */}
+              {children && (
+                <Collapse in={openSubMenus[text]} timeout="auto" unmountOnExit>
+                  <List component="div" disablePadding>
+                    {children.map((child) => (
+                      <ListItemButton
+                        key={child.text}
+                        sx={{
+                          pl: isExpanded ? 6 : 2,
+                          justifyContent: isExpanded ? 'initial' : 'center',
+                        }}
+                        onClick={() => handleNavigation(child.path)}
+                      >
+                        <ListItemIcon
+                          sx={{
+                            minWidth: 0,
+                            mr: isExpanded ? 2 : 'auto',
+                            justifyContent: 'center',
+                          }}
+                        >
+                          {child.icon}
+                        </ListItemIcon>
+
+                        {(isExpanded) && (
+                          <ListItemText primary={child.text} />
+                        )}
+
+                        {!isExpanded && !isSmallScreen && (
+                          <Tooltip title={child.text} placement="right">
+                            <ListItemText primary={''} />
+                          </Tooltip>
+                        )}
+                      </ListItemButton>
+                    ))}
+                  </List>
+                </Collapse>
               )}
-            </ListItemButton>
+
+            </Box>
           ))}
-        </List>
-      </Collapse>
-    )}
-  </Box>
-))}
 
         </List>
       </Box>
