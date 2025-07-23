@@ -33,8 +33,8 @@ const DynamicAttributes: React.FC<DynamicAttributesProps> = ({
   });
 
   const updateParent = (updated: Attribute[]) => {
-    setAttributes(updated);
-    onChange(updated);
+     setAttributes(updated);
+     onChange?.(updated); // ✅ call only if defined
   };
 
   const handleAddField = (index: number) => {

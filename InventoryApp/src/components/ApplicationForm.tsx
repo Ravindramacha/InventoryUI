@@ -1,7 +1,6 @@
 
 import { useState } from 'react';
 import type { ChangeEvent, FormEvent } from 'react';
-import { useState } from 'react';
 import {
  // Box,
   TextField,
@@ -15,7 +14,6 @@ import {
  // Switch,
   Button,
   Typography,
-  Slider,
  // Paper,
 //  Slider,
   Grid,
@@ -39,8 +37,6 @@ interface FormData {
 }
 
 const ApplicationFormPage = () => {
- 
-    const [attributes, setAttributes] = useState([]);
  
   const [formData, setFormData] = useState<FormData>({
     productId: '',
@@ -138,7 +134,10 @@ const ApplicationFormPage = () => {
               <Grid size={{xs:12, sm:12, md:6, lg:5}}>
                <DynamicAttributes
               maxFields={5}
-              onChange={setAttributes}
+                onChange={(fields) => {
+                console.log(fields);
+              }}
+              
             />
           </Grid>
           <Grid size={{xs:12, sm:12, md:6, lg:5}}>
