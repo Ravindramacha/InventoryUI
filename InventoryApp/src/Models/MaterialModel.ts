@@ -18,3 +18,23 @@ export interface ProductTypeModel {
   modifiedOn: string;
   modifiedBy: number;
 }
+
+export interface ProductGroupModel {
+  productGroupId: number;
+  productGroupCode: string;
+  productGroupDesc: string;
+  createdOn: string;     // You can use Date type if you parse it
+  createdBy: number;
+  modifiedOn: string;
+  modifiedBy: number;
+}
+
+export interface ProductCategoryModel {
+  productCategoryId: number;
+  productCategoryCode: string;
+  productCategoryDesc: string;
+  createdOn: string;     // You can use Date type if you parse it
+  createdBy: number;
+  modifiedOn: string;
+  modifiedBy: number;
+}

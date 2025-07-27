@@ -26,7 +26,8 @@ const App: React.FC = () => (
             <Route path="/profile/update" element={<ProfileUpdate />} />
             <Route path="/notifications" element={<NotificationList />} />
             <Route path="/form" element={<ApplicationFormPage />} />
-            <Route path="/dashboard" element={<Dashboard/>} />
+            <Route path="/dashboard/analytics" element={<Dashboard/>} />
+            <Route path="/dashboard/reports" element={<Dashboard/>} />
             <Route path="/products" element={<Products />} />
           </Route>
         </Routes>
