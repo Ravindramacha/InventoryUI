@@ -20,7 +20,7 @@ export interface Attribute {
   name: string;
   label: string;
   type: FieldType;
-  value: string | Dayjs | null;
+  value: string | number | Dayjs | null;
   options?: string[]; // For dropdowns only
 }
 
@@ -125,7 +125,7 @@ const handleConfirmDelete = () => {
         return (
           <TextField
             label={attr.label}
-            value={attr.value}
+            value={attr.value ?? ""}
             onChange={(e) => handleFieldChange(attr.id, e.target.value)}
             fullWidth
           />
@@ -135,7 +135,7 @@ const handleConfirmDelete = () => {
           <TextField
             label={attr.label}
             type="number"
-            value={attr.value}
+            value={attr.value !== null ? attr.value : ""}
             onChange={(e) => handleFieldChange(attr.id, e.target.value)}
             fullWidth
           />
@@ -144,8 +144,8 @@ const handleConfirmDelete = () => {
         return (
           <Autocomplete
             options={attr.options || []}
-            value={attr.value as string || ""}
-            onChange={(e, newValue) =>
+            value={attr.value ? String(attr.value) : ""}
+            onChange={(_, newValue) =>
               handleFieldChange(attr.id, newValue || "")
             }
             renderInput={(params) => (

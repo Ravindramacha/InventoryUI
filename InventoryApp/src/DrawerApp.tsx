@@ -36,7 +36,7 @@ const menuItems = [
     text: 'Products',
     icon: <Inventory2Icon />,
     children: [
-      { text: 'View All', path: '/products',icon: <PreviewIcon /> },
+      { text: 'Product Type', path: '/products',icon: <PreviewIcon /> },
       { text: 'Categories', path: '/products/categories',icon: <CategoryIcon /> },
       { text: 'New Product', path: '/products/new',icon: <AddIcon /> },
     ],

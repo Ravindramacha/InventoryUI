@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider } from "./context/AuthContext";
 import SignIn from "./components/SignIn"; // Import your SignIn component
-import Products from "./components/Products"; // Import your Products component
+import Products from "./components/Product/Products"; // Import your Products component
 import ApplicationFormPage from "./components/ApplicationForm";
 import Home from "./components/Home"; // Import your Home component
 import MainLayout from "./MainLayout";
@@ -28,7 +28,7 @@ const App: React.FC = () => (
             <Route path="/form" element={<ApplicationFormPage />} />
             <Route path="/dashboard/analytics" element={<Dashboard/>} />
             <Route path="/dashboard/reports" element={<Dashboard/>} />
-            <Route path="/products" element={<Products />} />
+            <Route path="/products" element={<Products/>} />
           </Route>
         </Routes>
       </BrowserRouter>

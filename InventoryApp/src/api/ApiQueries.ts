@@ -1,6 +1,6 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import type { LanguageModel, ProductCategoryModel, ProductGroupModel, ProductTypeModel } from "../Models/MaterialModel";
+import type { LanguageModel, PostProductType, ProductCategoryModel, ProductGroupModel, ProductTypeModel } from "../Models/MaterialModel";
 
 // ✅ Hook with retry + enabled as parameters
 export function useLanguages(
@@ -84,5 +84,20 @@ export function useGetAllProductCategories(
     staleTime: 1000 * 60 * 5,
     retry,      // 👈 dynamic retry
     enabled,    // 👈 only fetch if enabled === true
+  });
+}
+
+export function usePostProductType() {
+  return useMutation({
+    mutationFn: async (newProductType: PostProductType) => {
+      const response = await axios.post("/api/ProductTypes/AddProductType", newProductType, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          "Content-Type": "application/json",
+          "Cache-Control": "no-cache", 
+        },
+      });
+      return response.data;
+    },
   });
 }

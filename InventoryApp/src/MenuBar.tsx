@@ -61,7 +61,7 @@ const MenuBar: React.FC<MenuBarProps> = ({ onMenuClick }) => {
         </IconButton>
 
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-          Prodcut Master
+          Product Master
         </Typography>
 
         <IconButton

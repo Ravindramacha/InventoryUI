@@ -19,6 +19,19 @@ export interface ProductTypeModel {
   modifiedBy: number;
 }
 
+export interface PostProductType {
+  productTypeCode: string;
+  productTypeDesc: string;
+  TranscationById: number; // Assuming this is the user ID performing the transaction
+}
+
+export interface PutProductType {
+  productTypeId: number;
+  productTypeCode: string;
+  productTypeDesc: string;
+  TranscationById: number; // Assuming this is the user ID performing the transaction 
+}
+
 export interface ProductGroupModel {
   productGroupId: number;
   productGroupCode: string;
@@ -37,4 +50,19 @@ export interface ProductCategoryModel {
   createdBy: number;
   modifiedOn: string;
   modifiedBy: number;
+}
+export interface UomData {
+  id: number;
+  uom: string;
+  quantity: string;
+  primaryQty: string;
+  length: number;
+  width: number; 
+  height: number;
+  lengthUom: string;
+  netWeight: number;
+  grossWeight: number;
+  weightUom: string;
+  volume: number;
+  volumeUom?: string;
 }

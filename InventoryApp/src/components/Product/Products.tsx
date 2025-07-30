@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNotification } from '../context/NotificationContext';
+import React, { useEffect, useState } from 'react';
+import { useNotification } from '../../context/NotificationContext';
 import {
   Button, Dialog, DialogActions, DialogContent, DialogTitle,
   TextField, IconButton, Typography, Box,
@@ -11,38 +11,42 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import Popover from '@mui/material/Popover';
-
-interface Product {
-  id: number;
-  name: string;
-  price: number;
-  quantity: number;
-}
+import type { PostProductType, ProductTypeModel } from '../../Models/MaterialModel';
+import { usePostProductType, useProductTypes } from '../../api/ApiQueries';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
+import type { AlertColor } from '@mui/material/Alert';
+import { useQueryClient } from '@tanstack/react-query';
 
 export default function Products() {
-  const [products, setProducts] = useState<Product[]>([
-    { id: 1, name: 'Laptop', price: 50000, quantity: 10 },
-    { id: 2, name: 'Phone', price: 20000, quantity: 25 },
-  ]);
 
+  const queryClient = useQueryClient();
+  const { data: productTypes = [] } = useProductTypes();
+  const [products, setProducts] = useState<ProductTypeModel[]>([]);
+  const { mutate } = usePostProductType();
+  useEffect(() => {
+  setProducts(productTypes);
+}, [productTypes]);
+
+const [snackbarOpen, setSnackbarOpen] = useState(false);
+const [snackbarMessage, setSnackbarMessage] = useState('');
+const [snackbarSeverity, setSnackbarSeverity] = useState<AlertColor>('success');
   const [open, setOpen] = useState(false);
-  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [editingProduct, setEditingProduct] = useState<ProductTypeModel | null>(null);
   const { addNotification } = useNotification();
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [page, setPage] = useState(0);
 
   const [formValues, setFormValues] = useState({
-    name: '',
-    price: '',
-    quantity: '',
+    productTypeCode: '',
+    productTypeDesc: ''
   });
 
-  const handleOpen = (product?: Product) => {
-    setEditingProduct(product || null);
+  const handleOpen = (productType?: ProductTypeModel) => {
+    setEditingProduct(productType || null);
     setFormValues({
-      name: product?.name || '',
-      price: product?.price.toString() || '',
-      quantity: product?.quantity.toString() || '',
+      productTypeCode: productType?.productTypeCode || '',
+      productTypeDesc: productType?.productTypeDesc.toString() || ''
     });
     setOpen(true);
   };
@@ -57,55 +61,62 @@ export default function Products() {
   };
 
   const handleSubmit = () => {
-    const { name, price, quantity } = formValues;
-    const parsedPrice = parseFloat(price);
-    const parsedQty = parseInt(quantity);
+    const { productTypeCode, productTypeDesc } = formValues;
 
-    if (!name || isNaN(parsedPrice) || isNaN(parsedQty)) return;
+    if (!productTypeCode || !productTypeDesc ) return;
 
     if (editingProduct) {
       setProducts((prev) =>
         prev.map((p) =>
-          p.id === editingProduct.id ? { ...p, name, price: parsedPrice, quantity: parsedQty } : p
+          p.productTypeId === editingProduct.productTypeId ? { ...p, productTypeCode,productTypeDesc} : p
         )
       );
     } else {
-      const newProduct: Product = {
-        id: products.length ? Math.max(...products.map((p) => p.id)) + 1 : 1,
-        name,
-        price: parsedPrice,
-        quantity: parsedQty,
+      const newProduct: PostProductType = {
+       productTypeCode: productTypeCode,
+       productTypeDesc: productTypeDesc,
+       TranscationById: 1, // Assuming a static user ID for now
+
       };
-      setProducts((prev) => [...prev, newProduct]);
+      mutate(newProduct, {
+        onSuccess: (data) => {
+          queryClient.invalidateQueries(['productTypes']);
+          setSnackbarMessage('Product type added successfully');
+          setSnackbarSeverity('success');
+          setSnackbarOpen(true);
+          handleClose();
+          addNotification('Product type added successfully', 'success')
+        },
+        onError: (error) => {
+          addNotification(`Error adding product type: ${error.message}`, 'error');
+        },
+      });
     }
 
-    handleClose();
-
-    addNotification('Product added successfully', 'success')
+    
   };
 
   const handleDelete = (id: number) => {
-    setProducts((prev) => prev.filter((p) => p.id !== id));
+    //setProducts((prev) => prev.filter((p) => p.id !== id));
   };
 
-  const [nameFilter, setNameFilter] = useState('');
-  const [priceFilter, setPriceFilter] = useState('');
-  const [qtyFilter, setQtyFilter] = useState('');
-
+  const [productTypeCodeFilter, setproductTypeCodeFilter] = useState('');
+  const [productTypeDescFilter, setproductTypeDescFilter] = useState('');
+  
+const [globalSearch, setGlobalSearch] = useState('');
   // Popover state
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [filterType, setFilterType] = useState<'name' | 'price' | 'qty' | null>(null);
+  const [filterType, setFilterType] = useState<'productTypeCode' | 'productTypeDesc' | null>(null);
 
-  const handleFilterIconClick = (event: React.MouseEvent<HTMLElement>, type: 'name' | 'price' | 'qty') => {
+  const handleFilterIconClick = (event: React.MouseEvent<HTMLElement>, type: 'productTypeCode' | 'productTypeDesc') => {
     setAnchorEl(event.currentTarget);
     setFilterType(type);
   };
 
   const handleFilterInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    if (filterType === 'name') setNameFilter(value);
-    if (filterType === 'price') setPriceFilter(value);
-    if (filterType === 'qty') setQtyFilter(value);
+    if (filterType === 'productTypeCode') setproductTypeCodeFilter(value);
+    if (filterType === 'productTypeDesc') setproductTypeDescFilter(value);
   };
 
   const handleFilterPopoverClose = () => {
@@ -114,20 +125,36 @@ export default function Products() {
   };
 
   // Apply column filters
-  const filteredProducts = products.filter((product) => {
-    const nameMatch = nameFilter ? product.name.toLowerCase().includes(nameFilter.toLowerCase()) : true;
-    const priceMatch = priceFilter ? product.price === Number(priceFilter) : true;
-    const qtyMatch = qtyFilter ? product.quantity === Number(qtyFilter) : true;
-    return nameMatch && priceMatch && qtyMatch;
-  });
+const filteredProducts = products.filter((productType) => {
+  const searchText = globalSearch.toLowerCase();
+  const productTypeCodeMatch = productType.productTypeCode.toLowerCase().includes(searchText);
+  const productTypeDescMatch = productType.productTypeDesc.toLowerCase().includes(searchText);
+  return productTypeCodeMatch || productTypeDescMatch;
+});
 
   // Pagination logic for table rows
   const paginatedProducts = filteredProducts.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
   return (
+    <>
+      <Snackbar
+        open={snackbarOpen}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        autoHideDuration={4000}
+        onClose={() => setSnackbarOpen(false)}
+      >
+        <MuiAlert
+          onClose={() => setSnackbarOpen(false)}
+          severity={snackbarSeverity}
+          sx={{ width: '100%' }}
+        >
+          {snackbarMessage}
+        </MuiAlert>
+      </Snackbar>
+
     <Box p={2}>
       <Typography variant="h4" gutterBottom>
-        Products
+        Product Type
       </Typography>
       <Grid container spacing={3}>
         <Grid size={{xs:0, sm:0, md:9, lg:9}}>
@@ -136,50 +163,55 @@ export default function Products() {
 
         <Grid size={{xs:12, sm:12, md:3, lg:3}}>
           <Button variant="contained" onClick={() => handleOpen()} sx={{ mb: 2 }} startIcon={<AddIcon />}>
-            Add Product
+            Add
           </Button>
         </Grid>
       </Grid>
 
       <Box mt={2}>
+      <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+        <TextField
+          label="Search"
+          variant="outlined"
+          size="small"
+          value={globalSearch}
+          onChange={(e) => {
+            setGlobalSearch(e.target.value);
+            setPage(0); // reset to first page on search
+          }}
+          sx={{ width: 300 }}
+        />
+      </Box>
+      
         <TableContainer component={Paper}>
-          <Table>
+          <Table stickyHeader >
             <TableHead>
               <TableRow>
-                <TableCell>ID</TableCell>
-                <TableCell>
-                  Name
-                  <IconButton size="small" onClick={e => handleFilterIconClick(e, 'name')}>
+                  <TableCell>
+                  Product Type Code
+                  {/* <IconButton size="small" onClick={e => handleFilterIconClick(e, 'productTypeCode')}>
                     <FilterListIcon fontSize="small" />
-                  </IconButton>
+                  </IconButton> */}
                 </TableCell>
                 <TableCell>
-                  Price (₹)
-                  <IconButton size="small" onClick={e => handleFilterIconClick(e, 'price')}>
+                  Product Type Description
+                  {/* <IconButton size="small" onClick={e => handleFilterIconClick(e, 'productTypeDesc')}>
                     <FilterListIcon fontSize="small" />
-                  </IconButton>
-                </TableCell>
-                <TableCell>
-                  Quantity
-                  <IconButton size="small" onClick={e => handleFilterIconClick(e, 'qty')}>
-                    <FilterListIcon fontSize="small" />
-                  </IconButton>
+                  </IconButton> */}
                 </TableCell>
                 <TableCell>Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {paginatedProducts.map((product) => (
-                <TableRow key={product.id}>
-                  <TableCell>{product.id}</TableCell>
-                  <TableCell>{product.name}</TableCell>
-                  <TableCell>{product.price}</TableCell>
-                  <TableCell>{product.quantity}</TableCell>
+              {paginatedProducts.map((productType) => (
+                <TableRow key={productType.productTypeId}>
+                  <TableCell>{productType.productTypeCode}</TableCell>
+                  <TableCell>{productType.productTypeDesc}</TableCell>
                   <TableCell>
-                    <IconButton onClick={() => handleOpen(product)}>
+                    <IconButton onClick={() => handleOpen(productType)}>
                       <EditIcon />
                     </IconButton>
-                    <IconButton onClick={() => handleDelete(product.id)}>
+                    <IconButton onClick={() => handleDelete(productType.productTypeId)}>
                       <DeleteIcon />
                     </IconButton>
                   </TableCell>
@@ -189,7 +221,7 @@ export default function Products() {
           </Table>
         </TableContainer>
         {/* Filter popover */}
-        <Popover
+        {/* <Popover
           open={Boolean(anchorEl)}
           anchorEl={anchorEl}
           onClose={handleFilterPopoverClose}
@@ -198,11 +230,11 @@ export default function Products() {
           <Box p={2}>
             <TextField
               label={
-                filterType === 'name'
-                  ? 'Filter Name'
-                  : filterType === 'price'
-                  ? 'Filter Price'
-                  : 'Filter Quantity'
+                filterType === 'productTypeCode'
+                  ? 'Filter Product Type Code'
+                  : filterType === 'productTypeCode'
+                  ? 'Filter Product Type Description' 
+                  : ''
               }
               value={
                 filterType === 'name'
@@ -217,7 +249,7 @@ export default function Products() {
               autoFocus
             />
           </Box>
-        </Popover>
+        </Popover> */}
       </Box>
       {/* Rows per page dropdown */}
       <Box display="flex" justifyContent="flex-end" alignItems="center" mt={2}>
@@ -260,32 +292,24 @@ export default function Products() {
           </Typography>
         </Box>
       </Box>
-      <Dialog open={open} onClose={handleClose}>
+      <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
         <DialogTitle>{editingProduct ? 'Edit' : 'Add'} Product</DialogTitle>
         <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 1 }}>
           <TextField
-            name="name"
-            label="Name"
-            value={formValues.name}
+            name="productTypeCode"
+            label="Product Type Code"
+            value={formValues.productTypeCode}
             onChange={handleChange}
             required
           />
           <TextField
-            name="price"
-            label="Price"
-            type="number"
-            value={formValues.price}
+            name="productTypeDesc"
+            label="Product Type Description"
+            value={formValues.productTypeDesc}
             onChange={handleChange}
             required
-          />
-          <TextField
-            name="quantity"
-            label="Quantity"
-            type="number"
-            value={formValues.quantity}
-            onChange={handleChange}
-            required
-          />
+            />
+          
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
@@ -295,5 +319,6 @@ export default function Products() {
         </DialogActions>
       </Dialog>
     </Box>
+    </>
   );
 }
