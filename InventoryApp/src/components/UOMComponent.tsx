@@ -3,10 +3,11 @@ import {
   Stack,
   TextField,
   IconButton,
+  Autocomplete,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
-import type { UomData } from "../Models/MaterialModel";
+import type { UomData, UomModel } from "../Models/MaterialModel";
 
 
 
@@ -14,12 +15,14 @@ interface UOMComponentProps {
   initialRows?: UomData[];
   maxRows?: number;
   onChange?: (rows: UomData[]) => void;
+  uomOptions: UomModel[]
 }
 
 const UOMComponent: React.FC<UOMComponentProps> = ({
-  initialRows = [{ id: Date.now(), uom: "", quantity: "", primaryQty: "", length: 0, width: 0, height: 0, netWeight: 0, grossWeight: 0, volume: 0 , lengthUom: "", weightUom: "", volumeUom: "" }],
+  initialRows = [{ id: Date.now(), uom: "", quantity: "", primaryQty: "", length: null, width: null, height: null, netWeight: null, grossWeight: null, volume: null , lengthUom: "", weightUom: "", volumeUom: "" }],
   maxRows = 5,
   onChange,
+  uomOptions,
 }) => {
   const [rows, setRows] = useState<UomData[]>(initialRows);
 
@@ -36,9 +39,9 @@ const UOMComponent: React.FC<UOMComponentProps> = ({
       row.id === id
         ? {
             ...row,
-            [field]: field === "uom" ? value : Number(value),
+            [field]: value,
           }
-        : row
+        : row 
     );
     setRows(updated);
   };
@@ -50,14 +53,14 @@ const UOMComponent: React.FC<UOMComponentProps> = ({
         uom: "",
         quantity: "",
         primaryQty: "",
-        length: 0,
-        width: 0, 
-        height: 0,
+        length: null,
+        width: null, 
+        height: null,
         lengthUom: "",
-        netWeight: 0,
-        grossWeight: 0,
+        netWeight: null,
+        grossWeight: null,
         weightUom: "",
-        volume: 0,
+        volume: null,
         volumeUom: "",
       };
       const updated = [
@@ -84,11 +87,17 @@ const UOMComponent: React.FC<UOMComponentProps> = ({
                 key={row.id}
                 alignItems="center"
               >
-              <TextField
-                label="UOM"
-                value={row.uom}
-                onChange={(e) => handleChange(row.id, "uom", e.target.value)}
-                />
+              <Autocomplete
+                   disablePortal
+                   options={uomOptions}
+                   getOptionLabel={(option) => `${option.uomDesc} (${option.uomCode})` || ''}
+                   isOptionEqualToValue={(option, value) => option.uomId === value.uomId}
+                    onChange={
+                      (_, newValue) => handleChange(row.id, "uom", newValue?.uomId?.toString() || "")
+                   }
+                   size="medium"
+                   renderInput={(params) => <TextField {...params} label="Uom" required/>}
+                 />
                  <TextField
                 label="Qty"
                 value={row.quantity}
@@ -131,7 +140,7 @@ const UOMComponent: React.FC<UOMComponentProps> = ({
                 />
                
                  <TextField
-                label="weight UOM"
+                label="Weight UOM"
                 value={row.weightUom}
                 onChange={(e) => handleChange(row.id, "weightUom", e.target.value)}
                 />

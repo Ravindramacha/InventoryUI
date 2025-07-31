@@ -9,8 +9,6 @@ import {
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
-import FilterListIcon from '@mui/icons-material/FilterList';
-import Popover from '@mui/material/Popover';
 import type { PostProductType, ProductTypeModel } from '../../Models/MaterialModel';
 import { usePostProductType, useProductTypes } from '../../api/ApiQueries';
 import Snackbar from '@mui/material/Snackbar';
@@ -79,8 +77,8 @@ const [snackbarSeverity, setSnackbarSeverity] = useState<AlertColor>('success');
 
       };
       mutate(newProduct, {
-        onSuccess: (data) => {
-          queryClient.invalidateQueries(['productTypes']);
+        onSuccess: () => {
+          queryClient.invalidateQueries(["productTypes"]);
           setSnackbarMessage('Product type added successfully');
           setSnackbarSeverity('success');
           setSnackbarOpen(true);
@@ -96,33 +94,33 @@ const [snackbarSeverity, setSnackbarSeverity] = useState<AlertColor>('success');
     
   };
 
-  const handleDelete = (id: number) => {
-    //setProducts((prev) => prev.filter((p) => p.id !== id));
-  };
+  // const handleDelete = (id: number) => {
+  //   //setProducts((prev) => prev.filter((p) => p.id !== id));
+  // };
 
-  const [productTypeCodeFilter, setproductTypeCodeFilter] = useState('');
-  const [productTypeDescFilter, setproductTypeDescFilter] = useState('');
+ // const [productTypeCodeFilter, setproductTypeCodeFilter] = useState('');
+ // const [productTypeDescFilter, setproductTypeDescFilter] = useState('');
   
 const [globalSearch, setGlobalSearch] = useState('');
   // Popover state
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [filterType, setFilterType] = useState<'productTypeCode' | 'productTypeDesc' | null>(null);
+ // const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+ // const [filterType, setFilterType] = useState<'productTypeCode' | 'productTypeDesc' | null>(null);
 
-  const handleFilterIconClick = (event: React.MouseEvent<HTMLElement>, type: 'productTypeCode' | 'productTypeDesc') => {
-    setAnchorEl(event.currentTarget);
-    setFilterType(type);
-  };
+  // const handleFilterIconClick = (event: React.MouseEvent<HTMLElement>, type: 'productTypeCode' | 'productTypeDesc') => {
+  //   setAnchorEl(event.currentTarget);
+  //   setFilterType(type);
+  // };
 
-  const handleFilterInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    if (filterType === 'productTypeCode') setproductTypeCodeFilter(value);
-    if (filterType === 'productTypeDesc') setproductTypeDescFilter(value);
-  };
+  // const handleFilterInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const value = e.target.value;
+  //   if (filterType === 'productTypeCode') setproductTypeCodeFilter(value);
+  //   if (filterType === 'productTypeDesc') setproductTypeDescFilter(value);
+  // };
 
-  const handleFilterPopoverClose = () => {
-    setAnchorEl(null);
-    setFilterType(null);
-  };
+  // const handleFilterPopoverClose = () => {
+  //   setAnchorEl(null);
+  //   setFilterType(null);
+  // };
 
   // Apply column filters
 const filteredProducts = products.filter((productType) => {
@@ -211,7 +209,7 @@ const filteredProducts = products.filter((productType) => {
                     <IconButton onClick={() => handleOpen(productType)}>
                       <EditIcon />
                     </IconButton>
-                    <IconButton onClick={() => handleDelete(productType.productTypeId)}>
+                    <IconButton >
                       <DeleteIcon />
                     </IconButton>
                   </TableCell>

@@ -1,56 +1,47 @@
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { ChangeEvent, FormEvent } from 'react';
 import {
   TextField,
   Button,
   Typography,
   Grid,
+  Box,
  } from '@mui/material';
-import { useGetAllProductCategories, useGetAllProductGroups, useProductTypes } from '../api/ApiQueries';
+import { useGetAllProductCategories, useGetAllProductGroups, useGetUomsByDimensionId, useLanguages, usePostProductMasterForm, useProductTypes, useSalesStatus, useUomDimension } from '../api/ApiQueries';
 import Autocomplete from '@mui/material/Autocomplete';
 import DynamicField, { type Attribute } from './common/DynamicField';
 import UOMComponent from './UOMComponent';
-import type { UomData } from '../Models/MaterialModel';
+import type { PostProductMasterForm, UomData } from '../Models/MaterialModel';
+import { Snackbar, Alert, CircularProgress, Backdrop } from '@mui/material';
 
-interface FormData {
-  productId: string;
-  productTypeId: string;
-  productGroupId: string;
-  productCategoryId: string;
-  shortDescription: string;
-  longDescription: string;
-  attribute1: string;
-  attribute2: string;  
-  attribute3: string;
-  attribute4: string;
-  attribute5: string;
-  date1: Date | null;
-  date2: Date | null;   
-  date3: Date | null;
-  date4: Date | null;
-  date5: Date | null;
-  number1: string;
-  number2: string;  
-  number3: string;
-  number4: string;
-  number5: string;
-  dropDown1: string;
-  dropDown2: string;
-  dropDown3: string;
-  dropDown4: string;
-  dropDown5: string;
-  uomData: UomData[];
-  unitOfMeasurement: string;
-}
 
 const ApplicationFormPage = () => {
- 
-  const [formData, setFormData] = useState<FormData>({
+   const initialUOMRows = [
+  {
+    id: Date.now(),
+    uom: "",
+    quantity: "",
+    primaryQty: "",
+    length: null,
+    width: null,
+    height: null,
+    netWeight: null,
+    grossWeight: null,
+    volume: null,
+    lengthUom: "",
+    weightUom: "",
+    volumeUom: ""
+  }
+];
+   const [uomRows, setUomRows] = useState<UomData[]>(initialUOMRows);
+  const [formData, setFormData] = useState<PostProductMasterForm>({
     productId: '',
     productTypeId: '',
     productGroupId:  '',
     productCategoryId:  '',
+    salesStatusId: '',
+    languageId: '',
     shortDescription:  '',
     longDescription: '',
     attribute1: '',
@@ -63,17 +54,17 @@ const ApplicationFormPage = () => {
     date3: null,
     date4: null,
     date5: null,
-    number1: '',
-    number2: '',
-    number3: '',
-    number4: '',
-    number5: '',
+    number1: null,
+    number2: null,
+    number3: null,
+    number4: null,
+    number5: null,
     dropDown1: '',
     dropDown2: '',
     dropDown3: '',
     dropDown4: '',
     dropDown5: '',
-    uomData: [],
+    productMasterUomDto: uomRows,
     unitOfMeasurement:  '',
   });
   const initialTextFields: Attribute[] = [
@@ -91,7 +82,7 @@ const ApplicationFormPage = () => {
     name: "Number1",
     label: "Number 1",
     type: "number",
-    value: "",
+    value: null,
   }
  ];
   const initialDropDownFields: Attribute[] = [
@@ -114,10 +105,26 @@ const ApplicationFormPage = () => {
   }
  ];
 
+
   const [textFields, setTextFields] = useState<Attribute[]>(initialTextFields);
   const [numberFields, setNumberFields] = useState<Attribute[]>(initialNumberFields);
   const [dropDownFields, setDropDownFields] = useState<Attribute[]>(initialDropDownFields);
   const [dateFields, setDateFields] = useState<Attribute[]>(initialDateFields);
+ 
+ 
+  const [loading, setLoading] = useState(false);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('success');
+  const [backdropOpen, setBackdropOpen] = useState(false);
+
+  useEffect(() => {
+    setFormData((prev) => ({
+      ...prev,
+      productMasterUomDto: uomRows,
+    }));
+  }, [uomRows]);
+  const {mutate}= usePostProductMasterForm();
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>)  => {
     const { name, value } = event.target;
@@ -130,24 +137,81 @@ const ApplicationFormPage = () => {
    const { data: productTypes = [] } = useProductTypes();
    const { data: productGroups = [] } = useGetAllProductGroups();
    const { data: productCategories = [] } = useGetAllProductCategories();
+   const { data: salesStatuses = [] } = useSalesStatus();
+   const { data: languages = [] } = useLanguages();
+   const { data: uomDimensions = [] } = useUomDimension();
+   const { data: uomsByDimension = [] } = useGetUomsByDimensionId(formData.unitOfMeasurement)
+ const resetForm = () => {
+    setFormData({
+      productId: '',
+      productTypeId: '',
+      productGroupId: '',
+      productCategoryId: '',
+      salesStatusId: '',
+      languageId: '',
+      shortDescription: '',
+      longDescription: '',
+      attribute1: '',
+      attribute2: '',
+      attribute3: '',
+      attribute4: '',
+      attribute5: '',
+      date1: null,
+      date2: null,
+      date3: null,
+      date4: null,
+      date5: null,
+      number1: null,
+      number2: null,
+      number3: null,
+      number4: null,
+      number5: null,
+      dropDown1: '',
+      dropDown2: '',
+      dropDown3: '',
+      dropDown4: '',
+      dropDown5: '',
+      productMasterUomDto: [],
+      unitOfMeasurement: '',
+    });
+    setTextFields(initialTextFields);
+    setNumberFields(initialNumberFields);
+    setDateFields(initialDateFields);
+    setDropDownFields(initialDropDownFields);
+    setUomRows([
+      {
+        id: Date.now(),
+        uom: "",
+        quantity: "",
+        primaryQty: "",
+        length: null,
+        width: null,
+        height: null,
+        netWeight: null,
+        grossWeight: null,
+        volume: null,
+        lengthUom: "",
+        weightUom: "",
+        volumeUom: ""
+      }
+    ]);
+  };
 
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
   e.preventDefault();
+  setLoading(true);
+  setBackdropOpen(true); // show backdrop
 
-  // Convert dynamic fields to structured values
   const dynamicTextFields = Object.fromEntries(
     textFields.map((field, i) => [`attribute${i + 1}`, field.value])
   );
-
   const dynamicNumberFields = Object.fromEntries(
     numberFields.map((field, i) => [`number${i + 1}`, field.value])
   );
-
   const dynamicDropDownFields = Object.fromEntries(
     dropDownFields.map((field, i) => [`dropDown${i + 1}`, field.value])
   );
-
   const dynamicDateFields = Object.fromEntries(
     dateFields.map((field, i) => [`date${i + 1}`, field.value])
   );
@@ -158,31 +222,57 @@ const ApplicationFormPage = () => {
     ...dynamicNumberFields,
     ...dynamicDropDownFields,
     ...dynamicDateFields,
+    productMasterUomDto: uomRows,
   };
 
-  console.log("Submitted Data:", finalFormData);
+ 
 
-  alert("Form submitted! Check the console for full data.");
+  mutate(finalFormData, {
+    onSuccess: () => {
+      setSnackbarMessage('Product Master Form submitted successfully!');
+      setSnackbarSeverity('success');
+      setSnackbarOpen(true);
+      resetForm();
+    },
+    onError: (error) => {
+      setSnackbarMessage(`Failed to submit: ${error.message}`);
+      setSnackbarSeverity('error');
+      setSnackbarOpen(true);
+    },
+    onSettled: () => {
+      setTimeout(() => {
+        setLoading(false);
+        setBackdropOpen(false); // hide after 2s
+      }, 2000);
+    },
+  });
 };
+
 
   return (
     <>
-    <Typography variant="h5" gutterBottom>
-         Material Master
+        <Typography variant="h5" gutterBottom>
+         Product Master
         </Typography>
         <form onSubmit={handleSubmit}>
           <Grid container spacing={3}>
+             <Grid size={{xs:12}}>
+              <Box component="section">
+                <Typography variant="h6" gutterBottom>
+                  General Data
+                </Typography>
+              </Box>
+             </Grid>
+            
             <Grid size={{xs:12, sm:12, md:6, lg:3}}>
               <TextField
                 fullWidth
-                label="Product ID"
+                label="Product Id"
                 name="productId"
                 value={formData.productId}
                 onChange={handleChange}
                 required
-                //error
-                //defaultValue="Hello World"
-               // helperText="Enter value"
+                
               />
             </Grid>
              <Grid size={{xs:12, sm:12, md:6, lg:3}}>
@@ -231,6 +321,54 @@ const ApplicationFormPage = () => {
                 }}
                 fullWidth
                 renderInput={(params) => <TextField {...params} label="Product Category" fullWidth required/>}
+              />
+            </Grid>
+            <Grid size={{xs:12, sm:12, md:6, lg:3}}>
+               <Autocomplete
+                disablePortal
+                options={languages}
+                getOptionLabel={(option) => `${option.languageDesc} (${option.languageCode})` || ''}
+                isOptionEqualToValue={(option, value) => option.languageId === value.languageId}
+                 onChange={(_, newValue) => {
+                  setFormData((prev) => ({
+                    ...prev,
+                    languageId: newValue?.languageId?.toString() || '',
+                  }));
+                }}
+                fullWidth
+                renderInput={(params) => <TextField {...params} label="Language" fullWidth required/>}
+              />
+            </Grid>
+            <Grid size={{xs:12, sm:12, md:6, lg:3}}>
+               <Autocomplete
+                disablePortal
+                options={salesStatuses}
+                getOptionLabel={(option) => `${option.salesStatusDesc} (${option.salesStatusCode})` || ''}
+                isOptionEqualToValue={(option, value) => option.salesStatusId === value.salesStatusId}
+                 onChange={(_, newValue) => {
+                  setFormData((prev) => ({
+                    ...prev,
+                    salesStatusId: newValue?.salesStatusId?.toString() || '',
+                  }));
+                }}
+                fullWidth
+                renderInput={(params) => <TextField {...params} label="Status" fullWidth required/>}
+              />
+            </Grid>
+             <Grid size={{xs:12, sm:12, md:6, lg:3}}>
+               <Autocomplete
+                disablePortal
+                options={uomDimensions}
+                getOptionLabel={(option) => `${option.uomDimDesc} (${option.uomDimCode})` || ''}
+                isOptionEqualToValue={(option, value) => option.uomDimId === value.uomDimId}
+                 onChange={(_, newValue) => {
+                  setFormData((prev) => ({
+                    ...prev,
+                    unitOfMeasurement: newValue?.uomDimId?.toString() || '',
+                  }));
+                }}
+                fullWidth
+                renderInput={(params) => <TextField {...params} label="Unit of Measurement" fullWidth required/>}
               />
             </Grid>
              <Grid size={{xs:12, sm:12, md:6, lg:6}}>
@@ -286,34 +424,81 @@ const ApplicationFormPage = () => {
                onChange={(updated) => setDropDownFields(updated)}
               />
            </Grid>
+           
+            <Grid size={12}> 
+              <UOMComponent 
+                initialRows={uomRows}
+                maxRows={5}
+                onChange={(rows) => {
+                  setUomRows(rows); // update local state
+                }}
+                uomOptions={uomsByDimension}
+                />
+            </Grid>
+             <Grid size={{xs:12, sm:12, md:6, lg:3}}>
+               <Autocomplete
+                disablePortal
+                options={salesStatuses}
+                getOptionLabel={(option) => `${option.salesStatusDesc} (${option.salesStatusCode})` || ''}
+                isOptionEqualToValue={(option, value) => option.salesStatusId === value.salesStatusId}
+                 onChange={(_, newValue) => {
+                  setFormData((prev) => ({
+                    ...prev,
+                    salesStatusId: newValue?.salesStatusId?.toString() || '',
+                  }));
+                }}
+                fullWidth
+                renderInput={(params) => <TextField {...params} label="Manuafcturer" fullWidth required/>}
+              />
+            </Grid>
             <Grid size={{xs:12, sm:12, md:6, lg:3}}>
               <TextField
                 fullWidth
-                label="Unit of Measurement"
-                name="unitOfMeasurement"
-                value={formData.unitOfMeasurement}
+                label="Manufacturer Part Number"
+                name="productId"
+                value={formData.productId}
+                onChange={handleChange}
+                required
+                
+              />
+            </Grid>
+            <Grid size={{xs:12, sm:12, md:6, lg:6}}>
+              <TextField
+                fullWidth
+                // multiline
+                // rows={4}
+                label="Notes"
+                name="longDescription"
+                value={formData.longDescription}
                 onChange={handleChange}
                 required
               />
             </Grid>
-            <Grid size={12}> 
-              <UOMComponent 
-                initialRows={[{ id: Date.now(), uom: "", quantity: "", primaryQty: "", length: 0, width: 0, height: 0, netWeight: 0, grossWeight: 0, volume: 0 , lengthUom: "", weightUom: "", volumeUom: "" }]}
-                maxRows={5}
-                onChange={(rows) => {
-                setFormData((prev) => ({
-                  ...prev,
-                  uomData: rows,
-                }));
-              }}
-                />
-            </Grid>
             <Grid size={12}>
-              <Button variant="contained" color="primary" type="submit" >
-                Submit 
+              <Button variant="contained" color="primary" type="submit" disabled={loading}>
+                {loading ? <CircularProgress size={24} color="inherit" /> : 'Submit'}
               </Button>
+              <Button variant="outlined" color="secondary" onClick={resetForm} disabled={loading} style={{ marginLeft: '10px' }}>
+                Reset </Button>
             </Grid>
           </Grid>
+          <Backdrop
+            open={backdropOpen}
+            sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+          >
+            <CircularProgress color="inherit" />
+          </Backdrop>
+          <Snackbar
+            open={snackbarOpen}
+            autoHideDuration={3000}
+
+            onClose={() => setSnackbarOpen(false)}
+            anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+          >
+            <Alert variant='filled' onClose={() => setSnackbarOpen(false)} severity={snackbarSeverity} sx={{ width: '100%' }}>
+              {snackbarMessage}
+            </Alert>
+          </Snackbar>               
         </form></>
   );
 };

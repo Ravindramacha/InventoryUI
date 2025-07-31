@@ -9,6 +9,38 @@ export interface LanguageModel {
   modifiedBy: number;
 }
 
+export interface SalesStatusModel {
+  salesStatusId: number;
+  salesStatusCode: string;
+  salesStatusDesc: string;
+  createdOn: string;     // You can use Date type if you parse it
+  createdBy: number;
+  modifiedOn: string;
+  modifiedBy: number;
+}
+
+
+export interface UomModel {
+  uomId: number;
+  uomCode: string;
+  uomDesc: string;
+  uomDimId: number; // Assuming this is the dimension ID
+  createdOn: string;     // You can use Date type if you parse it
+  createdBy: number;
+  modifiedOn: string;
+  modifiedBy: number;
+}
+export interface UomDimensionModel {
+  uomDimId: number;
+  uomDimCode: string;
+  uomDimDesc: string;
+  uoms: UomModel[];
+  createdOn: string;     // You can use Date type if you parse it
+  createdBy: number;
+  modifiedOn: string;
+  modifiedBy: number;
+}
+
 export interface ProductTypeModel {
   productTypeId: number;
   productTypeCode: string;
@@ -56,13 +88,45 @@ export interface UomData {
   uom: string;
   quantity: string;
   primaryQty: string;
-  length: number;
-  width: number; 
-  height: number;
+  length?: number | undefined | null;
+  width?: number | undefined | null;
+  height?: number | undefined | null;
   lengthUom: string;
-  netWeight: number;
-  grossWeight: number;
+  netWeight?: number | undefined | null;
+  grossWeight?: number | undefined | null; 
   weightUom: string;
-  volume: number;
+  volume?: number | undefined | null;
   volumeUom?: string;
+}
+export interface PostProductMasterForm {
+  productId: string;
+  productTypeId: string;
+  productGroupId: string;
+  productCategoryId: string;
+  salesStatusId: string;
+  languageId: string;
+  shortDescription: string;
+  longDescription: string;
+  attribute1: string;
+  attribute2: string;  
+  attribute3: string;
+  attribute4: string;
+  attribute5: string;
+  date1: Date | null;
+  date2: Date | null;   
+  date3: Date | null;
+  date4: Date | null;
+  date5: Date | null;
+  number1: number | undefined | null;
+  number2: number | undefined | null;
+  number3: number | undefined | null;
+  number4: number | undefined | null;
+  number5: number | undefined | null;
+  dropDown1: string;
+  dropDown2: string;
+  dropDown3: string;
+  dropDown4: string;
+  dropDown5: string;
+  productMasterUomDto: UomData[];
+  unitOfMeasurement: string;
 }

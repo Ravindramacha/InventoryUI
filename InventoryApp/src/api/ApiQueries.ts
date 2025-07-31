@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import type { LanguageModel, PostProductType, ProductCategoryModel, ProductGroupModel, ProductTypeModel } from "../Models/MaterialModel";
+import type { LanguageModel, PostProductMasterForm, PostProductType, ProductCategoryModel, ProductGroupModel, ProductTypeModel, SalesStatusModel, UomDimensionModel, UomModel } from "../Models/MaterialModel";
 
 // ✅ Hook with retry + enabled as parameters
 export function useLanguages(
@@ -21,6 +21,62 @@ export function useLanguages(
     staleTime: 1000 * 60 * 5,
     retry,      // 👈 dynamic retry
     enabled,    // 👈 only fetch if enabled === true
+  });
+}
+
+export function useSalesStatus(
+  retry: number = 1,
+  enabled: boolean = true
+) {
+  return useQuery<SalesStatusModel[], Error>({
+    queryKey: ["SalesStatus"],
+    queryFn: async () => {
+      const response = await axios.get<SalesStatusModel[]>("/api/SalesStatuses/GetAllSalesStatuses", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          "Cache-Control": "no-cache", 
+        },
+      });
+      return response.data;
+    },
+    staleTime: 1000 * 60 * 5,
+    retry,      // 👈 dynamic retry
+    enabled,    // 👈 only fetch if enabled === true
+  });
+}
+export function useUomDimension(
+  retry: number = 1,
+  enabled: boolean = true
+) {
+  return useQuery<UomDimensionModel[], Error>({
+    queryKey: ["UomDimension"],
+    queryFn: async () => {
+      const response = await axios.get<UomDimensionModel[]>("/api/UomDimensions/GetAllUomDimensions", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          "Cache-Control": "no-cache", 
+        },
+      });
+      return response.data;
+    },
+    staleTime: 1000 * 60 * 5,
+    retry,      // 👈 dynamic retry
+    enabled,    // 👈 only fetch if enabled === true
+  });
+}
+export function useGetUomsByDimensionId(dimensionId?: string) {
+  return useQuery<UomModel[], Error>({
+    queryKey: ['UomsByDimension', dimensionId],
+    queryFn: async () => {
+      if (!dimensionId) return [];
+      const response = await axios.get(`/api/Uoms/GetUomByDimentionId/${dimensionId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+      return response.data;
+    },
+    enabled: !!dimensionId,
   });
 }
 
@@ -91,6 +147,20 @@ export function usePostProductType() {
   return useMutation({
     mutationFn: async (newProductType: PostProductType) => {
       const response = await axios.post("/api/ProductTypes/AddProductType", newProductType, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          "Content-Type": "application/json",
+          "Cache-Control": "no-cache", 
+        },
+      });
+      return response.data;
+    },
+  });
+}
+export function usePostProductMasterForm() {
+  return useMutation({
+    mutationFn: async (newProductMasterType: PostProductMasterForm) => {
+      const response = await axios.post("/api/ProductMasterForms/AddProductMasterForm", newProductMasterType, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
           "Content-Type": "application/json",

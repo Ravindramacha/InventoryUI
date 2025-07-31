@@ -33,25 +33,37 @@ const menuItems = [
   { text: 'Home', icon: <HomeIcon />, path: '/home' },
 
   {
-    text: 'Products',
+    text: 'Master Data',
     icon: <Inventory2Icon />,
     children: [
-      { text: 'Product Type', path: '/products',icon: <PreviewIcon /> },
-      { text: 'Categories', path: '/products/categories',icon: <CategoryIcon /> },
-      { text: 'New Product', path: '/products/new',icon: <AddIcon /> },
+      { text: 'Material / Product', path: '/form',icon: <PreviewIcon /> },
+      { text: 'Customer', path: '/products/categories',icon: <CategoryIcon /> },
+      { text: 'Supplier / Vendor', path: '/products/new',icon: <AddIcon /> },
     ],
   },
 
   {
-    text: 'Application',
+    text: 'Transational Data',
     icon: <AccountBoxIcon />,
     children: [
-      { text: 'New Application', path: '/form' ,icon: <AddIcon />},
-      { text: 'Submitted', path: '/form/submitted',icon: <ArrowUpward /> },
+      { text: 'Purchase Requisition', path: '/form' ,icon: <AddIcon />},
+      { text: 'Purchase Orders', path: '/form/submitted',icon: <ArrowUpward /> },
+      { text: 'Quotations', path: '/form/submitted',icon: <ArrowUpward /> },
+      { text: 'Sales Orders', path: '/form/submitted',icon: <ArrowUpward /> },
+      { text: 'Inventory', path: '/form/submitted',icon: <ArrowUpward /> },
     ],
   },
 
   {
+    text: 'Configuration',
+    icon: <DashboardIcon />,
+    children: [
+      { text: 'Product Type', path: '/products',icon: <Analytics /> },
+      { text: 'Product Group', path: '/dashboard/reports',icon: <Article /> },
+      { text: 'Product Category', path: '/dashboard/reports',icon: <Article /> },
+    ],
+  },
+    {
     text: 'Dashboard',
     icon: <DashboardIcon />,
     children: [
