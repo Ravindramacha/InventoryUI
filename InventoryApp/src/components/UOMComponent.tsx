@@ -19,7 +19,7 @@ interface UOMComponentProps {
 }
 
 const UOMComponent: React.FC<UOMComponentProps> = ({
-  initialRows = [{ id: Date.now(), uom: "", quantity: "", primaryQty: "", length: null, width: null, height: null, netWeight: null, grossWeight: null, volume: null , lengthUom: "", weightUom: "", volumeUom: "" }],
+  initialRows = [{ id: Date.now(), uom: null, quantity: "", primaryQty: "", length: null, width: null, height: null, netWeight: null, grossWeight: null, volume: null , lengthUom: "", weightUom: "", volumeUom: "" }],
   maxRows = 5,
   onChange,
   uomOptions,
@@ -50,7 +50,7 @@ const UOMComponent: React.FC<UOMComponentProps> = ({
     if (rows.length < maxRows) {
       const newRow: UomData = {
         id: Date.now(),
-        uom: "",
+        uom: null,
         quantity: "",
         primaryQty: "",
         length: null,

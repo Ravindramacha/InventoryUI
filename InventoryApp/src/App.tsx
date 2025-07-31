@@ -11,6 +11,7 @@ import Dashboard from "./components/Dashboard"; // Import your Dashboard compone
 import NotificationList from "./NotificationList";
 import Profile from "./components/Profile";
 import ProfileUpdate from "./components/ProfileUpdate";
+import VendorForm from "./components/common/VendorForm";
 
 const queryClient = new QueryClient();
 
@@ -27,7 +28,7 @@ const App: React.FC = () => (
             <Route path="/notifications" element={<NotificationList />} />
             <Route path="/form" element={<ApplicationFormPage />} />
             <Route path="/dashboard/analytics" element={<Dashboard/>} />
-            <Route path="/dashboard/reports" element={<Dashboard/>} />
+            <Route path="/vendor" element={<VendorForm/>} />
             <Route path="/products" element={<Products/>} />
           </Route>
         </Routes>

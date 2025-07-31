@@ -14,11 +14,11 @@ import { usePostProductType, useProductTypes } from '../../api/ApiQueries';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import type { AlertColor } from '@mui/material/Alert';
-import { useQueryClient } from '@tanstack/react-query';
+//import { useQueryClient } from '@tanstack/react-query';
 
 export default function Products() {
 
-  const queryClient = useQueryClient();
+  //const queryClient = useQueryClient();
   const { data: productTypes = [] } = useProductTypes();
   const [products, setProducts] = useState<ProductTypeModel[]>([]);
   const { mutate } = usePostProductType();
@@ -78,7 +78,7 @@ const [snackbarSeverity, setSnackbarSeverity] = useState<AlertColor>('success');
       };
       mutate(newProduct, {
         onSuccess: () => {
-          queryClient.invalidateQueries(["productTypes"]);
+         // queryClient.invalidateQueries(["productTypes"]);
           setSnackbarMessage('Product type added successfully');
           setSnackbarSeverity('success');
           setSnackbarOpen(true);

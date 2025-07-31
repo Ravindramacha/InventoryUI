@@ -20,7 +20,7 @@ const ApplicationFormPage = () => {
    const initialUOMRows = [
   {
     id: Date.now(),
-    uom: "",
+    uom: null,
     quantity: "",
     primaryQty: "",
     length: null,
@@ -65,7 +65,10 @@ const ApplicationFormPage = () => {
     dropDown4: '',
     dropDown5: '',
     productMasterUomDto: uomRows,
-    unitOfMeasurement:  '',
+    unitOfMeasurement:  null,
+    manufacturerId:null,
+    manufacturerPartNumber: '',
+    notes: '',
   });
   const initialTextFields: Attribute[] = [
   {
@@ -172,7 +175,10 @@ const ApplicationFormPage = () => {
       dropDown4: '',
       dropDown5: '',
       productMasterUomDto: [],
-      unitOfMeasurement: '',
+      unitOfMeasurement: null,
+      manufacturerId: null,
+      manufacturerPartNumber: '',
+      notes: '',
     });
     setTextFields(initialTextFields);
     setNumberFields(initialNumberFields);
@@ -181,7 +187,7 @@ const ApplicationFormPage = () => {
     setUomRows([
       {
         id: Date.now(),
-        uom: "",
+        uom: null,
         quantity: "",
         primaryQty: "",
         length: null,
@@ -364,7 +370,7 @@ const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
                  onChange={(_, newValue) => {
                   setFormData((prev) => ({
                     ...prev,
-                    unitOfMeasurement: newValue?.uomDimId?.toString() || '',
+                    unitOfMeasurement: newValue?.uomDimId
                   }));
                 }}
                 fullWidth

@@ -64,7 +64,7 @@ export function useUomDimension(
     enabled,    // 👈 only fetch if enabled === true
   });
 }
-export function useGetUomsByDimensionId(dimensionId?: string) {
+export function useGetUomsByDimensionId(dimensionId?: number | null) {
   return useQuery<UomModel[], Error>({
     queryKey: ['UomsByDimension', dimensionId],
     queryFn: async () => {

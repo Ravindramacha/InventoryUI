@@ -85,7 +85,7 @@ export interface ProductCategoryModel {
 }
 export interface UomData {
   id: number;
-  uom: string;
+  uom: number | undefined | null;
   quantity: string;
   primaryQty: string;
   length?: number | undefined | null;
@@ -128,5 +128,8 @@ export interface PostProductMasterForm {
   dropDown4: string;
   dropDown5: string;
   productMasterUomDto: UomData[];
-  unitOfMeasurement: string;
+  unitOfMeasurement: number | undefined | null;
+  manufacturerPartNumber: string;
+  manufacturerId: number | undefined | null;
+  notes: string;
 }

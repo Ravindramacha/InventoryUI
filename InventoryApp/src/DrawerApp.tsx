@@ -38,7 +38,7 @@ const menuItems = [
     children: [
       { text: 'Material / Product', path: '/form',icon: <PreviewIcon /> },
       { text: 'Customer', path: '/products/categories',icon: <CategoryIcon /> },
-      { text: 'Supplier / Vendor', path: '/products/new',icon: <AddIcon /> },
+      { text: 'Supplier / Vendor', path: '/vendor',icon: <AddIcon /> },
     ],
   },
 
