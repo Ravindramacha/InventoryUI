@@ -3,6 +3,7 @@ import {
   Stack,
   TextField,
   IconButton,
+  Autocomplete,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -18,10 +19,16 @@ interface TaxInformationProps {
 }
 
 const TaxInformation: React.FC<TaxInformationProps> = ({
+  
   initialRows = [{ id: Date.now(),countryId: null, category: "", name: "", taxNumber: ""}],
   maxRows = 5,
   onChange,
 }) => {
+const countryList = [
+  { id: 1, name: 'United States' },
+  { id: 2, name: 'Canada' },
+  { id: 3, name: 'India' },
+];
   const [rows, setRows] = useState<TaxInformationModel[]>(initialRows);
 
   useEffect(() => {
@@ -77,11 +84,18 @@ const TaxInformation: React.FC<TaxInformationProps> = ({
                 key={row.id}
                 alignItems="center"
               >
-                <TextField
-                  label="Country"
-                  value={row.countryId}
-                  onChange={(e) => handleChange(row.id, "countryId", e.target.value)}
-                 />
+                <Autocomplete
+                   disablePortal
+                   options={countryList}
+                   //value={countryList.find(c => c.id === else.target) || null}
+                   getOptionLabel={(option) => option.name}
+                  isOptionEqualToValue={(option, value) => option.id === value.id}
+                    onChange={(_, newValue) =>
+                              handleChange(row.id, "countryId", String(newValue?.id || ''))
+                            }
+                   size="medium"
+                   renderInput={(params) => <TextField {...params} label="Country" required fullWidth/>}
+                    />
                 <TextField
                   label="Category"
                   value={row.category}

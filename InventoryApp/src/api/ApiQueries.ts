@@ -1,6 +1,7 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import type { LanguageModel, PostProductMasterForm, PostProductType, ProductCategoryModel, ProductGroupModel, ProductTypeModel, SalesStatusModel, UomDimensionModel, UomModel } from "../Models/MaterialModel";
+import type { VendorModel } from "../Models/VendorModel";
 
 // ✅ Hook with retry + enabled as parameters
 export function useLanguages(
@@ -161,6 +162,21 @@ export function usePostProductMasterForm() {
   return useMutation({
     mutationFn: async (newProductMasterType: PostProductMasterForm) => {
       const response = await axios.post("/api/ProductMasterForms/AddProductMasterForm", newProductMasterType, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          "Content-Type": "application/json",
+          "Cache-Control": "no-cache", 
+        },
+      });
+      return response.data;
+    },
+  });
+}
+
+export function usePostVendorForm() {
+  return useMutation({
+    mutationFn: async (newVendorForm: VendorModel) => {
+      const response = await axios.post("/api/VendorForms/AddVendorForm", newVendorForm, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
           "Content-Type": "application/json",

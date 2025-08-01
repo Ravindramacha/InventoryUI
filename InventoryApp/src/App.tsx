@@ -12,6 +12,7 @@ import NotificationList from "./NotificationList";
 import Profile from "./components/Profile";
 import ProfileUpdate from "./components/ProfileUpdate";
 import VendorForm from "./components/common/VendorForm";
+import CrudTable from "./components/Curd/CrudTable";
 
 const queryClient = new QueryClient();
 
@@ -22,7 +23,7 @@ const App: React.FC = () => (
         <Routes>
           <Route path="/" element={<SignIn />} />
           <Route element={<MainLayout />}>
-            <Route path="/home" element={<Home />} />
+            <Route path="/home" element={<CrudTable />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/profile/update" element={<ProfileUpdate />} />
             <Route path="/notifications" element={<NotificationList />} />

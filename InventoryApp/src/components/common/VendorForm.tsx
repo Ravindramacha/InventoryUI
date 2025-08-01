@@ -7,14 +7,30 @@ import {
   Typography,
   Grid,
   Box,
+  Autocomplete,
  } from '@mui/material';
 import { Snackbar, CircularProgress, Backdrop } from '@mui/material';
 import type { BankModel, TaxInformationModel, VendorModel } from '../../Models/VendorModel';
 import TaxInformation from './TaxInformation';
 import BankData from './BankData';
+import { useLanguages, usePostVendorForm, useSalesStatus } from '../../api/ApiQueries';
 
 
 const VendorForm = () => {
+  const countryList = [
+  { id: 1, name: 'United States' },
+  { id: 2, name: 'Canada' },
+  { id: 3, name: 'India' },
+];
+
+const stateList = [
+  { id: 1, countryId: 1, name: 'California' },
+  { id: 2, countryId: 1, name: 'Texas' },
+  { id: 3, countryId: 2, name: 'Ontario' },
+  { id: 4, countryId: 3, name: 'Maharashtra' },
+  // add more states with countryId mappings
+];
+
   const [formData, setFormData] = useState<VendorModel>({
     companyName1: '',
     companyName2: '',
@@ -74,74 +90,48 @@ const VendorForm = () => {
 
   const [loading, setLoading] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
- // const [snackbarMessage, setSnackbarMessage] = useState('');
-  //const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('success');
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('success');
   const [backdropOpen, setBackdropOpen] = useState(false);
 
- 
+   const { data: salesStatuses = [] } = useSalesStatus();
+   const { data: languages = [] } = useLanguages();
 
-//    const { data: productTypes = [] } = useProductTypes();
-//    const { data: productGroups = [] } = useGetAllProductGroups();
-//    const { data: productCategories = [] } = useGetAllProductCategories();
-//    const { data: salesStatuses = [] } = useSalesStatus();
-//    const { data: languages = [] } = useLanguages();
-//    const { data: uomDimensions = [] } = useUomDimension();
-//    const { data: uomsByDimension = [] } = useGetUomsByDimensionId(formData.unitOfMeasurement)
+const filteredStates = stateList.filter(
+  (state) => state.countryId === formData.countryId
+);
+  const {mutate}= usePostVendorForm();
  const resetForm = () => {
-    // setFormData({
-    //   productId: null,
-    //   productTypeId: '',
-    //   productGroupId: '',
-    //   productCategoryId: '',
-    //   salesStatusId: null,
-    //   languageId: null,
-    //   shortDescription: '',
-    //   longDescription: '',
-    //   attribute1: '',
-    //   attribute2: '',
-    //   attribute3: '',
-    //   attribute4: '',
-    //   attribute5: '',
-    //   date1: null,
-    //   date2: null,
-    //   date3: null,
-    //   date4: null,
-    //   date5: null,
-    //   number1: null,
-    //   number2: null,
-    //   number3: null,
-    //   number4: null,
-    //   number5: null,
-    //   dropDown1: '',
-    //   dropDown2: '',
-    //   dropDown3: '',
-    //   dropDown4: '',
-    //   dropDown5: '',
-    //   productMasterUomDto: [],
-    //   unitOfMeasurement: '',
+    setFormData({
+    companyName1: '',
+    companyName2: '',
+    dba: '',
+    keyword: '',
+    houseNumber: '',
+    streetName: '',
+    buildingName: '',
+    landmark: '',
+    countryId: null,
+    stateId: null,
+    zipCode: '',
+    digiPin: '',
+    mapsUrl: '',
+    languageId: null,
+    phoneNumber1: '',
+    phoneNumber2: '',
+    phoneNumber3: '',
+    fax: '',
+    email1: '',
+    email2: '',
+    email3: '',
+    comments: '',
+    salesStatusId: null,
+    taxInformation: [],
+    bankDetails: [],
+    paymentId: null,
     
-    // });
-    // setTextFields(initialTextFields);
-    // setNumberFields(initialNumberFields);
-    // setDateFields(initialDateFields);
-    // setDropDownFields(initialDropDownFields);
-    // setUomRows([
-    //   {
-    //     id: Date.now(),
-    //     uom: "",
-    //     quantity: "",
-    //     primaryQty: "",
-    //     length: null,
-    //     width: null,
-    //     height: null,
-    //     netWeight: null,
-    //     grossWeight: null,
-    //     volume: null,
-    //     lengthUom: "",
-    //     weightUom: "",
-    //     volumeUom: ""
-    //   }
-    // ]);
+    });
+  
   };
 
 
@@ -150,46 +140,31 @@ const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
   setLoading(true);
   setBackdropOpen(true); // show backdrop
 
-//   const dynamicTextFields = Object.fromEntries(
-//     textFields.map((field, i) => [`attribute${i + 1}`, field.value])
-//   );
-//   const dynamicNumberFields = Object.fromEntries(
-//     numberFields.map((field, i) => [`number${i + 1}`, field.value])
-//   );
-//   const dynamicDropDownFields = Object.fromEntries(
-//     dropDownFields.map((field, i) => [`dropDown${i + 1}`, field.value])
-//   );
-//   const dynamicDateFields = Object.fromEntries(
-//     dateFields.map((field, i) => [`date${i + 1}`, field.value])
-//   );
-
   const finalFormData = {
     ...formData,
     taxInformation: taxInformationRows,
     bankDetails: bankRows,
   };
- console.log("Final Form Data:", finalFormData);
  
-
-//   mutate(finalFormData, {
-//     onSuccess: () => {
-//       setSnackbarMessage('Product Master Form submitted successfully!');
-//       setSnackbarSeverity('success');
-//       setSnackbarOpen(true);
-//       resetForm();
-//     },
-//     onError: (error) => {
-//       setSnackbarMessage(`Failed to submit: ${error.message}`);
-//       setSnackbarSeverity('error');
-//       setSnackbarOpen(true);
-//     },
-//     onSettled: () => {
-//       setTimeout(() => {
-//         setLoading(false);
-//         setBackdropOpen(false); // hide after 2s
-//       }, 2000);
-//     },
-//   });
+  mutate(finalFormData, {
+    onSuccess: () => {
+      setSnackbarMessage('Vendor submitted successfully!');
+      setSnackbarSeverity('success');
+      setSnackbarOpen(true);
+      resetForm();
+    },
+    onError: (error) => {
+      setSnackbarMessage(`Failed to submit: ${error.message}`);
+      setSnackbarSeverity('error');
+      setSnackbarOpen(true);
+    },
+    onSettled: () => {
+      setTimeout(() => {
+        setLoading(false);
+        setBackdropOpen(false); // hide after 2s
+      }, 2000);
+    },
+  });
 };
 const handleChange = (event: ChangeEvent<HTMLInputElement>)  => {
     const { name, value } = event.target;
@@ -299,23 +274,41 @@ const handleChange = (event: ChangeEvent<HTMLInputElement>)  => {
               />
             </Grid>
              <Grid size={{xs:12, sm:12, md:6, lg:3}}>
-              <TextField
-                fullWidth
-                label="Country"
-                name="countryId"
-                value={formData.countryId || ''}
-                onChange={handleChange}
-                required
-              />
+              <Autocomplete
+                disablePortal
+                options={countryList}
+                value={countryList.find(c => c.id === formData.countryId) || null}
+                getOptionLabel={(option) => option.name}
+                isOptionEqualToValue={(option, value) => option.id === value.id}
+                onChange={(_, newValue) => {
+                  setFormData((prev) => ({
+                    ...prev,
+                    countryId: newValue?.id || null,
+                    stateId: null, // Reset state when country changes
+                  }));
+                }}
+                renderInput={(params) => (
+                  <TextField {...params} label="Country" required fullWidth />
+                )}
+            />
             </Grid>
             <Grid size={{xs:12, sm:12, md:6, lg:3}}>
-              <TextField
-                fullWidth
-                label="State"
-                name="stateId"
-                value={formData.stateId || ''}
-                onChange={handleChange}
-                required
+              <Autocomplete
+                disablePortal
+                options={filteredStates}
+                value={filteredStates.find(s => s.id === formData.stateId) || null}
+                getOptionLabel={(option) => option.name}
+                isOptionEqualToValue={(option, value) => option.id === value.id}
+                onChange={(_, newValue) => {
+                  setFormData((prev) => ({
+                    ...prev,
+                    stateId: newValue?.id || null,
+                  }));
+                }}
+                renderInput={(params) => (
+                  <TextField {...params} label="State" required fullWidth />
+                )}
+                disabled={!formData.countryId}
               />
             </Grid>
              <Grid size={{xs:12, sm:12, md:6, lg:3}}>
@@ -354,13 +347,22 @@ const handleChange = (event: ChangeEvent<HTMLInputElement>)  => {
               </Box>
              </Grid>
             <Grid size={{xs:12, sm:12, md:6, lg:3}}>
-              <TextField
+             <Autocomplete
+                disablePortal
+                options={languages}
+                value={
+                  languages.find(p => p.languageId === formData.languageId) || null
+                }
+                getOptionLabel={(option) => `${option.languageDesc} (${option.languageCode})` || ''}
+                isOptionEqualToValue={(option, value) => option.languageId === value.languageId}
+                 onChange={(_, newValue) => {
+                  setFormData((prev) => ({
+                    ...prev,
+                    languageId: newValue?.languageId,
+                  }));
+                }}
                 fullWidth
-                label="Language"
-                name="languageId"
-                value={formData.languageId}
-                onChange={handleChange}
-                required
+                renderInput={(params) => <TextField {...params} label="Language" fullWidth required/>}
               />
             </Grid>
             <Grid size={{xs:12, sm:12, md:6, lg:3}}>
@@ -473,13 +475,23 @@ const handleChange = (event: ChangeEvent<HTMLInputElement>)  => {
               />
             </Grid>
             <Grid size={{xs:12, sm:12, md:6, lg:3}}>
-              <TextField
-                fullWidth
-                label="Status"
-                name="salesStatusId"
-                value={formData.salesStatusId}
-                onChange={handleChange}
-              />
+              <Autocomplete
+                      disablePortal
+                      options={salesStatuses}
+                       value={
+                        salesStatuses.find(p => p.salesStatusId === formData.salesStatusId) || null
+                      }
+                      getOptionLabel={(option) => `${option.salesStatusDesc} (${option.salesStatusCode})` || ''}
+                      isOptionEqualToValue={(option, value) => option.salesStatusId === value.salesStatusId}
+                       onChange={(_, newValue) => {
+                        setFormData((prev) => ({
+                          ...prev,
+                          salesStatusId: newValue?.salesStatusId,
+                        }));
+                      }}
+                      fullWidth
+                      renderInput={(params) => <TextField {...params} label="Status" fullWidth required/>}
+                  />
             </Grid>
             <Grid size={{xs:12, sm:12, md:6, lg:3}}>
               <TextField
