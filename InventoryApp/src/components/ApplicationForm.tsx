@@ -37,11 +37,11 @@ const ApplicationFormPage = () => {
    const [uomRows, setUomRows] = useState<UomData[]>(initialUOMRows);
   const [formData, setFormData] = useState<PostProductMasterForm>({
     productId: '',
-    productTypeId: '',
-    productGroupId:  '',
-    productCategoryId:  '',
-    salesStatusId: '',
-    languageId: '',
+    productTypeId: null,
+    productGroupId:  null,
+    productCategoryId:  null,
+    salesStatusId: null,
+    languageId: null,
     shortDescription:  '',
     longDescription: '',
     attribute1: '',
@@ -147,11 +147,11 @@ const ApplicationFormPage = () => {
  const resetForm = () => {
     setFormData({
       productId: '',
-      productTypeId: '',
-      productGroupId: '',
-      productCategoryId: '',
-      salesStatusId: '',
-      languageId: '',
+      productTypeId: null,
+      productGroupId: null,
+      productCategoryId: null,
+      salesStatusId: null,
+      languageId: null,
       shortDescription: '',
       longDescription: '',
       attribute1: '',
@@ -285,12 +285,15 @@ const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
                <Autocomplete
                 disablePortal
                 options={productTypes}
+                value={
+                  productTypes.find(p => p.productTypeId === formData.productTypeId) || null
+                }
                 getOptionLabel={(option) => `${option.productTypeDesc} (${option.productTypeCode})` || ''}
                 isOptionEqualToValue={(option, value) => option.productTypeId === value.productTypeId}
                 onChange={(_, newValue) => {
                   setFormData((prev) => ({
                     ...prev,
-                    productTypeId: newValue?.productTypeId?.toString() || '',
+                    productTypeId: newValue?.productTypeId || null,
                   }));
                 }}
                 fullWidth
@@ -301,12 +304,16 @@ const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
                <Autocomplete
                 disablePortal
                 options={productGroups}
+                value={
+                  productGroups.find(p => p.productGroupId === formData.productGroupId) || null
+                }
                 getOptionLabel={(option) => `${option.productGroupDesc} (${option.productGroupCode})` || ''}
                 isOptionEqualToValue={(option, value) => option.productGroupId === value.productGroupId}
+                
                  onChange={(_, newValue) => {
                   setFormData((prev) => ({
                     ...prev,
-                    productGroupId: newValue?.productGroupId?.toString() || '',
+                    productGroupId: newValue?.productGroupId,
                   }));
                 }}
                 fullWidth
@@ -317,12 +324,15 @@ const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
                <Autocomplete
                 disablePortal
                 options={productCategories}
+                value={
+                  productCategories.find(p => p.productCategoryId === formData.productCategoryId) || null
+                }
                 getOptionLabel={(option) => `${option.productCategoryDesc} (${option.productCategoryCode})` || ''}
                 isOptionEqualToValue={(option, value) => option.productCategoryId === value.productCategoryId}
                  onChange={(_, newValue) => {
                   setFormData((prev) => ({
                     ...prev,
-                    productCategoryId: newValue?.productCategoryId?.toString() || '',
+                    productCategoryId: newValue?.productCategoryId,
                   }));
                 }}
                 fullWidth
@@ -333,12 +343,15 @@ const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
                <Autocomplete
                 disablePortal
                 options={languages}
+                value={
+                  languages.find(p => p.languageId === formData.languageId) || null
+                }
                 getOptionLabel={(option) => `${option.languageDesc} (${option.languageCode})` || ''}
                 isOptionEqualToValue={(option, value) => option.languageId === value.languageId}
                  onChange={(_, newValue) => {
                   setFormData((prev) => ({
                     ...prev,
-                    languageId: newValue?.languageId?.toString() || '',
+                    languageId: newValue?.languageId,
                   }));
                 }}
                 fullWidth
@@ -349,12 +362,15 @@ const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
                <Autocomplete
                 disablePortal
                 options={salesStatuses}
+                 value={
+                  salesStatuses.find(p => p.salesStatusId === formData.salesStatusId) || null
+                }
                 getOptionLabel={(option) => `${option.salesStatusDesc} (${option.salesStatusCode})` || ''}
                 isOptionEqualToValue={(option, value) => option.salesStatusId === value.salesStatusId}
                  onChange={(_, newValue) => {
                   setFormData((prev) => ({
                     ...prev,
-                    salesStatusId: newValue?.salesStatusId?.toString() || '',
+                    salesStatusId: newValue?.salesStatusId,
                   }));
                 }}
                 fullWidth
@@ -365,6 +381,9 @@ const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
                <Autocomplete
                 disablePortal
                 options={uomDimensions}
+                value={
+                  uomDimensions.find(p => p.uomDimId === formData.unitOfMeasurement) || null
+                }
                 getOptionLabel={(option) => `${option.uomDimDesc} (${option.uomDimCode})` || ''}
                 isOptionEqualToValue={(option, value) => option.uomDimId === value.uomDimId}
                  onChange={(_, newValue) => {
@@ -445,12 +464,15 @@ const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
                <Autocomplete
                 disablePortal
                 options={salesStatuses}
+                value={
+                  salesStatuses.find(p => p.salesStatusId === formData.manufacturerId) || null
+                }
                 getOptionLabel={(option) => `${option.salesStatusDesc} (${option.salesStatusCode})` || ''}
                 isOptionEqualToValue={(option, value) => option.salesStatusId === value.salesStatusId}
                  onChange={(_, newValue) => {
                   setFormData((prev) => ({
                     ...prev,
-                    salesStatusId: newValue?.salesStatusId?.toString() || '',
+                    manufacturerId: newValue?.salesStatusId,
                   }));
                 }}
                 fullWidth
@@ -461,8 +483,8 @@ const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
               <TextField
                 fullWidth
                 label="Manufacturer Part Number"
-                name="productId"
-                value={formData.productId}
+                name="manufacturerPartNumber"
+                value={formData.manufacturerPartNumber}
                 onChange={handleChange}
                 required
                 
@@ -474,8 +496,8 @@ const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
                 // multiline
                 // rows={4}
                 label="Notes"
-                name="longDescription"
-                value={formData.longDescription}
+                name="notes"
+                value={formData.notes}
                 onChange={handleChange}
                 required
               />

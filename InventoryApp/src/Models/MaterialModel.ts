@@ -100,11 +100,11 @@ export interface UomData {
 }
 export interface PostProductMasterForm {
   productId: string;
-  productTypeId: string;
-  productGroupId: string;
-  productCategoryId: string;
-  salesStatusId: string;
-  languageId: string;
+  productTypeId: number | undefined | null;
+  productGroupId: number | undefined | null;
+  productCategoryId: number | undefined | null;
+  salesStatusId: number | undefined | null;
+  languageId: number | undefined | null;
   shortDescription: string;
   longDescription: string;
   attribute1: string;

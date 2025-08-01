@@ -26,6 +26,7 @@ export interface VendorModel {
   bankDetails: BankModel[];
   paymentId: number | undefined | null;
 }
+
 export interface TaxInformationModel {
     id: number;
     countryId: number | undefined | null;
@@ -33,6 +34,7 @@ export interface TaxInformationModel {
     name: string;
     taxNumber: string;
 }
+
 export interface BankModel {
   id: number;
   bankName: string;
