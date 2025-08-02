@@ -14,9 +14,15 @@ import DynamicField, { type Attribute } from './common/DynamicField';
 import UOMComponent from './UOMComponent';
 import type { PostProductMasterForm, UomData } from '../Models/MaterialModel';
 import { Snackbar, Alert, CircularProgress, Backdrop } from '@mui/material';
+import { useQueryClient } from '@tanstack/react-query';
+
+interface ApplicationFormPageProps
+{
+  onCancel: () => void;
+}
 
 
-const ApplicationFormPage = () => {
+const ApplicationFormPage :React.FC<ApplicationFormPageProps> = ({ onCancel }) => {
    const initialUOMRows = [
   {
     id: Date.now(),
@@ -108,7 +114,7 @@ const ApplicationFormPage = () => {
   }
  ];
 
-
+  const queryClient = useQueryClient();
   const [textFields, setTextFields] = useState<Attribute[]>(initialTextFields);
   const [numberFields, setNumberFields] = useState<Attribute[]>(initialNumberFields);
   const [dropDownFields, setDropDownFields] = useState<Attribute[]>(initialDropDownFields);
@@ -144,6 +150,7 @@ const ApplicationFormPage = () => {
    const { data: languages = [] } = useLanguages();
    const { data: uomDimensions = [] } = useUomDimension();
    const { data: uomsByDimension = [] } = useGetUomsByDimensionId(formData.unitOfMeasurement)
+
  const resetForm = () => {
     setFormData({
       productId: '',
@@ -235,10 +242,12 @@ const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
 
   mutate(finalFormData, {
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["readProductMasterForm"] });
       setSnackbarMessage('Product Master Form submitted successfully!');
       setSnackbarSeverity('success');
       setSnackbarOpen(true);
       resetForm();
+      onCancel();
     },
     onError: (error) => {
       setSnackbarMessage(`Failed to submit: ${error.message}`);

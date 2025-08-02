@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import type { LanguageModel, PostProductMasterForm, PostProductType, ProductCategoryModel, ProductGroupModel, ProductTypeModel, SalesStatusModel, UomDimensionModel, UomModel } from "../Models/MaterialModel";
+import type { LanguageModel, PostProductMasterForm, PostProductType, ProductCategoryModel, ProductGroupModel, ProductTypeModel, ReadProductMasterForm, SalesStatusModel, UomDimensionModel, UomModel } from "../Models/MaterialModel";
 import type { VendorModel } from "../Models/VendorModel";
 
 // ✅ Hook with retry + enabled as parameters
@@ -185,5 +185,26 @@ export function usePostVendorForm() {
       });
       return response.data;
     },
+  });
+}
+
+export function useGetAllProductMasterForm(
+  retry: number = 1,
+  enabled: boolean = true
+) {
+  return useQuery<ReadProductMasterForm[], Error>({
+    queryKey: ["readProductMasterForm"],
+    queryFn: async () => {
+      const response = await axios.get<ReadProductMasterForm[]>("/api/ProductMasterForms/GetAllProductMasterForm", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          "Cache-Control": "no-cache", 
+        },
+      });
+      return response.data;
+    },
+    staleTime: 1000 * 60 * 5,
+    retry,      // 👈 dynamic retry
+    enabled,    // 👈 only fetch if enabled === true
   });
 }
