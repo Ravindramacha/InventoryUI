@@ -59,7 +59,7 @@ const menuItems = [
     icon: <DashboardIcon />,
     children: [
       { text: 'Product Type', path: '/products',icon: <Analytics /> },
-      { text: 'Product Group', path: '/dashboard/reports',icon: <Article /> },
+      { text: 'Product Group', path: '/productGroup',icon: <Article /> },
       { text: 'Product Category', path: '/dashboard/reports',icon: <Article /> },
     ],
   },

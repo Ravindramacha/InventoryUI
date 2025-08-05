@@ -12,13 +12,13 @@ import {
   Paper,
   TextField,
   TablePagination,
-  Drawer,
-  Typography,
+  Drawer
 } from "@mui/material";
 import { Add, Delete, Edit, Visibility } from "@mui/icons-material";
 import { useGetAllProductMasterForm } from "../../api/ApiQueries";
 import type { ReadProductMasterForm } from "../../Models/MaterialModel";
 import ApplicationFormPage from "../ApplicationForm";
+import ProductMasterView from "../ProductMasterView";
 
 
 type Mode = "add" | "edit" | "view";
@@ -37,6 +37,15 @@ const CrudTable: React.FC = () => {
   const [drawerMode, setDrawerMode] = useState<Mode>("add");
   const [selectedRow, setSelectedRow] = useState<ReadProductMasterForm | null>(null);
 
+  const [drawerViewOpen, setDrawerViewOpen] = useState(false);
+
+  const handleOpenViewDrawer = (mode: Mode, row: ReadProductMasterForm | null = null) => {
+    setDrawerMode(mode);
+    setSelectedRow(row);
+    setDrawerViewOpen(true);
+  };
+
+
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
@@ -48,16 +57,22 @@ const CrudTable: React.FC = () => {
 
   const handleDelete = (id: number) => {
     setRows((prev) => prev.filter((r) => r.productMasterId !== id));
-  };
-
-  const handleSubmit = (formData: ReadProductMasterForm) => {
-    if (drawerMode === "add") {
-      setRows((prev) => [...prev, { ...formData, id: formData.productMasterId }]);
+       if (drawerMode === "add" && selectedRow) {
+     
     } else if (drawerMode === "edit") {
-      setRows((prev) => prev.map((r) => (r.productMasterId === formData.productMasterId ? formData : r)));
+      
     }
     setDrawerOpen(false);
   };
+
+  // const handleSubmit = (formData: ReadProductMasterForm) => {
+  //   if (drawerMode === "add") {
+  //     setRows((prev) => [...prev, { ...formData, id: formData.productMasterId }]);
+  //   } else if (drawerMode === "edit") {
+  //     setRows((prev) => prev.map((r) => (r.productMasterId === formData.productMasterId ? formData : r)));
+  //   }
+  //   setDrawerOpen(false);
+  // };
 
   const handleChangePage = (_: unknown, newPage: number) => {
     setPage(newPage);
@@ -116,7 +131,7 @@ const CrudTable: React.FC = () => {
                 <TableCell>{row.productGroup.productGroupDesc}</TableCell>
                 <TableCell>{row.productCategory.productCategoryDesc}</TableCell>
                 <TableCell>
-                  <IconButton onClick={() => handleOpenDrawer("view", row)}>
+                  <IconButton onClick={() => handleOpenViewDrawer("view", row)}>
                     <Visibility />
                   </IconButton>
                   <IconButton onClick={() => handleOpenDrawer("edit", row)}>
@@ -147,7 +162,7 @@ const CrudTable: React.FC = () => {
         />
       </TableContainer>
 
-      <Drawer
+    <Drawer
         anchor="bottom"
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
@@ -166,6 +181,28 @@ const CrudTable: React.FC = () => {
         <ApplicationFormPage onCancel={() => setDrawerOpen(false)}/>
       </Box>
     </Drawer>
+     <Drawer
+        anchor="bottom"
+        open={drawerViewOpen}
+        onClose={() => setDrawerViewOpen(false)}
+        slotProps={{
+            paper: {
+            sx: {
+                height: '92vh',        // 80% of viewport height
+                width: '100%',         // Full width
+                borderTopLeftRadius: 12,
+                borderTopRightRadius: 12,
+            }
+            }
+        }}
+        >
+      <Box p={3} height="100%" overflow="auto">
+        <ProductMasterView />
+      
+        {/* <ApplicationFormPage onCancel={() => setDrawerOpen(false)}/> */}
+      </Box>
+    </Drawer>
+
     </Box>
   );
 };

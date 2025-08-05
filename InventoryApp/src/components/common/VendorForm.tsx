@@ -8,6 +8,7 @@ import {
   Grid,
   Box,
   Autocomplete,
+  Alert,
  } from '@mui/material';
 import { Snackbar, CircularProgress, Backdrop } from '@mui/material';
 import type { BankModel, TaxInformationModel, VendorModel } from '../../Models/VendorModel';
@@ -524,9 +525,9 @@ const handleChange = (event: ChangeEvent<HTMLInputElement>)  => {
             onClose={() => setSnackbarOpen(false)}
             anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
           >
-            {/* <Alert variant='filled' onClose={() => setSnackbarOpen(false)} severity={snackbarSeverity} sx={{ width: '100%' }}>
+            <Alert variant='filled' onClose={() => setSnackbarOpen(false)} severity={snackbarSeverity} sx={{ width: '100%' }}>
               {snackbarMessage}
-            </Alert> */}
+            </Alert>
           </Snackbar>               
         </form></>
   );
