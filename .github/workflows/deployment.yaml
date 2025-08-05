@@ -21,15 +21,17 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 22  # Adjust based on your actual Vite-compatible Node version
+          node-version: 22  # ✅ You're using Node 22
 
-      - name: Install dependencies
-        run: npm install
-        working-directory: InventoryApp  # 👈 Important
+      - name: Clean install workaround
+        run: |
+          rm -rf node_modules package-lock.json
+          npm install --legacy-peer-deps
+        working-directory: InventoryApp  # 🔁 adjust if needed
 
       - name: Build the Vite React app
         run: npm run build
-        working-directory: InventoryApp  # 👈 Important
+        working-directory: InventoryApp
 
       - name: Deploy to Azure Static Web Apps
         uses: Azure/static-web-apps-deploy@v1
