@@ -25,6 +25,7 @@ jobs:
 
       - name: Install dependencies
         run: npm install
+        working-directory: ./InventoryUI
 
       - name: Build the Vite React app
         run: npm run build
