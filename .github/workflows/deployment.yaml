@@ -18,18 +18,18 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Set up Node.js
+      - name: Set up Node.js 22
         uses: actions/setup-node@v3
         with:
-          node-version: 22  # ✅ You're using Node 22
+          node-version: 22.2.0  # ✅ Use latest compatible version
 
-      - name: Clean install workaround
+      - name: Clean install dependencies
         run: |
           rm -rf node_modules package-lock.json
-          npm install --legacy-peer-deps
-        working-directory: InventoryApp  # 🔁 adjust if needed
+          npm install
+        working-directory: InventoryApp  # Change to your app dir if needed
 
-      - name: Build the Vite React app
+      - name: Build Vite app
         run: npm run build
         working-directory: InventoryApp
 
