@@ -25,11 +25,10 @@ jobs:
 
       - name: Install dependencies
         run: npm install
-        working-directory: ./InventoryUI
+        working-directory: ./
 
       - name: Build the Vite React app
         run: npm run build
-        working-directory: ./InventoryUI
 
       - name: Deploy to Azure Static Web Apps
         uses: Azure/static-web-apps-deploy@v1
