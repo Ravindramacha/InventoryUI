@@ -127,7 +127,7 @@ const CrudTable: React.FC = () => {
             {paginatedRows.map((row) => (
               <TableRow key={row.productMasterId}>
                 <TableCell>{row.productId}</TableCell>
-                <TableCell>{row.productType.productTypeDesc}</TableCell>
+                <TableCell>{row.productType.productty}</TableCell>
                 <TableCell>{row.productGroup.productGroupDesc}</TableCell>
                 <TableCell>{row.productCategory.productCategoryDesc}</TableCell>
                 <TableCell>
