@@ -8,7 +8,6 @@ on:
 permissions:
   contents: read
   id-token: write
-  actions: read
 
 jobs:
   build_and_deploy:
@@ -21,23 +20,23 @@ jobs:
       - name: Set up Node.js 20
         uses: actions/setup-node@v3
         with:
-          node-version: 20.11.1 # ✅ Use latest compatible version
+          node-version: 20.11.1
 
       - name: Clean install dependencies
         run: |
           rm -rf node_modules package-lock.json
           npm install
-        working-directory: InventoryApp  # Change to your app dir if needed
+        working-directory: InventoryApp
 
       - name: Build Vite app
         run: npm run build
         working-directory: InventoryApp
 
-      - name: Deploy to Azure Web App
-        uses: azure/webapps-deploy@v2
+      - name: Deploy to Azure Static Web Apps
+        uses: Azure/static-web-apps-deploy@v1
         with:
-          app-name: "inventory-ui-dev"
-          slot-name: production
-          publish-profile: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          package: InventoryApp/dist
+          action: "upload"
+          app_location: "InventoryApp"
+          output_location: "InventoryApp/dist"
