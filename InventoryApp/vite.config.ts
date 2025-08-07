@@ -11,13 +11,16 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [react()],
+    build: {
+      outDir: 'dist',
+      chunkSizeWarningLimit: 1000, // optional: silence large bundle warnings
+    },
     server: {
       proxy: {
         "/api": {
           target: backendUrl,
           changeOrigin: true,
-          // Optionally rewrite /api if you don't want /api prefix on backend
-          // rewrite: (path) => path.replace(/^\/api/, ''),
+          rewrite: path => path.replace(/^\/api/, '/api'),
         }
       }
     }
