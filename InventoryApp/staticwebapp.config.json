@@ -5,8 +5,13 @@
   },
   "routes": [
     {
+      "route": "/api/*/",
+      "rewrite": "https://inventory-webapi-dev.azurewebsites.net/api/:*"
+    },
+    {
       "route": "/api/*",
       "rewrite": "https://inventory-webapi-dev.azurewebsites.net/api/:*"
     }
   ]
 }
+
