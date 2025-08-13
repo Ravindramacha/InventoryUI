@@ -127,6 +127,7 @@ const handleConfirmDelete = () => {
             label={attr.label}
             value={attr.value ?? ""}
             onChange={(e) => handleFieldChange(attr.id, e.target.value)}
+            size="small"
             fullWidth
           />
         );
@@ -137,6 +138,7 @@ const handleConfirmDelete = () => {
             type="number"
             value={attr.value !== null ? attr.value : ""}
             onChange={(e) => handleFieldChange(attr.id, e.target.value)}
+            size="small"
             fullWidth
           />
         );
@@ -149,7 +151,7 @@ const handleConfirmDelete = () => {
               handleFieldChange(attr.id, newValue || "")
             }
             renderInput={(params) => (
-              <TextField {...params} label={attr.label} fullWidth />
+              <TextField {...params} label={attr.label} size="small" fullWidth />
             )}
             fullWidth
             disableClearable
@@ -162,7 +164,7 @@ const handleConfirmDelete = () => {
                    label={attr.label}
                    value={attr.value as Dayjs | null}
                    onChange={(newValue) => handleFieldChange(attr.id, newValue)}
-                   slotProps={{ textField: { fullWidth: true } }}
+                   slotProps={{ textField: { fullWidth: true, size: "small" } }}
                    />
             </LocalizationProvider>
         

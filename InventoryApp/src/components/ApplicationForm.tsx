@@ -5,9 +5,9 @@ import {
   TextField,
   Button,
   Typography,
-  Grid,
   Box,
- } from '@mui/material';
+  Grid
+} from '@mui/material';
 import { useGetAllProductCategories, useGetAllProductGroups, useGetUomsByDimensionId, useLanguages, usePostProductMasterForm, useProductTypes, useSalesStatus, useUomDimension } from '../api/ApiQueries';
 import Autocomplete from '@mui/material/Autocomplete';
 import DynamicField, { type Attribute } from './common/DynamicField';
@@ -265,12 +265,12 @@ const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
 
 
   return (
-    <>
+    <Box sx={{ maxWidth: '100%', width: '100%' }}>
         <Typography variant="h5" gutterBottom>
          Product Master
         </Typography>
-        <form onSubmit={handleSubmit}>
-          <Grid container spacing={3}>
+        <form onSubmit={handleSubmit} style={{ width: '100%' }}>
+          <Grid container spacing={2}>
              <Grid size={{xs:12}}>
               <Box component="section">
                 <Typography variant="h6" gutterBottom>
@@ -282,12 +282,12 @@ const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
             <Grid size={{xs:12, sm:12, md:6, lg:3}}>
               <TextField
                 fullWidth
+                size="small"
                 label="Product Id"
                 name="productId"
                 value={formData.productId}
                 onChange={handleChange}
                 required
-                
               />
             </Grid>
              <Grid size={{xs:12, sm:12, md:6, lg:3}}>
@@ -306,7 +306,7 @@ const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
                   }));
                 }}
                 fullWidth
-                renderInput={(params) => <TextField {...params} label="Product Type" fullWidth required/>}
+                renderInput={(params) => <TextField {...params} label="Product Type" size="small" fullWidth required/>}
               />
             </Grid>
              <Grid size={{xs:12, sm:12, md:6, lg:3}}>
@@ -326,7 +326,7 @@ const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
                   }));
                 }}
                 fullWidth
-                renderInput={(params) => <TextField {...params} label="Product Group" fullWidth required/>}
+                renderInput={(params) => <TextField {...params} label="Product Group" size="small" fullWidth required/>}
               />
             </Grid>
             <Grid size={{xs:12, sm:12, md:6, lg:3}}>
@@ -345,7 +345,7 @@ const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
                   }));
                 }}
                 fullWidth
-                renderInput={(params) => <TextField {...params} label="Product Category" fullWidth required/>}
+                renderInput={(params) => <TextField {...params} label="Product Category" size="small" fullWidth required/>}
               />
             </Grid>
             <Grid size={{xs:12, sm:12, md:6, lg:3}}>
@@ -364,7 +364,7 @@ const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
                   }));
                 }}
                 fullWidth
-                renderInput={(params) => <TextField {...params} label="Language" fullWidth required/>}
+                renderInput={(params) => <TextField {...params} label="Language" size="small" fullWidth required/>}
               />
             </Grid>
             <Grid size={{xs:12, sm:12, md:6, lg:3}}>
@@ -383,7 +383,7 @@ const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
                   }));
                 }}
                 fullWidth
-                renderInput={(params) => <TextField {...params} label="Status" fullWidth required/>}
+                renderInput={(params) => <TextField {...params} label="Status" size="small" fullWidth required/>}
               />
             </Grid>
              <Grid size={{xs:12, sm:12, md:6, lg:3}}>
@@ -402,14 +402,15 @@ const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
                   }));
                 }}
                 fullWidth
-                renderInput={(params) => <TextField {...params} label="Unit of Measurement" fullWidth required/>}
+                renderInput={(params) => <TextField {...params} label="Unit of Measurement" size="small" fullWidth required/>}
               />
             </Grid>
              <Grid size={{xs:12, sm:12, md:6, lg:6}}>
               <TextField
                 fullWidth
+                size="small"
                 multiline
-                rows={4}
+                rows={3}
                 label="Short Description"
                 name="shortDescription"
                 value={formData.shortDescription}
@@ -420,8 +421,9 @@ const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
             <Grid size={{xs:12, sm:12, md:6, lg:6}}>
               <TextField
                 fullWidth
+                size="small"
                 multiline
-                rows={4}
+                rows={3}
                 label="Long Description"
                 name="longDescription"
                 value={formData.longDescription}
@@ -430,33 +432,34 @@ const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
               />
             </Grid>
              
-            <Grid size={{xs:12, sm:12, md:6, lg:5}}>
-              <DynamicField
-               attributes={textFields}
-               maxFields={5}
-               onChange={(updated) => setTextFields(updated)}
-              />
-          </Grid>
-          <Grid size={{xs:12, sm:12, md:6, lg:5}}>
-            <DynamicField
-              attributes={dateFields}
-              maxFields={5}
-              onChange={(updated) => setDateFields(updated)}
-             />
-           </Grid>
-            <Grid size={{xs:12, sm:12, md:6, lg:5}}>
-            <DynamicField
-               attributes={numberFields}
-               maxFields={5}
-               onChange={(updated) => setNumberFields(updated)}
-              />
-           </Grid>
-            <Grid size={{xs:12, sm:12, md:6, lg:5}}>
-            <DynamicField
-               attributes={dropDownFields}
-               maxFields={5}
-               onChange={(updated) => setDropDownFields(updated)}
-              />
+            <Grid container spacing={2}>
+              <Grid size={{xs:12, sm:6, md:3}} >
+                <DynamicField
+                  attributes={textFields}
+                  maxFields={5}
+                  onChange={(updated) => setTextFields(updated)}
+                />
+              </Grid>
+              <Grid  size={{xs:12, sm:6, md:3}}>
+                <DynamicField
+                  attributes={numberFields}
+                  maxFields={5}
+                  onChange={(updated) => setNumberFields(updated)}
+                />
+              </Grid>
+              <Grid  size={{xs:12, sm:6, md:3}}>
+                <DynamicField
+                  attributes={dateFields}
+                  maxFields={5}
+                  onChange={(updated) => setDateFields(updated)}
+                />
+              </Grid>
+              <Grid size={{xs:12, sm:6, md:3}}>
+                <DynamicField
+                  attributes={dropDownFields}
+                  maxFields={5}
+                  onChange={(updated) => setDropDownFields(updated)}
+                />
            </Grid>
            
             <Grid size={12}> 
@@ -485,25 +488,24 @@ const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
                   }));
                 }}
                 fullWidth
-                renderInput={(params) => <TextField {...params} label="Manuafcturer" fullWidth required/>}
+                renderInput={(params) => <TextField {...params} label="Manuafcturer" size="small" fullWidth required/>}
               />
             </Grid>
-            <Grid size={{xs:12, sm:12, md:6, lg:3}}>
+            <Grid size={{xs:12, sm:6, md:3}} >
               <TextField
                 fullWidth
+                size="small"
                 label="Manufacturer Part Number"
                 name="manufacturerPartNumber"
                 value={formData.manufacturerPartNumber}
                 onChange={handleChange}
                 required
-                
               />
             </Grid>
             <Grid size={{xs:12, sm:12, md:6, lg:6}}>
               <TextField
                 fullWidth
-                // multiline
-                // rows={4}
+                size="small"
                 label="Notes"
                 name="notes"
                 value={formData.notes}
@@ -518,6 +520,7 @@ const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
               <Button variant="outlined" color="secondary" onClick={resetForm} disabled={loading} style={{ marginLeft: '10px' }}>
                 Reset </Button>
             </Grid>
+          </Grid>
           </Grid>
           <Backdrop
             open={backdropOpen}
@@ -536,7 +539,8 @@ const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
               {snackbarMessage}
             </Alert>
           </Snackbar>               
-        </form></>
+        </form>
+    </Box>
   );
 };
 

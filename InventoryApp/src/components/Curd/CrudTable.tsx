@@ -100,6 +100,7 @@ const CrudTable: React.FC = () => {
         <TextField
           label="Search by name"
           variant="outlined"
+          size="small"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
