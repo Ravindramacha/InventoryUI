@@ -114,39 +114,58 @@ const CrudTable: React.FC = () => {
       </Box>
 
       <TableContainer component={Paper}>
-        <Table>
+        <Table size="small" sx={{ border: '1px solid black' }}>
           <TableHead>
             <TableRow>
-              <TableCell>Product Id</TableCell>
-              <TableCell>Product Type</TableCell>
-              <TableCell>Product Group</TableCell>
-              <TableCell>Product Category</TableCell>
-              <TableCell>Actions</TableCell>
+              <TableCell sx={{ py: 1, fontWeight: 'bold', border: '1px solid black' }}>Product Id</TableCell>
+              <TableCell sx={{ py: 1, fontWeight: 'bold', border: '1px solid black' }}>Product Type</TableCell>
+              <TableCell sx={{ py: 1, fontWeight: 'bold', border: '1px solid black' }}>Product Group</TableCell>
+              <TableCell sx={{ py: 1, fontWeight: 'bold', border: '1px solid black' }}>Product Category</TableCell>
+              <TableCell sx={{ py: 1, fontWeight: 'bold', border: '1px solid black' }}>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {paginatedRows.map((row) => (
               <TableRow key={row.productMasterId}>
-                <TableCell>{row.productId}</TableCell>
-                <TableCell>{row.productType.productTypeDesc}</TableCell>
-                <TableCell>{row.productGroup.productGroupDesc}</TableCell>
-                <TableCell>{row.productCategory.productCategoryDesc}</TableCell>
-                <TableCell>
-                  <IconButton onClick={() => handleOpenViewDrawer("view", row)}>
-                    <Visibility />
+                <TableCell sx={{ py: 1, border: '1px solid black' }}>{row.productId}</TableCell>
+                <TableCell sx={{ py: 1, border: '1px solid black' }}>{row.productType.productTypeDesc}</TableCell>
+                <TableCell sx={{ py: 1, border: '1px solid black' }}>{row.productGroup.productGroupDesc}</TableCell>
+                <TableCell sx={{ py: 1, border: '1px solid black' }}>{row.productCategory.productCategoryDesc}</TableCell>
+                <TableCell sx={{ py: 1, border: '1px solid black'  }}>
+                  <IconButton 
+                    size="small" 
+                    onClick={() => handleOpenViewDrawer("view", row)}
+                    sx={{ color: 'primary.main' }}
+                  >
+                    <Visibility fontSize="small" />
                   </IconButton>
-                  <IconButton onClick={() => handleOpenDrawer("edit", row)}>
-                    <Edit />
+                  <IconButton 
+                    size="small" 
+                    onClick={() => handleOpenDrawer("edit", row)}
+                    sx={{ color: 'primary.main' }}
+                  >
+                    <Edit fontSize="small" />
                   </IconButton>
-                  <IconButton onClick={() => handleDelete(row.productMasterId)}>
-                    <Delete />
+                  <IconButton 
+                    size="small" 
+                    onClick={() => handleDelete(row.productMasterId)}
+                    sx={{ color: 'error.main' }}
+                  >
+                    <Delete fontSize="small" />
                   </IconButton>
                 </TableCell>
               </TableRow>
             ))}
             {paginatedRows.length === 0 && (
               <TableRow>
-                <TableCell colSpan={5} align="center">
+                <TableCell 
+                  colSpan={5} 
+                  align="center" 
+                  sx={{ 
+                    py: 2,
+                    border: '1px solid black'
+                  }}
+                >
                   No data found.
                 </TableCell>
               </TableRow>
