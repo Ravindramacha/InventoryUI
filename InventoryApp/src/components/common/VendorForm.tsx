@@ -177,22 +177,23 @@ const handleChange = (event: ChangeEvent<HTMLInputElement>)  => {
 
   return (
     <>
-        <Typography variant="h5" gutterBottom>
+        <Typography variant="h5" gutterBottom fontWeight="bold">
          Vendor
         </Typography>
         <form onSubmit={handleSubmit}>
           <Grid container spacing={3}>
              <Grid size={{xs:12}}>
               <Box component="section">
-                <Typography variant="body1" gutterBottom>
+                <Typography variant="body1" gutterBottom fontWeight="bold">
                   Name
                 </Typography>
               </Box>
              </Grid>
             
-            <Grid size={{xs:12, sm:12, md:6, lg:3}}>
+            <Grid size={{xs:12, sm:12, md:6, lg:4}}>
               <TextField
                 fullWidth
+                size="small"
                 label="Company Name 1"
                 name="companyName1"
                 value={formData.companyName1}
@@ -200,9 +201,10 @@ const handleChange = (event: ChangeEvent<HTMLInputElement>)  => {
                 required
               />
             </Grid>
-            <Grid size={{xs:12, sm:12, md:6, lg:3}}>
+            <Grid size={{xs:12, sm:12, md:6, lg:4}}>
               <TextField
                 fullWidth
+                size="small"
                 label="Company Name 2"
                 name="companyName2"
                 value={formData.companyName2}
@@ -210,18 +212,20 @@ const handleChange = (event: ChangeEvent<HTMLInputElement>)  => {
                 required
               />
             </Grid>
-            <Grid size={{xs:12, sm:12, md:6, lg:3}}>
+            <Grid size={{xs:12, sm:12, md:6, lg:4}}>
               <TextField
                 fullWidth
+                size="small"
                 label="DBA (Doing Business AS)"
                 name="dba"
                 value={formData.dba}
                 onChange={handleChange}
               />
             </Grid>
-             <Grid size={{xs:12, sm:12, md:6, lg:3}}>
+             <Grid size={{xs:12, sm:12, md:6, lg:4}}>
               <TextField
                 fullWidth
+                size="small"
                 label="Keyword"
                 name="keyword"
                 value={formData.keyword}
@@ -231,14 +235,15 @@ const handleChange = (event: ChangeEvent<HTMLInputElement>)  => {
             </Grid>
             <Grid size={{xs:12}}>
               <Box component="section">
-                <Typography variant="body1" gutterBottom>
+                <Typography variant="body1" gutterBottom fontWeight="bold">
                   Address
                 </Typography>
               </Box>
              </Grid>
-             <Grid size={{xs:12, sm:12, md:6, lg:3}}>
+             <Grid size={{xs:12, sm:12, md:6, lg:4}}>
               <TextField
                 fullWidth
+                size="small"
                 label="House Number"
                 name="houseNumber"
                 value={formData.houseNumber}
@@ -246,9 +251,10 @@ const handleChange = (event: ChangeEvent<HTMLInputElement>)  => {
                 required
               />
             </Grid>
-             <Grid size={{xs:12, sm:12, md:6, lg:3}}>
+             <Grid size={{xs:12, sm:12, md:6, lg:4}}>
               <TextField
                 fullWidth
+                size="small"
                 label="Street Name"
                 name="streetName"
                 value={formData.streetName}
@@ -256,25 +262,27 @@ const handleChange = (event: ChangeEvent<HTMLInputElement>)  => {
                 required
               />
             </Grid>
-            <Grid size={{xs:12, sm:12, md:6, lg:3}}>
+            <Grid size={{xs:12, sm:12, md:6, lg:4}}>
               <TextField
                 fullWidth
+                size="small"
                 label="Building Name"
                 name="buildingName"
                 value={formData.buildingName}
                 onChange={handleChange}
               />
             </Grid>
-            <Grid size={{xs:12, sm:12, md:6, lg:3}}>
+            <Grid size={{xs:12, sm:12, md:6, lg:4}}>
               <TextField
                 fullWidth
+                size="small"
                 label="Landmark"
                 name="landmark"
                 value={formData.landmark}
                 onChange={handleChange}
               />
             </Grid>
-             <Grid size={{xs:12, sm:12, md:6, lg:3}}>
+             <Grid size={{xs:12, sm:12, md:6, lg:4}}>
               <Autocomplete
                 disablePortal
                 options={countryList}
@@ -289,13 +297,14 @@ const handleChange = (event: ChangeEvent<HTMLInputElement>)  => {
                   }));
                 }}
                 renderInput={(params) => (
-                  <TextField {...params} label="Country" required fullWidth />
+                  <TextField {...params} label="Country" size="small" required fullWidth />
                 )}
             />
             </Grid>
-            <Grid size={{xs:12, sm:12, md:6, lg:3}}>
+            <Grid size={{xs:12, sm:12, md:6, lg:4}}>
               <Autocomplete
                 disablePortal
+                size="small"
                 options={filteredStates}
                 value={filteredStates.find(s => s.id === formData.stateId) || null}
                 getOptionLabel={(option) => option.name}
@@ -307,14 +316,15 @@ const handleChange = (event: ChangeEvent<HTMLInputElement>)  => {
                   }));
                 }}
                 renderInput={(params) => (
-                  <TextField {...params} label="State" required fullWidth />
+                  <TextField {...params} label="State" size="small" required fullWidth />
                 )}
                 disabled={!formData.countryId}
               />
             </Grid>
-             <Grid size={{xs:12, sm:12, md:6, lg:3}}>
+             <Grid size={{xs:12, sm:12, md:6, lg:4}}>
               <TextField
                 fullWidth
+                size="small"
                 label="Zip Code"
                 name="zipCode"
                 value={formData.zipCode}
@@ -322,18 +332,20 @@ const handleChange = (event: ChangeEvent<HTMLInputElement>)  => {
                 required
               />
             </Grid>
-            <Grid size={{xs:12, sm:12, md:6, lg:3}}>
+            <Grid size={{xs:12, sm:12, md:6, lg:4}}>
               <TextField
                 fullWidth
+                size="small"
                 label="Digi Pin"
                 name="digiPin"
                 value={formData.digiPin}
                 onChange={handleChange}
               />
             </Grid>
-              <Grid size={{xs:12, sm:12, md:6, lg:3}}>
+              <Grid size={{xs:12, sm:12, md:6, lg:4}}>
               <TextField
                 fullWidth
+                size="small"
                 label="Maps URL"
                 name="mapsUrl"
                 value={formData.mapsUrl}
@@ -342,12 +354,12 @@ const handleChange = (event: ChangeEvent<HTMLInputElement>)  => {
             </Grid>
             <Grid size={{xs:12}}>
               <Box component="section">
-                <Typography variant="body1" gutterBottom>
+                <Typography variant="body1" gutterBottom fontWeight="bold">
                   Communication
                 </Typography>
               </Box>
              </Grid>
-            <Grid size={{xs:12, sm:12, md:6, lg:3}}>
+            <Grid size={{xs:12, sm:12, md:6, lg:4}}>
              <Autocomplete
                 disablePortal
                 options={languages}
@@ -363,12 +375,14 @@ const handleChange = (event: ChangeEvent<HTMLInputElement>)  => {
                   }));
                 }}
                 fullWidth
-                renderInput={(params) => <TextField {...params} label="Language" fullWidth required/>}
+                size="small"
+                renderInput={(params) => <TextField {...params} label="Language" size="small" fullWidth required/>}
               />
             </Grid>
-            <Grid size={{xs:12, sm:12, md:6, lg:3}}>
+            <Grid size={{xs:12, sm:12, md:6, lg:4}}>
               <TextField
                 fullWidth
+                size="small"
                 label="Phone Number 1"
                 name="phoneNumber1"
                 value={formData.phoneNumber1}
@@ -376,9 +390,10 @@ const handleChange = (event: ChangeEvent<HTMLInputElement>)  => {
                 required
               />
             </Grid>
-            <Grid size={{xs:12, sm:12, md:6, lg:3}}>
+            <Grid size={{xs:12, sm:12, md:6, lg:4}}>
               <TextField
                 fullWidth
+                size="small"
                 label="Phone Number 2"
                 name="phoneNumber2"
                 value={formData.phoneNumber2}
@@ -386,9 +401,10 @@ const handleChange = (event: ChangeEvent<HTMLInputElement>)  => {
                 required
               />
             </Grid>
-            <Grid size={{xs:12, sm:12, md:6, lg:3}}>
+            <Grid size={{xs:12, sm:12, md:6, lg:4}}>
               <TextField
                 fullWidth
+                size="small"
                 label="Phone Number 3"
                 name="phoneNumber3"
                 value={formData.phoneNumber3}
@@ -396,18 +412,20 @@ const handleChange = (event: ChangeEvent<HTMLInputElement>)  => {
                 required
               />
             </Grid>
-             <Grid size={{xs:12, sm:12, md:6, lg:3}}>
+             <Grid size={{xs:12, sm:12, md:6, lg:4}}>
               <TextField
                 fullWidth
+                size="small"
                 label="Fax"
                 name="fax"
                 value={formData.fax}
                 onChange={handleChange}
               />
             </Grid>
-             <Grid size={{xs:12, sm:12, md:6, lg:3}}>
+             <Grid size={{xs:12, sm:12, md:6, lg:4}}>
               <TextField
                 fullWidth
+                size="small"
                 label="Email 1"
                 name="email1"
                 value={formData.email1}
@@ -415,18 +433,20 @@ const handleChange = (event: ChangeEvent<HTMLInputElement>)  => {
                 required
               />
             </Grid>
-             <Grid size={{xs:12, sm:12, md:6, lg:3}}>
+             <Grid size={{xs:12, sm:12, md:6, lg:4}}>
               <TextField
                 fullWidth
+                size="small"
                 label="Email 2"
                 name="email2"
                 value={formData.email2}
                 onChange={handleChange}
               />
             </Grid>
-             <Grid size={{xs:12, sm:12, md:6, lg:3}}>
+             <Grid size={{xs:12, sm:12, md:6, lg:4}}>
               <TextField
                 fullWidth
+                size="small"
                 label="Email 3"
                 name="email3"
                 value={formData.email3}
@@ -435,7 +455,7 @@ const handleChange = (event: ChangeEvent<HTMLInputElement>)  => {
             </Grid>
             <Grid size={{xs:12}}>
               <Box component="section">
-                <Typography variant="body1" gutterBottom>
+                <Typography variant="body1" gutterBottom fontWeight="bold">
                   Tax Information
                 </Typography>
               </Box>
@@ -452,7 +472,7 @@ const handleChange = (event: ChangeEvent<HTMLInputElement>)  => {
 
                 <Grid size={{xs:12}}>
               <Box component="section">
-                <Typography variant="body1" gutterBottom>
+                <Typography variant="body1" gutterBottom fontWeight="bold">
                   Bank Details
                 </Typography>
               </Box>
@@ -466,19 +486,21 @@ const handleChange = (event: ChangeEvent<HTMLInputElement>)  => {
                 }}
                 />
                 </Grid>
-            <Grid size={{xs:12, sm:12, md:6, lg:3}}>
+            <Grid size={{xs:12, sm:12, md:6, lg:4}}>
               <TextField
                 fullWidth
+                size="small"
                 label="Comments"
                 name="comments"
                 value={formData.comments}
                 onChange={handleChange}
               />
             </Grid>
-            <Grid size={{xs:12, sm:12, md:6, lg:3}}>
+            <Grid size={{xs:12, sm:12, md:6, lg:4}}>
               <Autocomplete
                       disablePortal
                       options={salesStatuses}
+                      size="small"
                        value={
                         salesStatuses.find(p => p.salesStatusId === formData.salesStatusId) || null
                       }
@@ -491,12 +513,13 @@ const handleChange = (event: ChangeEvent<HTMLInputElement>)  => {
                         }));
                       }}
                       fullWidth
-                      renderInput={(params) => <TextField {...params} label="Status" fullWidth required/>}
+                      renderInput={(params) => <TextField {...params} label="Status" size="small" fullWidth required/>}
                   />
             </Grid>
-            <Grid size={{xs:12, sm:12, md:6, lg:3}}>
+            <Grid size={{xs:12, sm:12, md:6, lg:4}}>
               <TextField
                 fullWidth
+                size="small"
                 label="Payment Terms"
                 name="paymentId"
                 value={formData.paymentId}
@@ -504,11 +527,33 @@ const handleChange = (event: ChangeEvent<HTMLInputElement>)  => {
               />
             </Grid>
             <Grid size={12}>
-              <Button variant="contained" color="primary" type="submit" disabled={loading}>
-                {loading ? <CircularProgress size={24} color="inherit" /> : 'Submit'}
+              <Button 
+                variant="contained" 
+                color="primary" 
+                type="submit" 
+                disabled={loading}
+                size="small"
+                sx={{ 
+                  borderRadius: '8px',
+                  minWidth: '100px'
+                }}
+              >
+                {loading ? <CircularProgress size={20} color="inherit" /> : 'Submit'}
               </Button>
-              <Button variant="outlined" color="secondary" onClick={resetForm} disabled={loading} style={{ marginLeft: '10px' }}>
-                Reset </Button>
+              <Button 
+                variant="outlined" 
+                color="secondary" 
+                onClick={resetForm} 
+                disabled={loading}
+                size="small"
+                sx={{ 
+                  marginLeft: '10px',
+                  borderRadius: '8px',
+                  minWidth: '100px'
+                }}
+              >
+                Reset
+              </Button>
             </Grid>
           </Grid>
          

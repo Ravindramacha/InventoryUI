@@ -142,7 +142,7 @@ const CrudTable: React.FC = () => {
                   <IconButton 
                     size="small" 
                     onClick={() => handleOpenDrawer("edit", row)}
-                    sx={{ color: 'primary.main' }}
+                    sx={{ color: 'primary.dark' }}
                   >
                     <Edit fontSize="small" />
                   </IconButton>
