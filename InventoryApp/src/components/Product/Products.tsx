@@ -4,7 +4,7 @@ import {
   Button, Dialog, DialogActions, DialogContent, DialogTitle,
   TextField, IconButton, Typography, Box,
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper,
-  TablePagination,
+  TablePagination, TableSortLabel,
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -102,14 +102,29 @@ export default function Products() {
   // const [productTypeDescFilter, setproductTypeDescFilter] = useState('');
 
   const [globalSearch, setGlobalSearch] = useState('');
-  // Popover state
-  // const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  // const [filterType, setFilterType] = useState<'productTypeCode' | 'productTypeDesc' | null>(null);
+  const [orderBy, setOrderBy] = useState<keyof ProductTypeModel>('productTypeCode');
+  const [order, setOrder] = useState<'asc' | 'desc'>('asc');
 
-  // const handleFilterIconClick = (event: React.MouseEvent<HTMLElement>, type: 'productTypeCode' | 'productTypeDesc') => {
-  //   setAnchorEl(event.currentTarget);
-  //   setFilterType(type);
-  // };
+  const handleRequestSort = (property: keyof ProductTypeModel) => {
+    const isAsc = orderBy === property && order === 'asc';
+    setOrder(isAsc ? 'desc' : 'asc');
+    setOrderBy(property);
+  };
+
+  function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
+    if (b[orderBy] < a[orderBy]) return -1;
+    if (b[orderBy] > a[orderBy]) return 1;
+    return 0;
+  }
+
+  function getComparator<T>(
+    order: 'asc' | 'desc',
+    orderBy: keyof T,
+  ): (a: T, b: T) => number {
+    return order === 'desc'
+      ? (a, b) => descendingComparator(a, b, orderBy)
+      : (a, b) => -descendingComparator(a, b, orderBy);
+  }
 
   // const handleFilterInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
   //   const value = e.target.value;
@@ -122,14 +137,17 @@ export default function Products() {
   //   setFilterType(null);
   // };
 
-  // Apply column filters
-  const filteredProducts = products.filter((productType) => {
-    const searchText = globalSearch.toLowerCase();
-    const productTypeCodeMatch = productType.productTypeCode.toLowerCase().includes(searchText);
-    const productTypeDescMatch = productType.productTypeDesc.toLowerCase().includes(searchText);
-    return productTypeCodeMatch || productTypeDescMatch;
-  });
-const handleChangeRowsPerPage = (
+  // Apply column filters and sorting
+  const filteredProducts = products
+    .filter((productType) => {
+      const searchText = globalSearch.toLowerCase();
+      const productTypeCodeMatch = productType.productTypeCode.toLowerCase().includes(searchText);
+      const productTypeDescMatch = productType.productTypeDesc.toLowerCase().includes(searchText);
+      return productTypeCodeMatch || productTypeDescMatch;
+    })
+    .sort(getComparator(order, orderBy));
+
+  const handleChangeRowsPerPage = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     setRowsPerPage(parseInt(event.target.value, 10));
@@ -194,10 +212,22 @@ const handleChangeRowsPerPage = (
               <TableHead>
                 <TableRow>
                   <TableCell sx={{ py: 1.5, fontWeight: 600 }}>
-                    Product Type Code
+                    <TableSortLabel
+                      active={orderBy === 'productTypeCode'}
+                      direction={orderBy === 'productTypeCode' ? order : 'asc'}
+                      onClick={() => handleRequestSort('productTypeCode')}
+                    >
+                      Product Type Code
+                    </TableSortLabel>
                   </TableCell>
                   <TableCell sx={{ py: 1.5, fontWeight: 600 }}>
-                    Product Type Description
+                    <TableSortLabel
+                      active={orderBy === 'productTypeDesc'}
+                      direction={orderBy === 'productTypeDesc' ? order : 'asc'}
+                      onClick={() => handleRequestSort('productTypeDesc')}
+                    >
+                      Product Type Description
+                    </TableSortLabel>
                   </TableCell>
                   <TableCell sx={{ py: 1.5, fontWeight: 600 }}>Actions</TableCell>
                 </TableRow>
@@ -221,7 +251,7 @@ const handleChangeRowsPerPage = (
             </Table>
             <TablePagination
               component="div"
-              count={paginatedProducts.length}
+              count={filteredProducts.length}
               page={page}
               onPageChange={handleChangePage}
               rowsPerPage={rowsPerPage}
