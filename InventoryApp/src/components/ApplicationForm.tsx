@@ -292,7 +292,7 @@ const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
           <Grid container spacing={2}>
              <Grid size={{xs:12}}>
               <Box component="section">
-                <Typography variant="h6" gutterBottom>
+                <Typography variant="body1" gutterBottom>
                   General Data
                 </Typography>
               </Box>

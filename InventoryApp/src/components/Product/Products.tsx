@@ -32,7 +32,7 @@ export default function Products() {
   const [open, setOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<ProductTypeModel | null>(null);
   const { addNotification } = useNotification();
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [page, setPage] = useState(0);
 
   const [formValues, setFormValues] = useState({

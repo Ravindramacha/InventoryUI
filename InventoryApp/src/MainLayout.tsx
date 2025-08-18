@@ -38,7 +38,7 @@ export default function MainLayout() {
         component="main"
         sx={{
           flexGrow: 1,
-          p: 3,
+          p: 2,
           mt: 8,
           width: '100%',
           transition: 'margin 0.3s',

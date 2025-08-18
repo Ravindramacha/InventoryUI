@@ -160,8 +160,8 @@ const CrudTable: React.FC<CrudTableProps> = ({ onEdit }) => {
       {!drawerOpen && !selectedRow && (
         <>
           <Box display="flex" justifyContent="space-between" sx={{ 
-          p: 3,
-          mt: 5
+          p: 2,
+          mt: 0
         }}>
             <TextField
               label="Search"
