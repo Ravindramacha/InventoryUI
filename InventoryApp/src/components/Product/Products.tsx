@@ -2,12 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { useNotification } from '../../context/NotificationContext';
 import {
   Button, Dialog, DialogActions, DialogContent, DialogTitle,
-  TextField, IconButton, Typography, Box,
+  TextField, Typography, Box,
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper,
   TablePagination, TableSortLabel,
 } from '@mui/material';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 import type { PostProductType, ProductTypeModel } from '../../Models/MaterialModel';
 import { usePostProductType, useProductTypes } from '../../api/ApiQueries';

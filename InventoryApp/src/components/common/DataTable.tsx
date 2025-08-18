@@ -19,7 +19,7 @@ import {
   DialogContent,
   DialogActions
 } from "@mui/material";
-import { Delete, Edit, Visibility, Close } from "@mui/icons-material";
+import { Close } from "@mui/icons-material";
 
 type Order = 'asc' | 'desc';
 
@@ -107,9 +107,6 @@ const DataTable: FC<DataTableProps> = ({ rows }) => {
     setOrderBy(property);
   };
 
-  const handleDelete = (id: number) => {
-    setRowData((prev) => prev.filter((r) => r.id !== id));
-  };
 
   const handleOpenDrawer = (type: "view" | "edit", data: Data) => {
     setDrawerContent({ type, data });
