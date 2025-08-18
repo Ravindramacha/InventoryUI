@@ -92,7 +92,7 @@ const CrudTable: React.FC<CrudTableProps> = ({ onEdit }) => {
 
 
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const handleOpenDrawer = (mode: Mode, row: ReadProductMasterForm | null = null) => {
     setDrawerMode(mode);
@@ -130,10 +130,21 @@ const CrudTable: React.FC<CrudTableProps> = ({ onEdit }) => {
     setPage(0);
   };
 
-  // First filter
-  const filteredRows = rows.filter((r) =>
-    r.productId.toLowerCase().includes(search.toLowerCase())
-  );
+  // First filter - Global search across all relevant fields
+  const filteredRows = rows.filter((row) => {
+    const searchTerm = search.toLowerCase();
+    return (
+      row.productId.toLowerCase().includes(searchTerm) ||
+      row.productType.productTypeDesc.toLowerCase().includes(searchTerm) ||
+      row.productType.productTypeCode.toLowerCase().includes(searchTerm) ||
+      row.productGroup.productGroupDesc.toLowerCase().includes(searchTerm) ||
+      row.productGroup.productGroupCode.toLowerCase().includes(searchTerm) ||
+      row.productCategory.productCategoryDesc.toLowerCase().includes(searchTerm) ||
+      row.productCategory.productCategoryCode.toLowerCase().includes(searchTerm) ||
+      (row.shortDescription || '').toLowerCase().includes(searchTerm) ||
+      (row.longDescription || '').toLowerCase().includes(searchTerm)
+    );
+  });
 
   // Then sort
   const sortedRows = [...filteredRows].sort(getComparator(order, orderBy));
@@ -153,11 +164,13 @@ const CrudTable: React.FC<CrudTableProps> = ({ onEdit }) => {
           mt: 5
         }}>
             <TextField
-              label="Search by name"
+              label="Search"
+              placeholder="search"
               variant="outlined"
               size="small"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
+              sx={{ width: 250 }}
             />
             <Button
               variant="contained"
