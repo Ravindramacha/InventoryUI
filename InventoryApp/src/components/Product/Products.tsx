@@ -4,7 +4,8 @@ import {
   Button, Dialog, DialogActions, DialogContent, DialogTitle,
   TextField, IconButton, Typography, Box,
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper,
-  Select, MenuItem, FormControl, InputLabel, Grid,
+  Select, MenuItem, FormControl, InputLabel, 
+  TablePagination,
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -129,7 +130,15 @@ export default function Products() {
     const productTypeDescMatch = productType.productTypeDesc.toLowerCase().includes(searchText);
     return productTypeCodeMatch || productTypeDescMatch;
   });
-
+const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+  const handleChangePage = (_: unknown, newPage: number) => {
+    setPage(newPage);
+  };
   // Pagination logic for table rows
   const paginatedProducts = filteredProducts.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
@@ -151,77 +160,74 @@ export default function Products() {
       </Snackbar>
 
       <Box p={2}>
-        <Typography variant="h4" gutterBottom>
+        <Typography variant="h5" gutterBottom>
           Product Type
         </Typography>
-        <Grid container spacing={3}>
-          <Grid size={{ xs: 0, sm: 0, md: 9, lg: 9 }}>
-
-          </Grid>
-
-          <Grid size={{ xs: 12, sm: 12, md: 3, lg: 3 }}>
-            <Button variant="contained" onClick={() => handleOpen()}
-              sx={{
-                borderRadius: '8px',
-                minWidth: '100px',
-                marginLeft: '10px', mb: 2
-              }} startIcon={<AddIcon />}>
-              Add
-            </Button>
-          </Grid>
-        </Grid>
-
-        <Box mt={2}>
-          <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-            <TextField
-              label="Search"
-              variant="outlined"
-              size="small"
-              value={globalSearch}
-              onChange={(e) => {
-                setGlobalSearch(e.target.value);
-                setPage(0); // reset to first page on search
-              }}
-              sx={{ width: 300 }}
-            />
+        <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+          <TextField
+            label="Search"
+            variant="outlined"
+            size="small"
+            value={globalSearch}
+            onChange={(e) => {
+              setGlobalSearch(e.target.value);
+              setPage(0); // reset to first page on search
+            }}
+            sx={{ width: 250 }}
+          />
+          <Button 
+            variant="contained" 
+            onClick={() => handleOpen()}
+            size="small"
+            sx={{
+              borderRadius: '8px',
+              minWidth: '100px',
+            }} 
+            startIcon={<AddIcon />}
+          >
+            Add
+          </Button>
+        </Box>
           </Box>
 
           <TableContainer component={Paper}>
-            <Table stickyHeader >
+            <Table stickyHeader size="small">
               <TableHead>
                 <TableRow>
-                  <TableCell>
+                  <TableCell sx={{ py: 1.5, fontWeight: 600 }}>
                     Product Type Code
-                    {/* <IconButton size="small" onClick={e => handleFilterIconClick(e, 'productTypeCode')}>
-                    <FilterListIcon fontSize="small" />
-                  </IconButton> */}
                   </TableCell>
-                  <TableCell>
+                  <TableCell sx={{ py: 1.5, fontWeight: 600 }}>
                     Product Type Description
-                    {/* <IconButton size="small" onClick={e => handleFilterIconClick(e, 'productTypeDesc')}>
-                    <FilterListIcon fontSize="small" />
-                  </IconButton> */}
                   </TableCell>
-                  <TableCell>Actions</TableCell>
+                  <TableCell sx={{ py: 1.5, fontWeight: 600 }}>Actions</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {paginatedProducts.map((productType) => (
                   <TableRow key={productType.productTypeId}>
-                    <TableCell>{productType.productTypeCode}</TableCell>
-                    <TableCell>{productType.productTypeDesc}</TableCell>
-                    <TableCell>
-                      <IconButton onClick={() => handleOpen(productType)}>
-                        <EditIcon />
+                    <TableCell sx={{ py: 1 }}>{productType.productTypeCode}</TableCell>
+                    <TableCell sx={{ py: 1 }}>{productType.productTypeDesc}</TableCell>
+                    <TableCell sx={{ py: 1 }}>
+                      <IconButton size="small" onClick={() => handleOpen(productType)}>
+                        <EditIcon fontSize="small" />
                       </IconButton>
-                      <IconButton >
-                        <DeleteIcon />
+                      <IconButton size="small">
+                        <DeleteIcon fontSize="small" />
                       </IconButton>
                     </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
+            <TablePagination
+              component="div"
+              count={paginatedProducts.length}
+              page={page}
+              onPageChange={handleChangePage}
+              rowsPerPage={rowsPerPage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+            />
           </TableContainer>
           {/* Filter popover */}
           {/* <Popover
@@ -253,48 +259,8 @@ export default function Products() {
             />
           </Box>
         </Popover> */}
-        </Box>
         {/* Rows per page dropdown */}
-        <Box display="flex" justifyContent="flex-end" alignItems="center" mt={2}>
-          <FormControl size="small" sx={{ minWidth: 120 }}>
-            <InputLabel id="rows-per-page-label">Rows per page</InputLabel>
-            <Select
-              labelId="rows-per-page-label"
-              value={rowsPerPage}
-              label="Rows per page"
-              onChange={e => {
-                setRowsPerPage(Number(e.target.value));
-                setPage(0);
-              }}
-            >
-              {[5, 10, 25, 50].map(opt => (
-                <MenuItem key={opt} value={opt}>{opt}</MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-          {/* Pagination controls */}
-          <Box ml={2}>
-            <Button
-              size="small"
-              disabled={page === 0}
-              onClick={() => setPage(page - 1)}
-            >
-              Prev
-            </Button>
-            <Button
-              size="small"
-              disabled={(page + 1) * rowsPerPage >= filteredProducts.length}
-              onClick={() => setPage(page + 1)}
-            >
-              Next
-            </Button>
-          </Box>
-          <Box ml={2}>
-            <Typography variant="body2">
-              Page {page + 1} of {Math.max(1, Math.ceil(filteredProducts.length / rowsPerPage))}
-            </Typography>
-          </Box>
-        </Box>
+       
         <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
           <DialogTitle>{editingProduct ? 'Edit' : 'Add'} Product</DialogTitle>
           <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 1 }}>
@@ -304,6 +270,7 @@ export default function Products() {
               value={formValues.productTypeCode}
               onChange={handleChange}
               required
+              size="small"
             />
             <TextField
               name="productTypeDesc"
@@ -311,17 +278,22 @@ export default function Products() {
               value={formValues.productTypeDesc}
               onChange={handleChange}
               required
+              size="small"
             />
 
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleClose}>Cancel</Button>
-            <Button onClick={handleSubmit} variant="contained">
+            <Button onClick={handleClose} size="small">Cancel</Button>
+            <Button 
+              onClick={handleSubmit} 
+              variant="contained" 
+              size="small"
+              sx={{ borderRadius: '8px', minWidth: '100px' }}
+            >
               {editingProduct ? 'Update' : 'Create'}
             </Button>
           </DialogActions>
         </Dialog>
-      </Box>
     </>
   );
 }

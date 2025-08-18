@@ -39,7 +39,7 @@ export default function MainLayout() {
         sx={{
           flexGrow: 1,
           p: 3,
-          mt: 6,
+          mt: 8,
           width: '100%',
           transition: 'margin 0.3s',
           // overflowY: 'auto',

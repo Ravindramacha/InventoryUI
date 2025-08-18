@@ -115,41 +115,36 @@ const DataTable: FC<DataTableProps> = ({ rows }) => {
   const handleCloseDrawer = () => setDrawerOpen(false);
 
   return (
-    <Box sx={{ p: 2, bgcolor: "background.paper", borderRadius: 3, boxShadow: 4 }}>
-      <TextField
-        fullWidth
-        size="small"
-        variant="outlined"
-        placeholder="Search..."
-        value={search}
-        onChange={handleSearchChange}
-        sx={{ mb: 2, maxWidth: 360 }}
-      />
+      <Box sx={{ p: 2, bgcolor: "background.paper", borderRadius: 3, boxShadow: 4 }}>
+        <TextField
+          fullWidth
+          size="small"
+          variant="outlined"
+          placeholder="Search..."
+          value={search}
+          onChange={handleSearchChange}
+          sx={{ mb: 2, maxWidth: 360 }}
+        />
       <TableContainer component={Paper}>
-        <Table>
+        <Table size="small">
           <TableHead>
-            <TableRow sx={{ bgcolor: 'primary.main' }}>
+            <TableRow>
               {columns.map((col) => (
                 <TableCell
                   key={col.id}
                   sortDirection={orderBy === col.id ? order : false}
-                  sx={{ color: 'primary.contrastText', fontWeight: 'bold' }}
+                  sx={{ fontWeight: 600, py: 1.5 }}
                 >
                   <TableSortLabel
                     active={orderBy === col.id}
                     direction={orderBy === col.id ? order : 'asc'}
                     onClick={() => handleRequestSort(col.id as keyof Data)}
-                    sx={{
-                      '&.MuiTableSortLabel-root:hover': { color: 'secondary.light' },
-                      '&.MuiTableSortLabel-root.Mui-active': { color: 'secondary.main' },
-                      '& .MuiTableSortLabel-icon': { color: 'inherit !important' },
-                    }}
                   >
                     {col.label}
                   </TableSortLabel>
                 </TableCell>
               ))}
-              <TableCell align="right" sx={{ color: 'primary.contrastText', fontWeight: 'bold' }}>
+              <TableCell align="right" sx={{ fontWeight: 600, py: 1.5 }}>
                 Actions
               </TableCell>
             </TableRow>
@@ -165,37 +160,40 @@ const DataTable: FC<DataTableProps> = ({ rows }) => {
                     bgcolor: index % 2 === 0 ? 'background.default' : 'action.hover',
                   }}
                 >
-                  <TableCell>{row.name}</TableCell>
-                  <TableCell>{row.email}</TableCell>
-                  <TableCell>{row.age}</TableCell>
-                  <TableCell align="right">
+                  <TableCell sx={{ py: 1 }}>{row.name}</TableCell>
+                  <TableCell sx={{ py: 1 }}>{row.email}</TableCell>
+                  <TableCell sx={{ py: 1 }}>{row.age}</TableCell>
+                  <TableCell align="right" sx={{ py: 1 }}>
                     <IconButton
+                      size="small"
                       color="primary"
                       onClick={() => handleOpenDrawer("view", row)}
                       aria-label="view"
                     >
-                      <Visibility />
+                      <Visibility fontSize="small" />
                     </IconButton>
                     <IconButton
+                      size="small"
                       color="secondary"
                       onClick={() => handleOpenDrawer("edit", row)}
                       aria-label="edit"
                     >
-                      <Edit />
+                      <Edit fontSize="small" />
                     </IconButton>
                     <IconButton
+                      size="small"
                       color="error"
                       onClick={() => handleDelete(row.id)}
                       aria-label="delete"
                     >
-                      <Delete />
+                      <Delete fontSize="small" />
                     </IconButton>
                   </TableCell>
                 </TableRow>
               ))}
             {sortedRows.length === 0 && (
               <TableRow>
-                <TableCell colSpan={columns.length + 1} align="center">
+                <TableCell colSpan={columns.length + 1} align="center" sx={{ py: 2 }}>
                   No data found.
                 </TableCell>
               </TableRow>
@@ -210,7 +208,9 @@ const DataTable: FC<DataTableProps> = ({ rows }) => {
           rowsPerPage={rowsPerPage}
           onRowsPerPageChange={(e) => setRowsPerPage(Number(e.target.value))}
           rowsPerPageOptions={[5, 10, 25]}
+          size="small"
         />
+        
       </TableContainer>
       <Drawer
         anchor="bottom"
