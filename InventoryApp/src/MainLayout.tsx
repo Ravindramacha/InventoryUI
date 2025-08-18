@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Outlet } from 'react-router-dom';
-import { Box, useTheme, useMediaQuery, Paper } from '@mui/material';
+import { Box, useTheme, useMediaQuery } from '@mui/material';
 import MenuBar from './MenuBar';
 import DrawerApp from './DrawerApp';
 
@@ -39,7 +39,7 @@ export default function MainLayout() {
         sx={{
           flexGrow: 1,
           p: 3,
-          mt: 8,
+          mt: 6,
           width: '100%',
           transition: 'margin 0.3s',
           // overflowY: 'auto',
@@ -47,7 +47,7 @@ export default function MainLayout() {
           minWidth: 0,
         }}
       >
-        <Box
+        {/* <Box
         component={Paper}
         sx={{
           p: 4,
@@ -56,9 +56,9 @@ export default function MainLayout() {
           width: '100%',
           boxSizing: 'border-box',
         }}
-      >
+      > */}
         <Outlet/>
-      </Box>
+      {/* </Box> */}
       </Box>
     </Box>
   );

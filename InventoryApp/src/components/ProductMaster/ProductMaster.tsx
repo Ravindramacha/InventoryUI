@@ -28,7 +28,7 @@ const ProductMaster = () => {
   };
 
   return (
-    <Box sx={{ p: 2 }}>
+    <Box >
       {!showForm ? (
         <>
           <Button 

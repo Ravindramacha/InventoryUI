@@ -271,9 +271,23 @@ const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
 
   return (
     <Box sx={{ maxWidth: '100%', width: '100%' }}>
-        <Typography variant="h5" gutterBottom>
-          {mode === 'add' ? 'Add Product Master' : 'Edit Product Master'}
-        </Typography>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+          <Typography variant="h5">
+            {mode === 'add' ? 'Add Product Master' : 'Edit Product Master'}
+          </Typography>
+          <Button
+            variant="outlined"
+            color="primary"
+            onClick={onCancel}
+            size="small"
+            sx={{ 
+              borderRadius: '8px',
+              minWidth: '100px'
+            }}
+          >
+            Back
+          </Button>
+        </Box>
         <form onSubmit={handleSubmit} style={{ width: '100%' }}>
           <Grid container spacing={2}>
              <Grid size={{xs:12}}>
