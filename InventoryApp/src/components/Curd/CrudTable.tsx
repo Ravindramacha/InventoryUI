@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
-  IconButton,
   Table,
   TableBody,
   TableCell,
@@ -13,16 +12,21 @@ import {
   TextField,
   TablePagination
 } from "@mui/material";
-import { Add, Delete, Edit, Visibility } from "@mui/icons-material";
+import { Add } from "@mui/icons-material";
 import { useGetAllProductMasterForm } from "../../api/ApiQueries";
 import type { ReadProductMasterForm } from "../../Models/MaterialModel";
 import ApplicationFormPage from "../ApplicationForm";
 import ProductMasterView from "../ProductMasterView";
+import ProductDetails from "../ProductDetails";
 
 
 type Mode = "add" | "edit" | "view";
 
-const CrudTable: React.FC = () => {
+interface CrudTableProps {
+  onEdit?: (data: ReadProductMasterForm) => void;
+}
+
+const CrudTable: React.FC<CrudTableProps> = ({ onEdit }) => {
   const { data: productMasterForm = [] } = useGetAllProductMasterForm();
 
   const [rows, setRows] = useState<ReadProductMasterForm[]>([]);
@@ -38,11 +42,11 @@ const CrudTable: React.FC = () => {
 
   const [drawerViewOpen, setDrawerViewOpen] = useState(false);
 
-  const handleOpenViewDrawer = (mode: Mode, row: ReadProductMasterForm | null = null) => {
-    setDrawerMode(mode);
-    setSelectedRow(row);
-    setDrawerViewOpen(true);
-  };
+  // const handleOpenViewDrawer = (mode: Mode, row: ReadProductMasterForm | null = null) => {
+  //   setDrawerMode(mode);
+  //   setSelectedRow(row);
+  //   setDrawerViewOpen(true);
+  // };
 
 
   const [page, setPage] = useState(0);
@@ -54,15 +58,15 @@ const CrudTable: React.FC = () => {
     setDrawerOpen(true);
   };
 
-  const handleDelete = (id: number) => {
-    setRows((prev) => prev.filter((r) => r.productMasterId !== id));
-    if (drawerMode === "add" && selectedRow) {
+  // const handleDelete = (id: number) => {
+  //   setRows((prev) => prev.filter((r) => r.productMasterId !== id));
+  //   if (drawerMode === "add" && selectedRow) {
 
-    } else if (drawerMode === "edit") {
+  //   } else if (drawerMode === "edit") {
 
-    }
-    setDrawerOpen(false);
-  };
+  //   }
+  //   setDrawerOpen(false);
+  // };
 
   // const handleSubmit = (formData: ReadProductMasterForm) => {
   //   if (drawerMode === "add") {
@@ -95,7 +99,7 @@ const CrudTable: React.FC = () => {
 
   return (
     <Box p={2}>
-      {!drawerOpen ? (
+      {!drawerOpen && !selectedRow && (
         <>
           <Box display="flex" justifyContent="space-between" mb={2}>
             <TextField
@@ -128,16 +132,17 @@ const CrudTable: React.FC = () => {
                   <TableCell sx={{ py: 1, fontWeight: 'bold' }}>Product Type</TableCell>
                   <TableCell sx={{ py: 1, fontWeight: 'bold' }}>Product Group</TableCell>
                   <TableCell sx={{ py: 1, fontWeight: 'bold' }}>Product Category</TableCell>
-                  <TableCell sx={{ py: 1, fontWeight: 'bold' }}>Actions</TableCell>
+                  {/* <TableCell sx={{ py: 1, fontWeight: 'bold' }}>Actions</TableCell> */}
                 </TableRow>
               </TableHead>
               <TableBody>
                 {paginatedRows.map((row) => (
                   <TableRow 
                     key={row.productMasterId}
+                    onClick={() => setSelectedRow(row)}
                     sx={{ 
                       '&:hover': {
-                        backgroundColor: '#f1f1fa ',
+                        backgroundColor: '#f1f1fa',
                         cursor: 'pointer'
                       }
                     }}
@@ -146,29 +151,38 @@ const CrudTable: React.FC = () => {
                     <TableCell sx={{ py: 1 }}>{row.productType.productTypeDesc}</TableCell>
                     <TableCell sx={{ py: 1 }}>{row.productGroup.productGroupDesc}</TableCell>
                     <TableCell sx={{ py: 1 }}>{row.productCategory.productCategoryDesc}</TableCell>
-                    <TableCell sx={{ py: 1 }}>
+                    {/* <TableCell sx={{ py: 1 }}>
                       <IconButton
                         size="small"
-                        onClick={() => handleOpenViewDrawer("view", row)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleOpenViewDrawer("view", row);
+                        }}
                         sx={{ color: 'primary.main' }}
                       >
                         <Visibility fontSize="small" />
                       </IconButton>
                       <IconButton
                         size="small"
-                        onClick={() => handleOpenDrawer("edit", row)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleOpenDrawer("edit", row);
+                        }}
                         sx={{ color: 'primary.dark' }}
                       >
                         <Edit fontSize="small" />
                       </IconButton>
                       <IconButton
                         size="small"
-                        onClick={() => handleDelete(row.productMasterId)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDelete(row.productMasterId);
+                        }}
                         sx={{ color: 'error.main' }}
                       >
                         <Delete fontSize="small" />
                       </IconButton>
-                    </TableCell>
+                    </TableCell> */}
                   </TableRow>
                 ))}
                 {paginatedRows.length === 0 && (
@@ -177,8 +191,7 @@ const CrudTable: React.FC = () => {
                       colSpan={5}
                       align="center"
                       sx={{
-                        py: 2,
-                       
+                        py: 2
                       }}
                     >
                       No data found.
@@ -197,9 +210,59 @@ const CrudTable: React.FC = () => {
             />
           </TableContainer>
         </>
-      ) : (
+      )}
+      
+      {selectedRow && !drawerOpen && (
+        <Box>
+          <ProductDetails 
+            product={selectedRow}
+            onBack={() => setSelectedRow(null)}
+            onEdit={(product) => onEdit ? onEdit(product) : handleOpenDrawer("edit", product)}
+          />
+        </Box>
+      )}
+      
+      {drawerOpen && (
         <Box sx={{ backgroundColor: 'white', p: 2, borderRadius: 1 }}>
-          <ApplicationFormPage onCancel={() => setDrawerOpen(false)} />
+          <ApplicationFormPage 
+            onCancel={() => setDrawerOpen(false)} 
+            initialData={drawerMode === "edit" && selectedRow ? {
+              productId: selectedRow.productId,
+              productTypeId: selectedRow.productTypeId,
+              productGroupId: selectedRow.productGroupId,
+              productCategoryId: selectedRow.productCategoryId,
+              salesStatusId: selectedRow.salesStatusId,
+              languageId: selectedRow.languageId,
+              shortDescription: selectedRow.shortDescription,
+              longDescription: selectedRow.longDescription,
+              attribute1: selectedRow.attribute1,
+              attribute2: selectedRow.attribute2,
+              attribute3: selectedRow.attribute3,
+              attribute4: selectedRow.attribute4,
+              attribute5: selectedRow.attribute5,
+              date1: selectedRow.date1,
+              date2: selectedRow.date2,
+              date3: selectedRow.date3,
+              date4: selectedRow.date4,
+              date5: selectedRow.date5,
+              number1: selectedRow.number1,
+              number2: selectedRow.number2,
+              number3: selectedRow.number3,
+              number4: selectedRow.number4,
+              number5: selectedRow.number5,
+              dropDown1: selectedRow.dropDown1,
+              dropDown2: selectedRow.dropDown2,
+              dropDown3: selectedRow.dropDown3,
+              dropDown4: selectedRow.dropDown4,
+              dropDown5: selectedRow.dropDown5,
+              productMasterUomDto: selectedRow.productMasterUomDto,
+              unitOfMeasurement: selectedRow.unitOfMeasurement,
+              manufacturerId: selectedRow.manufacturerId,
+              manufacturerPartNumber: selectedRow.manufacturerPartNumber,
+              notes: selectedRow.notes
+            } : null}
+            mode={drawerMode === "edit" ? "edit" : "add"}
+          />
         </Box>
       )}
 

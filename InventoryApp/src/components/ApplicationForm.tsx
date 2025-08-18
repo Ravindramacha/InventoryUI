@@ -16,13 +16,17 @@ import type { PostProductMasterForm, UomData } from '../Models/MaterialModel';
 import { Snackbar, Alert, CircularProgress, Backdrop } from '@mui/material';
 import { useQueryClient } from '@tanstack/react-query';
 
-interface ApplicationFormPageProps
-{
+interface ApplicationFormPageProps {
   onCancel: () => void;
+  initialData?: PostProductMasterForm | null;
+  mode?: 'add' | 'edit';
 }
 
-
-const ApplicationFormPage :React.FC<ApplicationFormPageProps> = ({ onCancel }) => {
+const ApplicationFormPage: React.FC<ApplicationFormPageProps> = ({ 
+  onCancel, 
+  initialData = null,
+  mode = 'add'
+}) => {
    const initialUOMRows = [
   {
     id: Date.now(),
@@ -41,9 +45,10 @@ const ApplicationFormPage :React.FC<ApplicationFormPageProps> = ({ onCancel }) =
   }
 ];
    const [uomRows, setUomRows] = useState<UomData[]>(initialUOMRows);
-  const [formData, setFormData] = useState<PostProductMasterForm>({
-    productId: '',
-    productTypeId: null,
+  const [formData, setFormData] = useState<PostProductMasterForm>(
+    initialData || {
+      productId: '',
+      productTypeId: null,
     productGroupId:  null,
     productCategoryId:  null,
     salesStatusId: null,
@@ -267,7 +272,7 @@ const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
   return (
     <Box sx={{ maxWidth: '100%', width: '100%' }}>
         <Typography variant="h5" gutterBottom>
-         Product Master
+          {mode === 'add' ? 'Add Product Master' : 'Edit Product Master'}
         </Typography>
         <form onSubmit={handleSubmit} style={{ width: '100%' }}>
           <Grid container spacing={2}>
@@ -279,7 +284,7 @@ const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
               </Box>
              </Grid>
             
-            <Grid size={{xs:12, sm:12, md:6, lg:3}}>
+            <Grid size={{xs:12, sm:12, md:6, lg:4}}>
               <TextField
                 fullWidth
                 size="small"
@@ -290,7 +295,7 @@ const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
                 required
               />
             </Grid>
-             <Grid size={{xs:12, sm:12, md:6, lg:3}}>
+             <Grid size={{xs:12, sm:12, md:6, lg:4}}>
                <Autocomplete
                 disablePortal
                 options={productTypes}
@@ -309,7 +314,7 @@ const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
                 renderInput={(params) => <TextField {...params} label="Product Type" size="small" fullWidth required/>}
               />
             </Grid>
-             <Grid size={{xs:12, sm:12, md:6, lg:3}}>
+             <Grid size={{xs:12, sm:12, md:6, lg:4}}>
                <Autocomplete
                 disablePortal
                 options={productGroups}
@@ -329,7 +334,7 @@ const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
                 renderInput={(params) => <TextField {...params} label="Product Group" size="small" fullWidth required/>}
               />
             </Grid>
-            <Grid size={{xs:12, sm:12, md:6, lg:3}}>
+            <Grid size={{xs:12, sm:12, md:6, lg:4}}>
                <Autocomplete
                 disablePortal
                 options={productCategories}
@@ -348,7 +353,7 @@ const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
                 renderInput={(params) => <TextField {...params} label="Product Category" size="small" fullWidth required/>}
               />
             </Grid>
-            <Grid size={{xs:12, sm:12, md:6, lg:3}}>
+            <Grid size={{xs:12, sm:12, md:6, lg:4}}>
                <Autocomplete
                 disablePortal
                 options={languages}
@@ -367,7 +372,7 @@ const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
                 renderInput={(params) => <TextField {...params} label="Language" size="small" fullWidth required/>}
               />
             </Grid>
-            <Grid size={{xs:12, sm:12, md:6, lg:3}}>
+            <Grid size={{xs:12, sm:12, md:6, lg:4}}>
                <Autocomplete
                 disablePortal
                 options={salesStatuses}
@@ -386,7 +391,7 @@ const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
                 renderInput={(params) => <TextField {...params} label="Status" size="small" fullWidth required/>}
               />
             </Grid>
-             <Grid size={{xs:12, sm:12, md:6, lg:3}}>
+             <Grid size={{xs:12, sm:12, md:6, lg:4}}>
                <Autocomplete
                 disablePortal
                 options={uomDimensions}
@@ -405,12 +410,12 @@ const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
                 renderInput={(params) => <TextField {...params} label="Unit of Measurement" size="small" fullWidth required/>}
               />
             </Grid>
-             <Grid size={{xs:12, sm:12, md:6, lg:6}}>
+             <Grid size={{xs:12, sm:12, md:6, lg:4}}>
               <TextField
                 fullWidth
                 size="small"
                 multiline
-                rows={3}
+                rows={2}
                 label="Short Description"
                 name="shortDescription"
                 value={formData.shortDescription}
@@ -418,12 +423,12 @@ const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
                 required
               />
             </Grid>
-            <Grid size={{xs:12, sm:12, md:6, lg:6}}>
+            <Grid size={{xs:12, sm:12, md:6, lg:4}}>
               <TextField
                 fullWidth
                 size="small"
                 multiline
-                rows={3}
+                rows={2}
                 label="Long Description"
                 name="longDescription"
                 value={formData.longDescription}
@@ -431,37 +436,37 @@ const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
                 required
               />
             </Grid>
-             
+             <Grid></Grid>
             <Grid container spacing={2}>
-              <Grid size={{xs:12, sm:6, md:3}} >
+              <Grid size={{xs:12, sm:6, md:6}} >
                 <DynamicField
                   attributes={textFields}
                   maxFields={5}
                   onChange={(updated) => setTextFields(updated)}
                 />
               </Grid>
-              <Grid  size={{xs:12, sm:6, md:3}}>
+              <Grid  size={{xs:12, sm:6, md:6}}>
                 <DynamicField
                   attributes={numberFields}
                   maxFields={5}
                   onChange={(updated) => setNumberFields(updated)}
                 />
               </Grid>
-              <Grid  size={{xs:12, sm:6, md:3}}>
+              <Grid  size={{xs:12, sm:6, md:6}}>
                 <DynamicField
                   attributes={dateFields}
                   maxFields={5}
                   onChange={(updated) => setDateFields(updated)}
                 />
               </Grid>
-              <Grid size={{xs:12, sm:6, md:3}}>
+              <Grid size={{xs:12, sm:6, md:6}}>
                 <DynamicField
                   attributes={dropDownFields}
                   maxFields={5}
                   onChange={(updated) => setDropDownFields(updated)}
                 />
            </Grid>
-           
+            <Grid></Grid>
             <Grid size={12}> 
               <UOMComponent 
                 initialRows={uomRows}
@@ -472,6 +477,7 @@ const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
                 uomOptions={uomsByDimension}
                 />
             </Grid>
+            
              <Grid size={{xs:12, sm:12, md:6, lg:4}}>
                <Autocomplete
                 disablePortal
@@ -526,7 +532,7 @@ const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
                   minWidth: '100px'
                 }}
               >
-                {loading ? <CircularProgress size={20} color="inherit" /> : 'Submit'}
+                {loading ? <CircularProgress size={20} color="inherit" /> : mode === 'add' ? 'Submit' : 'Update'}
               </Button>
               <Button 
                 variant="outlined" 
@@ -544,7 +550,9 @@ const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
               </Button>
             </Grid>
           </Grid>
+          
           </Grid>
+         
           <Backdrop
             open={backdropOpen}
             sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
@@ -554,7 +562,6 @@ const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
           <Snackbar
             open={snackbarOpen}
             autoHideDuration={3000}
-
             onClose={() => setSnackbarOpen(false)}
             anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
           >
