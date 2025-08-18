@@ -11,8 +11,7 @@ import {
   TableRow,
   Paper,
   TextField,
-  TablePagination,
-  Drawer
+  TablePagination
 } from "@mui/material";
 import { Add, Delete, Edit, Visibility } from "@mui/icons-material";
 import { useGetAllProductMasterForm } from "../../api/ApiQueries";
@@ -134,7 +133,15 @@ const CrudTable: React.FC = () => {
               </TableHead>
               <TableBody>
                 {paginatedRows.map((row) => (
-                  <TableRow key={row.productMasterId}>
+                  <TableRow 
+                    key={row.productMasterId}
+                    sx={{ 
+                      '&:hover': {
+                        backgroundColor: '#f1f1fa ',
+                        cursor: 'pointer'
+                      }
+                    }}
+                  >
                     <TableCell sx={{ py: 1 }}>{row.productId}</TableCell>
                     <TableCell sx={{ py: 1 }}>{row.productType.productTypeDesc}</TableCell>
                     <TableCell sx={{ py: 1 }}>{row.productGroup.productGroupDesc}</TableCell>
