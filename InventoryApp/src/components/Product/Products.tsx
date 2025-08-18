@@ -229,22 +229,36 @@ export default function Products() {
                       Product Type Description
                     </TableSortLabel>
                   </TableCell>
-                  <TableCell sx={{ py: 1.5, fontWeight: 600 }}>Actions</TableCell>
+                  {/* <TableCell sx={{ py: 1.5, fontWeight: 600 }}>Actions</TableCell> */}
                 </TableRow>
               </TableHead>
               <TableBody>
                 {paginatedProducts.map((productType) => (
-                  <TableRow key={productType.productTypeId}>
+                  <TableRow 
+                    key={productType.productTypeId}
+                    onClick={(event) => {
+                      // Prevent row click if clicking on action buttons
+                      if (!(event.target as HTMLElement).closest('.action-buttons')) {
+                        handleOpen(productType);
+                      }
+                    }}
+                    sx={{ 
+                      '&:hover': {
+                        backgroundColor: '#f1f1fa',
+                        cursor: 'pointer'
+                      }
+                    }}
+                  >
                     <TableCell sx={{ py: 1 }}>{productType.productTypeCode}</TableCell>
                     <TableCell sx={{ py: 1 }}>{productType.productTypeDesc}</TableCell>
-                    <TableCell sx={{ py: 1 }}>
+                    {/* <TableCell sx={{ py: 1 }} className="action-buttons">
                       <IconButton size="small" onClick={() => handleOpen(productType)}>
                         <EditIcon fontSize="small" />
                       </IconButton>
                       <IconButton size="small">
                         <DeleteIcon fontSize="small" />
                       </IconButton>
-                    </TableCell>
+                    </TableCell> */}
                   </TableRow>
                 ))}
               </TableBody>
@@ -291,8 +305,10 @@ export default function Products() {
         {/* Rows per page dropdown */}
        
         <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
-          <DialogTitle>{editingProduct ? 'Edit' : 'Add'} Product</DialogTitle>
-          <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 1 }}>
+          <DialogTitle sx={{ p: 1, mb: 0 }}>
+            {editingProduct ? 'Edit' : 'Add'} Product</DialogTitle>
+          <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 0 }}>
+            <span></span>
             <TextField
               name="productTypeCode"
               label="Product Type Code"
