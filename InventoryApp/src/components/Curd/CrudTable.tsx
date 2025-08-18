@@ -24,14 +24,14 @@ import ProductMasterView from "../ProductMasterView";
 type Mode = "add" | "edit" | "view";
 
 const CrudTable: React.FC = () => {
-  const { data: productMasterForm  = [] } = useGetAllProductMasterForm();  
+  const { data: productMasterForm = [] } = useGetAllProductMasterForm();
 
   const [rows, setRows] = useState<ReadProductMasterForm[]>([]);
   useEffect(() => {
-  if (productMasterForm.length > 0) {
-    setRows(productMasterForm);
-  }
-}, [productMasterForm]);
+    if (productMasterForm.length > 0) {
+      setRows(productMasterForm);
+    }
+  }, [productMasterForm]);
   const [search, setSearch] = useState("");
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [drawerMode, setDrawerMode] = useState<Mode>("add");
@@ -57,10 +57,10 @@ const CrudTable: React.FC = () => {
 
   const handleDelete = (id: number) => {
     setRows((prev) => prev.filter((r) => r.productMasterId !== id));
-       if (drawerMode === "add" && selectedRow) {
-     
+    if (drawerMode === "add" && selectedRow) {
+
     } else if (drawerMode === "edit") {
-      
+
     }
     setDrawerOpen(false);
   };
@@ -96,132 +96,131 @@ const CrudTable: React.FC = () => {
 
   return (
     <Box p={2}>
-      <Box display="flex" justifyContent="space-between" mb={2}>
-        <TextField
-          label="Search by name"
-          variant="outlined"
-          size="small"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-        <Button
-          variant="contained"
-          startIcon={<Add />}
-          onClick={() => handleOpenDrawer("add")}
-        >
-          Add New
-        </Button>
-      </Box>
+      {!drawerOpen ? (
+        <>
+          <Box display="flex" justifyContent="space-between" mb={2}>
+            <TextField
+              label="Search by name"
+              variant="outlined"
+              size="small"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+            <Button
+              variant="contained"
+              startIcon={<Add />}
+              size="small"
+              sx={{
+                borderRadius: '10px',
+                minWidth: '100px',
+                textTransform: 'none'
+              }}
+              onClick={() => handleOpenDrawer("add")}
+            >
+              Add New
+            </Button>
+          </Box>
 
-      <TableContainer component={Paper}>
-        <Table size="small" sx={{ border: '1px solid black' }}>
-          <TableHead>
-            <TableRow>
-              <TableCell sx={{ py: 1, fontWeight: 'bold', border: '1px solid black' }}>Product Id</TableCell>
-              <TableCell sx={{ py: 1, fontWeight: 'bold', border: '1px solid black' }}>Product Type</TableCell>
-              <TableCell sx={{ py: 1, fontWeight: 'bold', border: '1px solid black' }}>Product Group</TableCell>
-              <TableCell sx={{ py: 1, fontWeight: 'bold', border: '1px solid black' }}>Product Category</TableCell>
-              <TableCell sx={{ py: 1, fontWeight: 'bold', border: '1px solid black' }}>Actions</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {paginatedRows.map((row) => (
-              <TableRow key={row.productMasterId}>
-                <TableCell sx={{ py: 1, border: '1px solid black' }}>{row.productId}</TableCell>
-                <TableCell sx={{ py: 1, border: '1px solid black' }}>{row.productType.productTypeDesc}</TableCell>
-                <TableCell sx={{ py: 1, border: '1px solid black' }}>{row.productGroup.productGroupDesc}</TableCell>
-                <TableCell sx={{ py: 1, border: '1px solid black' }}>{row.productCategory.productCategoryDesc}</TableCell>
-                <TableCell sx={{ py: 1, border: '1px solid black'  }}>
-                  <IconButton 
-                    size="small" 
-                    onClick={() => handleOpenViewDrawer("view", row)}
-                    sx={{ color: 'primary.main' }}
-                  >
-                    <Visibility fontSize="small" />
-                  </IconButton>
-                  <IconButton 
-                    size="small" 
-                    onClick={() => handleOpenDrawer("edit", row)}
-                    sx={{ color: 'primary.dark' }}
-                  >
-                    <Edit fontSize="small" />
-                  </IconButton>
-                  <IconButton 
-                    size="small" 
-                    onClick={() => handleDelete(row.productMasterId)}
-                    sx={{ color: 'error.main' }}
-                  >
-                    <Delete fontSize="small" />
-                  </IconButton>
-                </TableCell>
-              </TableRow>
-            ))}
-            {paginatedRows.length === 0 && (
-              <TableRow>
-                <TableCell 
-                  colSpan={5} 
-                  align="center" 
-                  sx={{ 
-                    py: 2,
-                    border: '1px solid black'
-                  }}
-                >
-                  No data found.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-        <TablePagination
-          component="div"
-          count={filteredRows.length}
-          page={page}
-          onPageChange={handleChangePage}
-          rowsPerPage={rowsPerPage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
-      </TableContainer>
+          <TableContainer component={Paper}>
+            <Table size="small">
+              <TableHead>
+                <TableRow>
+                  <TableCell sx={{ py: 1, fontWeight: 'bold' }}>Product Id</TableCell>
+                  <TableCell sx={{ py: 1, fontWeight: 'bold' }}>Product Type</TableCell>
+                  <TableCell sx={{ py: 1, fontWeight: 'bold' }}>Product Group</TableCell>
+                  <TableCell sx={{ py: 1, fontWeight: 'bold' }}>Product Category</TableCell>
+                  <TableCell sx={{ py: 1, fontWeight: 'bold' }}>Actions</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {paginatedRows.map((row) => (
+                  <TableRow key={row.productMasterId}>
+                    <TableCell sx={{ py: 1 }}>{row.productId}</TableCell>
+                    <TableCell sx={{ py: 1 }}>{row.productType.productTypeDesc}</TableCell>
+                    <TableCell sx={{ py: 1 }}>{row.productGroup.productGroupDesc}</TableCell>
+                    <TableCell sx={{ py: 1 }}>{row.productCategory.productCategoryDesc}</TableCell>
+                    <TableCell sx={{ py: 1 }}>
+                      <IconButton
+                        size="small"
+                        onClick={() => handleOpenViewDrawer("view", row)}
+                        sx={{ color: 'primary.main' }}
+                      >
+                        <Visibility fontSize="small" />
+                      </IconButton>
+                      <IconButton
+                        size="small"
+                        onClick={() => handleOpenDrawer("edit", row)}
+                        sx={{ color: 'primary.dark' }}
+                      >
+                        <Edit fontSize="small" />
+                      </IconButton>
+                      <IconButton
+                        size="small"
+                        onClick={() => handleDelete(row.productMasterId)}
+                        sx={{ color: 'error.main' }}
+                      >
+                        <Delete fontSize="small" />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                ))}
+                {paginatedRows.length === 0 && (
+                  <TableRow>
+                    <TableCell
+                      colSpan={5}
+                      align="center"
+                      sx={{
+                        py: 2,
+                       
+                      }}
+                    >
+                      No data found.
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+            <TablePagination
+              component="div"
+              count={filteredRows.length}
+              page={page}
+              onPageChange={handleChangePage}
+              rowsPerPage={rowsPerPage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+            />
+          </TableContainer>
+        </>
+      ) : (
+        <Box sx={{ backgroundColor: 'white', p: 2, borderRadius: 1 }}>
+          <ApplicationFormPage onCancel={() => setDrawerOpen(false)} />
+        </Box>
+      )}
 
-    <Drawer
-        anchor="bottom"
-        open={drawerOpen}
-        onClose={() => setDrawerOpen(false)}
-        slotProps={{
-            paper: {
-            sx: {
-                height: '92vh',        // 80% of viewport height
-                width: '100%',         // Full width
-                borderTopLeftRadius: 12,
-                borderTopRightRadius: 12,
-            }
-            }
-        }}
+      {drawerViewOpen && (
+        <Box 
+          sx={{
+            position: 'fixed',
+            top: '64px', // Height of AppBar
+            right: 0,
+            bottom: 0,
+            width: '100%',
+            backgroundColor: 'white',
+            boxShadow: 1,
+            overflowY: 'auto',
+            p: 2,
+            zIndex: 1200
+          }}
         >
-      <Box p={3} height="100%" overflow="auto">
-        <ApplicationFormPage onCancel={() => setDrawerOpen(false)}/>
-      </Box>
-    </Drawer>
-     <Drawer
-        anchor="bottom"
-        open={drawerViewOpen}
-        onClose={() => setDrawerViewOpen(false)}
-        slotProps={{
-            paper: {
-            sx: {
-                height: '92vh',        // 80% of viewport height
-                width: '100%',         // Full width
-                borderTopLeftRadius: 12,
-                borderTopRightRadius: 12,
-            }
-            }
-        }}
-        >
-      <Box p={3} height="100%" overflow="auto">
-        <ProductMasterView />
-      
-        {/* <ApplicationFormPage onCancel={() => setDrawerOpen(false)}/> */}
-      </Box>
-    </Drawer>
+          <ProductMasterView />
+          <Button
+            variant="outlined"
+            onClick={() => setDrawerViewOpen(false)}
+            sx={{ position: 'absolute', top: 16, right: 16 }}
+          >
+            Close
+          </Button>
+        </Box>
+      )}
 
     </Box>
   );
@@ -277,7 +276,7 @@ const CrudTable: React.FC = () => {
 //         )}
 //       </Box>
 //     </Box>
- //);
+//);
 //};
 
 export default CrudTable;

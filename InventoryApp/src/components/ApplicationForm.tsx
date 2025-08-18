@@ -472,7 +472,7 @@ const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
                 uomOptions={uomsByDimension}
                 />
             </Grid>
-             <Grid size={{xs:12, sm:12, md:6, lg:3}}>
+             <Grid size={{xs:12, sm:12, md:6, lg:4}}>
                <Autocomplete
                 disablePortal
                 options={salesStatuses}
@@ -491,7 +491,7 @@ const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
                 renderInput={(params) => <TextField {...params} label="Manuafcturer" size="small" fullWidth required/>}
               />
             </Grid>
-            <Grid size={{xs:12, sm:6, md:3}} >
+            <Grid size={{xs:12, sm:6, md:4}} >
               <TextField
                 fullWidth
                 size="small"
@@ -502,7 +502,7 @@ const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
                 required
               />
             </Grid>
-            <Grid size={{xs:12, sm:12, md:6, lg:6}}>
+            <Grid size={{xs:12, sm:12, md:6, lg:4}}>
               <TextField
                 fullWidth
                 size="small"
@@ -514,11 +514,34 @@ const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
               />
             </Grid>
             <Grid size={12}>
-              <Button variant="contained" color="primary" type="submit" disabled={loading}>
-                {loading ? <CircularProgress size={24} color="inherit" /> : 'Submit'}
+              <Button 
+                variant="contained" 
+                color="primary" 
+                type="submit" 
+                disabled={loading}
+                size="small"
+                sx={{ 
+                  marginLeft: '10px',
+                  borderRadius: '8px',
+                  minWidth: '100px'
+                }}
+              >
+                {loading ? <CircularProgress size={20} color="inherit" /> : 'Submit'}
               </Button>
-              <Button variant="outlined" color="secondary" onClick={resetForm} disabled={loading} style={{ marginLeft: '10px' }}>
-                Reset </Button>
+              <Button 
+                variant="outlined" 
+                color="secondary" 
+                onClick={resetForm} 
+                disabled={loading} 
+                size="small"
+                sx={{ 
+                  marginLeft: '10px',
+                  borderRadius: '8px',
+                  minWidth: '100px'
+                }}
+              >
+                Reset
+              </Button>
             </Grid>
           </Grid>
           </Grid>

@@ -86,22 +86,11 @@ export default function DrawerApp({
 }) {
   const [openSubMenus, setOpenSubMenus] = useState<Record<string, boolean>>({});
   const navigate = useNavigate();
-
-  const isExpanded = open;
-  const drawerWidth = isExpanded ? expandedWidth : collapsedWidth;
-
+  
   const handleNavigation = (path: string) => {
     navigate(path);
-    if (isSmallScreen && isExpanded) onClose(); // Close temporary drawer on nav
+    if (isSmallScreen) onClose();
   };
-
-  const drawerVariant = isSmallScreen
-    ? isExpanded
-      ? 'temporary'
-      : 'permanent'
-    : 'permanent';
-
-  const drawerOpen = isSmallScreen ? isExpanded : true;
 
   const toggleSubMenu = (label: string) => {
   setOpenSubMenus((prev) => ({
@@ -113,49 +102,52 @@ export default function DrawerApp({
 
   return (
     <Drawer
-      variant={drawerVariant}
-      open={drawerOpen}
-      onClose={isSmallScreen && isExpanded ? onClose : undefined}
+      variant={isSmallScreen ? 'temporary' : 'permanent'}
+      open={open}
+      onClose={onClose}
       ModalProps={{ keepMounted: true }}
       sx={{
-        width: drawerWidth,
+        width: open ? 250 : 64,
         flexShrink: 0,
         whiteSpace: 'nowrap',
         '& .MuiDrawer-paper': {
-          width: drawerWidth,
+          width: open ? 250 : 64,
           boxSizing: 'border-box',
           overflowX: 'hidden',
-          transition: 'width 0.3s',
+          transition: theme => theme.transitions.create('width', {
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.enteringScreen,
+          }),
         },
       }}
     >
-      <Box sx={{ width: drawerWidth }}>
+      <Box sx={{ width: open ? 250 : 64 }}>
         <Box sx={(theme) => theme.mixins.toolbar} />
         <List>
           {menuItems.map(({ text, icon, path, children }) => (
             <Box key={text}>
               <ListItem disablePadding sx={{ display: 'block' }}>
-                <Tooltip title={!isExpanded ? text : ''} placement="right">
+                <Tooltip title={!open ? text : ''} placement="right">
                   <ListItemButton
                     onClick={() =>
                       children ? toggleSubMenu(text) : handleNavigation(path!)
                     }
                     sx={{
                       minHeight: 48,
-                      justifyContent: isExpanded ? 'initial' : 'center',
+                      justifyContent: open ? 'initial' : 'center',
                       px: 2.5,
                     }}
                   >
                     <ListItemIcon
                       sx={{
                         minWidth: 0,
-                        mr: isExpanded ? 2 : 'auto',
+                        mr: open ? 2 : 'auto',
                         justifyContent: 'center',
                       }}
                     >
                       {icon}
                     </ListItemIcon>
-                    {isExpanded && (
+                    {open && (
                       <>
                         <ListItemText primary={text} />
                         {children &&
@@ -174,26 +166,26 @@ export default function DrawerApp({
                       <ListItemButton
                         key={child.text}
                         sx={{
-                          pl: isExpanded ? 6 : 2,
-                          justifyContent: isExpanded ? 'initial' : 'center',
+                          pl: open ? 6 : 2,
+                          justifyContent: open ? 'initial' : 'center',
                         }}
                         onClick={() => handleNavigation(child.path)}
                       >
                         <ListItemIcon
                           sx={{
                             minWidth: 0,
-                            mr: isExpanded ? 2 : 'auto',
+                            mr: open ? 2 : 'auto',
                             justifyContent: 'center',
                           }}
                         >
                           {child.icon}
                         </ListItemIcon>
 
-                        {(isExpanded) && (
+                        {open && (
                           <ListItemText primary={child.text} />
                         )}
 
-                        {!isExpanded && !isSmallScreen && (
+                        {!open && !isSmallScreen && (
                           <Tooltip title={child.text} placement="right">
                             <ListItemText primary={''} />
                           </Tooltip>

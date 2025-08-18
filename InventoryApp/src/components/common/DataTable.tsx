@@ -1,4 +1,4 @@
-import  { useState, type FC, type ChangeEvent} from "react";
+import { useState, type FC, type ChangeEvent } from "react";
 import {
   Box,
   Paper,
@@ -118,6 +118,7 @@ const DataTable: FC<DataTableProps> = ({ rows }) => {
     <Box sx={{ p: 2, bgcolor: "background.paper", borderRadius: 3, boxShadow: 4 }}>
       <TextField
         fullWidth
+        size="small"
         variant="outlined"
         placeholder="Search..."
         value={search}

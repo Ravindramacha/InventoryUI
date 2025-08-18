@@ -7,12 +7,13 @@ import DrawerApp from './DrawerApp';
 export default function MainLayout() {
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
-  const [drawerOpen, setDrawerOpen] = useState(!isSmallScreen);
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
-  // Keep drawer open on large screens, close on small screens
   React.useEffect(() => {
-  setDrawerOpen(!isSmallScreen);
-}, [isSmallScreen]); 
+    if (!isSmallScreen) {
+      setDrawerOpen(true);
+    }
+  }, [isSmallScreen]);
 
 
   const toggleDrawer = () => {

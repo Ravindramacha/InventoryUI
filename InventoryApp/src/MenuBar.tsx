@@ -55,7 +55,10 @@ const MenuBar: React.FC<MenuBarProps> = ({ onMenuClick }) => {
           color="inherit"
           aria-label="open drawer"
           sx={{ mr: 2 }}
-          onClick={onMenuClick}
+          onClick={(event) => {
+            event.stopPropagation();
+            onMenuClick();
+          }}
         >
           <MenuIcon />
         </IconButton>
