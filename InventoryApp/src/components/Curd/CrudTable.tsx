@@ -10,7 +10,8 @@ import {
   TableRow,
   Paper,
   TextField,
-  TablePagination
+  TablePagination,
+  TableSortLabel
 } from "@mui/material";
 import { Add } from "@mui/icons-material";
 import { useGetAllProductMasterForm } from "../../api/ApiQueries";
@@ -26,15 +27,56 @@ interface CrudTableProps {
   onEdit?: (data: ReadProductMasterForm) => void;
 }
 
+type Order = 'asc' | 'desc';
+
 const CrudTable: React.FC<CrudTableProps> = ({ onEdit }) => {
   const { data: productMasterForm = [] } = useGetAllProductMasterForm();
 
   const [rows, setRows] = useState<ReadProductMasterForm[]>([]);
+  const [order, setOrder] = useState<Order>('asc');
+  const [orderBy, setOrderBy] = useState<keyof ReadProductMasterForm>('productId');
+
   useEffect(() => {
     if (productMasterForm.length > 0) {
       setRows(productMasterForm);
     }
   }, [productMasterForm]);
+
+  const handleRequestSort = (property: keyof ReadProductMasterForm) => {
+    const isAsc = orderBy === property && order === 'asc';
+    setOrder(isAsc ? 'desc' : 'asc');
+    setOrderBy(property);
+  };
+
+  function getComparator<Key extends keyof any>(
+    order: Order,
+    orderBy: Key,
+  ): (a: { [key in Key]: any }, b: { [key in Key]: any }) => number {
+    return order === 'desc'
+      ? (a, b) => descendingComparator(a, b, orderBy)
+      : (a, b) => -descendingComparator(a, b, orderBy);
+  }
+
+  function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
+    let aValue = a[orderBy];
+    let bValue = b[orderBy];
+
+    // Handle nested properties for productType, productGroup, and productCategory
+    if (orderBy === 'productType' as keyof T) aValue = (a as any).productType.productTypeDesc;
+    if (orderBy === 'productGroup' as keyof T) aValue = (a as any).productGroup.productGroupDesc;
+    if (orderBy === 'productCategory' as keyof T) aValue = (a as any).productCategory.productCategoryDesc;
+    if (orderBy === 'productType' as keyof T) bValue = (b as any).productType.productTypeDesc;
+    if (orderBy === 'productGroup' as keyof T) bValue = (b as any).productGroup.productGroupDesc;
+    if (orderBy === 'productCategory' as keyof T) bValue = (b as any).productCategory.productCategoryDesc;
+
+    if (bValue < aValue) {
+      return -1;
+    }
+    if (bValue > aValue) {
+      return 1;
+    }
+    return 0;
+  }
   const [search, setSearch] = useState("");
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [drawerMode, setDrawerMode] = useState<Mode>("add");
@@ -88,11 +130,16 @@ const CrudTable: React.FC<CrudTableProps> = ({ onEdit }) => {
     setPage(0);
   };
 
+  // First filter
   const filteredRows = rows.filter((r) =>
     r.productId.toLowerCase().includes(search.toLowerCase())
   );
 
-  const paginatedRows = filteredRows.slice(
+  // Then sort
+  const sortedRows = [...filteredRows].sort(getComparator(order, orderBy));
+
+  // Finally paginate
+  const paginatedRows = sortedRows.slice(
     page * rowsPerPage,
     page * rowsPerPage + rowsPerPage
   );
@@ -131,11 +178,42 @@ const CrudTable: React.FC<CrudTableProps> = ({ onEdit }) => {
             <Table size="small">
               <TableHead>
                 <TableRow>
-                  <TableCell sx={{ py: 1, fontWeight: 'bold' }}>Product Id</TableCell>
-                  <TableCell sx={{ py: 1, fontWeight: 'bold' }}>Product Type</TableCell>
-                  <TableCell sx={{ py: 1, fontWeight: 'bold' }}>Product Group</TableCell>
-                  <TableCell sx={{ py: 1, fontWeight: 'bold' }}>Product Category</TableCell>
-                  {/* <TableCell sx={{ py: 1, fontWeight: 'bold' }}>Actions</TableCell> */}
+                  <TableCell sx={{ py: 1, fontWeight: 'bold' }}>
+                    <TableSortLabel
+                      active={orderBy === 'productId'}
+                      direction={orderBy === 'productId' ? order : 'asc'}
+                      onClick={() => handleRequestSort('productId')}
+                    >
+                      Product Id
+                    </TableSortLabel>
+                  </TableCell>
+                  <TableCell sx={{ py: 1, fontWeight: 'bold' }}>
+                    <TableSortLabel
+                      active={orderBy === 'productType'}
+                      direction={orderBy === 'productType' ? order : 'asc'}
+                      onClick={() => handleRequestSort('productType')}
+                    >
+                      Product Type
+                    </TableSortLabel>
+                  </TableCell>
+                  <TableCell sx={{ py: 1, fontWeight: 'bold' }}>
+                    <TableSortLabel
+                      active={orderBy === 'productGroup'}
+                      direction={orderBy === 'productGroup' ? order : 'asc'}
+                      onClick={() => handleRequestSort('productGroup')}
+                    >
+                      Product Group
+                    </TableSortLabel>
+                  </TableCell>
+                  <TableCell sx={{ py: 1, fontWeight: 'bold' }}>
+                    <TableSortLabel
+                      active={orderBy === 'productCategory'}
+                      direction={orderBy === 'productCategory' ? order : 'asc'}
+                      onClick={() => handleRequestSort('productCategory')}
+                    >
+                      Product Category
+                    </TableSortLabel>
+                  </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
