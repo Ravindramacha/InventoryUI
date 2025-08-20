@@ -28,6 +28,9 @@ jobs:
         run: npm run build
         working-directory: InventoryApp
 
+      - name: List dist folder
+        run: ls -R InventoryApp/dist
+        
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
