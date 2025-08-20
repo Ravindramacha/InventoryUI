@@ -73,6 +73,7 @@ export default function Register() {
               label="Email Address"
               name="email"
               autoComplete="email"
+              size="small"
               autoFocus
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -83,6 +84,7 @@ export default function Register() {
               fullWidth
               name="password"
               label="Password"
+              size="small"
               type="password"
               id="password"
               autoComplete="current-password"

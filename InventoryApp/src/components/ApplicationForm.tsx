@@ -5,9 +5,9 @@ import {
   TextField,
   Button,
   Typography,
-  Grid,
   Box,
- } from '@mui/material';
+  Grid
+} from '@mui/material';
 import { useGetAllProductCategories, useGetAllProductGroups, useGetUomsByDimensionId, useLanguages, usePostProductMasterForm, useProductTypes, useSalesStatus, useUomDimension } from '../api/ApiQueries';
 import Autocomplete from '@mui/material/Autocomplete';
 import DynamicField, { type Attribute } from './common/DynamicField';
@@ -16,13 +16,17 @@ import type { PostProductMasterForm, UomData } from '../Models/MaterialModel';
 import { Snackbar, Alert, CircularProgress, Backdrop } from '@mui/material';
 import { useQueryClient } from '@tanstack/react-query';
 
-interface ApplicationFormPageProps
-{
+interface ApplicationFormPageProps {
   onCancel: () => void;
+  initialData?: PostProductMasterForm | null;
+  mode?: 'add' | 'edit';
 }
 
-
-const ApplicationFormPage :React.FC<ApplicationFormPageProps> = ({ onCancel }) => {
+const ApplicationFormPage: React.FC<ApplicationFormPageProps> = ({ 
+  onCancel, 
+  initialData = null,
+  mode = 'add'
+}) => {
    const initialUOMRows = [
   {
     id: Date.now(),
@@ -41,9 +45,10 @@ const ApplicationFormPage :React.FC<ApplicationFormPageProps> = ({ onCancel }) =
   }
 ];
    const [uomRows, setUomRows] = useState<UomData[]>(initialUOMRows);
-  const [formData, setFormData] = useState<PostProductMasterForm>({
-    productId: '',
-    productTypeId: null,
+  const [formData, setFormData] = useState<PostProductMasterForm>(
+    initialData || {
+      productId: '',
+      productTypeId: null,
     productGroupId:  null,
     productCategoryId:  null,
     salesStatusId: null,
@@ -265,32 +270,46 @@ const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
 
 
   return (
-    <>
-        <Typography variant="h5" gutterBottom>
-         Product Master
-        </Typography>
-        <form onSubmit={handleSubmit}>
-          <Grid container spacing={3}>
+    <Box sx={{ maxWidth: '100%', width: '100%' }}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+          <Typography variant="h5">
+            {mode === 'add' ? 'Add Product Master' : 'Edit Product Master'}
+          </Typography>
+          <Button
+            variant="outlined"
+            color="primary"
+            onClick={onCancel}
+            size="small"
+            sx={{ 
+              borderRadius: '8px',
+              minWidth: '100px'
+            }}
+          >
+            Back
+          </Button>
+        </Box>
+        <form onSubmit={handleSubmit} style={{ width: '100%' }}>
+          <Grid container spacing={2}>
              <Grid size={{xs:12}}>
               <Box component="section">
-                <Typography variant="h6" gutterBottom>
+                <Typography variant="body1" gutterBottom>
                   General Data
                 </Typography>
               </Box>
              </Grid>
             
-            <Grid size={{xs:12, sm:12, md:6, lg:3}}>
+            <Grid size={{xs:12, sm:12, md:6, lg:4}}>
               <TextField
                 fullWidth
+                size="small"
                 label="Product Id"
                 name="productId"
                 value={formData.productId}
                 onChange={handleChange}
                 required
-                
               />
             </Grid>
-             <Grid size={{xs:12, sm:12, md:6, lg:3}}>
+             <Grid size={{xs:12, sm:12, md:6, lg:4}}>
                <Autocomplete
                 disablePortal
                 options={productTypes}
@@ -306,10 +325,10 @@ const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
                   }));
                 }}
                 fullWidth
-                renderInput={(params) => <TextField {...params} label="Product Type" fullWidth required/>}
+                renderInput={(params) => <TextField {...params} label="Product Type" size="small" fullWidth required/>}
               />
             </Grid>
-             <Grid size={{xs:12, sm:12, md:6, lg:3}}>
+             <Grid size={{xs:12, sm:12, md:6, lg:4}}>
                <Autocomplete
                 disablePortal
                 options={productGroups}
@@ -326,10 +345,10 @@ const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
                   }));
                 }}
                 fullWidth
-                renderInput={(params) => <TextField {...params} label="Product Group" fullWidth required/>}
+                renderInput={(params) => <TextField {...params} label="Product Group" size="small" fullWidth required/>}
               />
             </Grid>
-            <Grid size={{xs:12, sm:12, md:6, lg:3}}>
+            <Grid size={{xs:12, sm:12, md:6, lg:4}}>
                <Autocomplete
                 disablePortal
                 options={productCategories}
@@ -345,10 +364,10 @@ const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
                   }));
                 }}
                 fullWidth
-                renderInput={(params) => <TextField {...params} label="Product Category" fullWidth required/>}
+                renderInput={(params) => <TextField {...params} label="Product Category" size="small" fullWidth required/>}
               />
             </Grid>
-            <Grid size={{xs:12, sm:12, md:6, lg:3}}>
+            <Grid size={{xs:12, sm:12, md:6, lg:4}}>
                <Autocomplete
                 disablePortal
                 options={languages}
@@ -364,10 +383,10 @@ const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
                   }));
                 }}
                 fullWidth
-                renderInput={(params) => <TextField {...params} label="Language" fullWidth required/>}
+                renderInput={(params) => <TextField {...params} label="Language" size="small" fullWidth required/>}
               />
             </Grid>
-            <Grid size={{xs:12, sm:12, md:6, lg:3}}>
+            <Grid size={{xs:12, sm:12, md:6, lg:4}}>
                <Autocomplete
                 disablePortal
                 options={salesStatuses}
@@ -383,10 +402,10 @@ const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
                   }));
                 }}
                 fullWidth
-                renderInput={(params) => <TextField {...params} label="Status" fullWidth required/>}
+                renderInput={(params) => <TextField {...params} label="Status" size="small" fullWidth required/>}
               />
             </Grid>
-             <Grid size={{xs:12, sm:12, md:6, lg:3}}>
+             <Grid size={{xs:12, sm:12, md:6, lg:4}}>
                <Autocomplete
                 disablePortal
                 options={uomDimensions}
@@ -402,14 +421,15 @@ const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
                   }));
                 }}
                 fullWidth
-                renderInput={(params) => <TextField {...params} label="Unit of Measurement" fullWidth required/>}
+                renderInput={(params) => <TextField {...params} label="Unit of Measurement" size="small" fullWidth required/>}
               />
             </Grid>
-             <Grid size={{xs:12, sm:12, md:6, lg:6}}>
+             <Grid size={{xs:12, sm:12, md:6, lg:4}}>
               <TextField
                 fullWidth
+                size="small"
                 multiline
-                rows={4}
+                rows={2}
                 label="Short Description"
                 name="shortDescription"
                 value={formData.shortDescription}
@@ -417,11 +437,12 @@ const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
                 required
               />
             </Grid>
-            <Grid size={{xs:12, sm:12, md:6, lg:6}}>
+            <Grid size={{xs:12, sm:12, md:6, lg:4}}>
               <TextField
                 fullWidth
+                size="small"
                 multiline
-                rows={4}
+                rows={2}
                 label="Long Description"
                 name="longDescription"
                 value={formData.longDescription}
@@ -429,36 +450,37 @@ const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
                 required
               />
             </Grid>
-             
-            <Grid size={{xs:12, sm:12, md:6, lg:5}}>
-              <DynamicField
-               attributes={textFields}
-               maxFields={5}
-               onChange={(updated) => setTextFields(updated)}
-              />
-          </Grid>
-          <Grid size={{xs:12, sm:12, md:6, lg:5}}>
-            <DynamicField
-              attributes={dateFields}
-              maxFields={5}
-              onChange={(updated) => setDateFields(updated)}
-             />
+             <Grid></Grid>
+            <Grid container spacing={2}>
+              <Grid size={{xs:12, sm:6, md:6}} >
+                <DynamicField
+                  attributes={textFields}
+                  maxFields={5}
+                  onChange={(updated) => setTextFields(updated)}
+                />
+              </Grid>
+              <Grid  size={{xs:12, sm:6, md:6}}>
+                <DynamicField
+                  attributes={numberFields}
+                  maxFields={5}
+                  onChange={(updated) => setNumberFields(updated)}
+                />
+              </Grid>
+              <Grid  size={{xs:12, sm:6, md:6}}>
+                <DynamicField
+                  attributes={dateFields}
+                  maxFields={5}
+                  onChange={(updated) => setDateFields(updated)}
+                />
+              </Grid>
+              <Grid size={{xs:12, sm:6, md:6}}>
+                <DynamicField
+                  attributes={dropDownFields}
+                  maxFields={5}
+                  onChange={(updated) => setDropDownFields(updated)}
+                />
            </Grid>
-            <Grid size={{xs:12, sm:12, md:6, lg:5}}>
-            <DynamicField
-               attributes={numberFields}
-               maxFields={5}
-               onChange={(updated) => setNumberFields(updated)}
-              />
-           </Grid>
-            <Grid size={{xs:12, sm:12, md:6, lg:5}}>
-            <DynamicField
-               attributes={dropDownFields}
-               maxFields={5}
-               onChange={(updated) => setDropDownFields(updated)}
-              />
-           </Grid>
-           
+            <Grid></Grid>
             <Grid size={12}> 
               <UOMComponent 
                 initialRows={uomRows}
@@ -469,7 +491,8 @@ const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
                 uomOptions={uomsByDimension}
                 />
             </Grid>
-             <Grid size={{xs:12, sm:12, md:6, lg:3}}>
+            
+             <Grid size={{xs:12, sm:12, md:6, lg:4}}>
                <Autocomplete
                 disablePortal
                 options={salesStatuses}
@@ -485,25 +508,24 @@ const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
                   }));
                 }}
                 fullWidth
-                renderInput={(params) => <TextField {...params} label="Manuafcturer" fullWidth required/>}
+                renderInput={(params) => <TextField {...params} label="Manuafcturer" size="small" fullWidth required/>}
               />
             </Grid>
-            <Grid size={{xs:12, sm:12, md:6, lg:3}}>
+            <Grid size={{xs:12, sm:6, md:4}} >
               <TextField
                 fullWidth
+                size="small"
                 label="Manufacturer Part Number"
                 name="manufacturerPartNumber"
                 value={formData.manufacturerPartNumber}
                 onChange={handleChange}
                 required
-                
               />
             </Grid>
-            <Grid size={{xs:12, sm:12, md:6, lg:6}}>
+            <Grid size={{xs:12, sm:12, md:6, lg:4}}>
               <TextField
                 fullWidth
-                // multiline
-                // rows={4}
+                size="small"
                 label="Notes"
                 name="notes"
                 value={formData.notes}
@@ -512,13 +534,39 @@ const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
               />
             </Grid>
             <Grid size={12}>
-              <Button variant="contained" color="primary" type="submit" disabled={loading}>
-                {loading ? <CircularProgress size={24} color="inherit" /> : 'Submit'}
+              <Button 
+                variant="contained" 
+                color="primary" 
+                type="submit" 
+                disabled={loading}
+                size="small"
+                sx={{ 
+                  marginLeft: '10px',
+                  borderRadius: '8px',
+                  minWidth: '100px'
+                }}
+              >
+                {loading ? <CircularProgress size={20} color="inherit" /> : mode === 'add' ? 'Submit' : 'Update'}
               </Button>
-              <Button variant="outlined" color="secondary" onClick={resetForm} disabled={loading} style={{ marginLeft: '10px' }}>
-                Reset </Button>
+              <Button 
+                variant="outlined" 
+                color="secondary" 
+                onClick={resetForm} 
+                disabled={loading} 
+                size="small"
+                sx={{ 
+                  marginLeft: '10px',
+                  borderRadius: '8px',
+                  minWidth: '100px'
+                }}
+              >
+                Reset
+              </Button>
             </Grid>
           </Grid>
+          
+          </Grid>
+         
           <Backdrop
             open={backdropOpen}
             sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
@@ -528,7 +576,6 @@ const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
           <Snackbar
             open={snackbarOpen}
             autoHideDuration={3000}
-
             onClose={() => setSnackbarOpen(false)}
             anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
           >
@@ -536,7 +583,8 @@ const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
               {snackbarMessage}
             </Alert>
           </Snackbar>               
-        </form></>
+        </form>
+    </Box>
   );
 };
 

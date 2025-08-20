@@ -28,7 +28,7 @@ const App: React.FC = () => (
             <Route path="/profile" element={<Profile />} />
             <Route path="/profile/update" element={<ProfileUpdate />} />
             <Route path="/notifications" element={<NotificationList />} />
-            <Route path="/form" element={<ApplicationFormPage onCancel={() => {}} />} />
+            <Route path="/form" element={<ApplicationFormPage onCancel={() => window.history.back()} />} />
             <Route path="/dashboard/analytics" element={<Dashboard/>} />
             <Route path="/vendor" element={<VendorForm/>} />
             <Route path="/products" element={<Products/>} />

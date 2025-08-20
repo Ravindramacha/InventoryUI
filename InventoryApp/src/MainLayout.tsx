@@ -1,18 +1,19 @@
 import React, { useState } from 'react';
 import { Outlet } from 'react-router-dom';
-import { Box, useTheme, useMediaQuery, Paper } from '@mui/material';
+import { Box, useTheme, useMediaQuery } from '@mui/material';
 import MenuBar from './MenuBar';
 import DrawerApp from './DrawerApp';
 
 export default function MainLayout() {
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
-  const [drawerOpen, setDrawerOpen] = useState(!isSmallScreen);
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
-  // Keep drawer open on large screens, close on small screens
   React.useEffect(() => {
-  setDrawerOpen(!isSmallScreen);
-}, [isSmallScreen]); 
+    if (!isSmallScreen) {
+      setDrawerOpen(true);
+    }
+  }, [isSmallScreen]);
 
 
   const toggleDrawer = () => {
@@ -37,7 +38,7 @@ export default function MainLayout() {
         component="main"
         sx={{
           flexGrow: 1,
-          p: 3,
+          p: 2,
           mt: 8,
           width: '100%',
           transition: 'margin 0.3s',
@@ -46,7 +47,7 @@ export default function MainLayout() {
           minWidth: 0,
         }}
       >
-        <Box
+        {/* <Box
         component={Paper}
         sx={{
           p: 4,
@@ -55,9 +56,9 @@ export default function MainLayout() {
           width: '100%',
           boxSizing: 'border-box',
         }}
-      >
+      > */}
         <Outlet/>
-      </Box>
+      {/* </Box> */}
       </Box>
     </Box>
   );

@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
-  IconButton,
   Table,
   TableBody,
   TableCell,
@@ -12,26 +11,72 @@ import {
   Paper,
   TextField,
   TablePagination,
-  Drawer
+  TableSortLabel
 } from "@mui/material";
-import { Add, Delete, Edit, Visibility } from "@mui/icons-material";
+import { Add } from "@mui/icons-material";
 import { useGetAllProductMasterForm } from "../../api/ApiQueries";
 import type { ReadProductMasterForm } from "../../Models/MaterialModel";
 import ApplicationFormPage from "../ApplicationForm";
 import ProductMasterView from "../ProductMasterView";
+import ProductDetails from "../ProductDetails";
 
 
 type Mode = "add" | "edit" | "view";
 
-const CrudTable: React.FC = () => {
-  const { data: productMasterForm  = [] } = useGetAllProductMasterForm();  
+interface CrudTableProps {
+  onEdit?: (data: ReadProductMasterForm) => void;
+}
+
+type Order = 'asc' | 'desc';
+
+const CrudTable: React.FC<CrudTableProps> = ({ onEdit }) => {
+  const { data: productMasterForm = [] } = useGetAllProductMasterForm();
 
   const [rows, setRows] = useState<ReadProductMasterForm[]>([]);
+  const [order, setOrder] = useState<Order>('asc');
+  const [orderBy, setOrderBy] = useState<keyof ReadProductMasterForm>('productId');
+
   useEffect(() => {
-  if (productMasterForm.length > 0) {
-    setRows(productMasterForm);
+    if (productMasterForm.length > 0) {
+      setRows(productMasterForm);
+    }
+  }, [productMasterForm]);
+
+  const handleRequestSort = (property: keyof ReadProductMasterForm) => {
+    const isAsc = orderBy === property && order === 'asc';
+    setOrder(isAsc ? 'desc' : 'asc');
+    setOrderBy(property);
+  };
+
+  function getComparator<Key extends keyof any>(
+    order: Order,
+    orderBy: Key,
+  ): (a: { [key in Key]: any }, b: { [key in Key]: any }) => number {
+    return order === 'desc'
+      ? (a, b) => descendingComparator(a, b, orderBy)
+      : (a, b) => -descendingComparator(a, b, orderBy);
   }
-}, [productMasterForm]);
+
+  function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
+    let aValue = a[orderBy];
+    let bValue = b[orderBy];
+
+    // Handle nested properties for productType, productGroup, and productCategory
+    if (orderBy === 'productType' as keyof T) aValue = (a as any).productType.productTypeDesc;
+    if (orderBy === 'productGroup' as keyof T) aValue = (a as any).productGroup.productGroupDesc;
+    if (orderBy === 'productCategory' as keyof T) aValue = (a as any).productCategory.productCategoryDesc;
+    if (orderBy === 'productType' as keyof T) bValue = (b as any).productType.productTypeDesc;
+    if (orderBy === 'productGroup' as keyof T) bValue = (b as any).productGroup.productGroupDesc;
+    if (orderBy === 'productCategory' as keyof T) bValue = (b as any).productCategory.productCategoryDesc;
+
+    if (bValue < aValue) {
+      return -1;
+    }
+    if (bValue > aValue) {
+      return 1;
+    }
+    return 0;
+  }
   const [search, setSearch] = useState("");
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [drawerMode, setDrawerMode] = useState<Mode>("add");
@@ -39,15 +84,15 @@ const CrudTable: React.FC = () => {
 
   const [drawerViewOpen, setDrawerViewOpen] = useState(false);
 
-  const handleOpenViewDrawer = (mode: Mode, row: ReadProductMasterForm | null = null) => {
-    setDrawerMode(mode);
-    setSelectedRow(row);
-    setDrawerViewOpen(true);
-  };
+  // const handleOpenViewDrawer = (mode: Mode, row: ReadProductMasterForm | null = null) => {
+  //   setDrawerMode(mode);
+  //   setSelectedRow(row);
+  //   setDrawerViewOpen(true);
+  // };
 
 
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const handleOpenDrawer = (mode: Mode, row: ReadProductMasterForm | null = null) => {
     setDrawerMode(mode);
@@ -55,15 +100,15 @@ const CrudTable: React.FC = () => {
     setDrawerOpen(true);
   };
 
-  const handleDelete = (id: number) => {
-    setRows((prev) => prev.filter((r) => r.productMasterId !== id));
-       if (drawerMode === "add" && selectedRow) {
-     
-    } else if (drawerMode === "edit") {
-      
-    }
-    setDrawerOpen(false);
-  };
+  // const handleDelete = (id: number) => {
+  //   setRows((prev) => prev.filter((r) => r.productMasterId !== id));
+  //   if (drawerMode === "add" && selectedRow) {
+
+  //   } else if (drawerMode === "edit") {
+
+  //   }
+  //   setDrawerOpen(false);
+  // };
 
   // const handleSubmit = (formData: ReadProductMasterForm) => {
   //   if (drawerMode === "add") {
@@ -85,123 +130,261 @@ const CrudTable: React.FC = () => {
     setPage(0);
   };
 
-  const filteredRows = rows.filter((r) =>
-    r.productId.toLowerCase().includes(search.toLowerCase())
-  );
+  // First filter - Global search across all relevant fields
+  const filteredRows = rows.filter((row) => {
+    const searchTerm = search.toLowerCase();
+    return (
+      row.productId.toLowerCase().includes(searchTerm) ||
+      row.productType.productTypeDesc.toLowerCase().includes(searchTerm) ||
+      row.productType.productTypeCode.toLowerCase().includes(searchTerm) ||
+      row.productGroup.productGroupDesc.toLowerCase().includes(searchTerm) ||
+      row.productGroup.productGroupCode.toLowerCase().includes(searchTerm) ||
+      row.productCategory.productCategoryDesc.toLowerCase().includes(searchTerm) ||
+      row.productCategory.productCategoryCode.toLowerCase().includes(searchTerm) ||
+      (row.shortDescription || '').toLowerCase().includes(searchTerm) ||
+      (row.longDescription || '').toLowerCase().includes(searchTerm)
+    );
+  });
 
-  const paginatedRows = filteredRows.slice(
+  // Then sort
+  const sortedRows = [...filteredRows].sort(getComparator(order, orderBy));
+
+  // Finally paginate
+  const paginatedRows = sortedRows.slice(
     page * rowsPerPage,
     page * rowsPerPage + rowsPerPage
   );
 
   return (
-    <Box p={2}>
-      <Box display="flex" justifyContent="space-between" mb={2}>
-        <TextField
-          label="Search by name"
-          variant="outlined"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-        <Button
-          variant="contained"
-          startIcon={<Add />}
-          onClick={() => handleOpenDrawer("add")}
-        >
-          Add New
-        </Button>
-      </Box>
+    <Box >
+      {!drawerOpen && !selectedRow && (
+        <>
+          <Box display="flex" justifyContent="space-between" sx={{ 
+          p: 2,
+          mt: 0
+        }}>
+            <TextField
+              label="Search"
+              placeholder="search"
+              variant="outlined"
+              size="small"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              sx={{ width: 250 }}
+            />
+            <Button
+              variant="contained"
+              startIcon={<Add />}
+              size="small"
+              sx={{
+                borderRadius: '10px',
+                minWidth: '100px',
+                textTransform: 'none'
+              }}
+              onClick={() => handleOpenDrawer("add")}
+            >
+              Add New
+            </Button>
+          </Box>
 
-      <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Product Id</TableCell>
-              <TableCell>Product Type</TableCell>
-              <TableCell>Product Group</TableCell>
-              <TableCell>Product Category</TableCell>
-              <TableCell>Actions</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {paginatedRows.map((row) => (
-              <TableRow key={row.productMasterId}>
-                <TableCell>{row.productId}</TableCell>
-                <TableCell>{row.productType.productTypeDesc}</TableCell>
-                <TableCell>{row.productGroup.productGroupDesc}</TableCell>
-                <TableCell>{row.productCategory.productCategoryDesc}</TableCell>
-                <TableCell>
-                  <IconButton onClick={() => handleOpenViewDrawer("view", row)}>
-                    <Visibility />
-                  </IconButton>
-                  <IconButton onClick={() => handleOpenDrawer("edit", row)}>
-                    <Edit />
-                  </IconButton>
-                  <IconButton onClick={() => handleDelete(row.productMasterId)}>
-                    <Delete />
-                  </IconButton>
-                </TableCell>
-              </TableRow>
-            ))}
-            {paginatedRows.length === 0 && (
-              <TableRow>
-                <TableCell colSpan={5} align="center">
-                  No data found.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-        <TablePagination
-          component="div"
-          count={filteredRows.length}
-          page={page}
-          onPageChange={handleChangePage}
-          rowsPerPage={rowsPerPage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
-      </TableContainer>
-
-    <Drawer
-        anchor="bottom"
-        open={drawerOpen}
-        onClose={() => setDrawerOpen(false)}
-        slotProps={{
-            paper: {
-            sx: {
-                height: '92vh',        // 80% of viewport height
-                width: '100%',         // Full width
-                borderTopLeftRadius: 12,
-                borderTopRightRadius: 12,
-            }
-            }
-        }}
-        >
-      <Box p={3} height="100%" overflow="auto">
-        <ApplicationFormPage onCancel={() => setDrawerOpen(false)}/>
-      </Box>
-    </Drawer>
-     <Drawer
-        anchor="bottom"
-        open={drawerViewOpen}
-        onClose={() => setDrawerViewOpen(false)}
-        slotProps={{
-            paper: {
-            sx: {
-                height: '92vh',        // 80% of viewport height
-                width: '100%',         // Full width
-                borderTopLeftRadius: 12,
-                borderTopRightRadius: 12,
-            }
-            }
-        }}
-        >
-      <Box p={3} height="100%" overflow="auto">
-        <ProductMasterView />
+          <TableContainer component={Paper}>
+            <Table size="small">
+              <TableHead>
+                <TableRow>
+                  <TableCell sx={{ py: 1, fontWeight: 'bold' }}>
+                    <TableSortLabel
+                      active={orderBy === 'productId'}
+                      direction={orderBy === 'productId' ? order : 'asc'}
+                      onClick={() => handleRequestSort('productId')}
+                    >
+                      Product Id
+                    </TableSortLabel>
+                  </TableCell>
+                  <TableCell sx={{ py: 1, fontWeight: 'bold' }}>
+                    <TableSortLabel
+                      active={orderBy === 'productType'}
+                      direction={orderBy === 'productType' ? order : 'asc'}
+                      onClick={() => handleRequestSort('productType')}
+                    >
+                      Product Type
+                    </TableSortLabel>
+                  </TableCell>
+                  <TableCell sx={{ py: 1, fontWeight: 'bold' }}>
+                    <TableSortLabel
+                      active={orderBy === 'productGroup'}
+                      direction={orderBy === 'productGroup' ? order : 'asc'}
+                      onClick={() => handleRequestSort('productGroup')}
+                    >
+                      Product Group
+                    </TableSortLabel>
+                  </TableCell>
+                  <TableCell sx={{ py: 1, fontWeight: 'bold' }}>
+                    <TableSortLabel
+                      active={orderBy === 'productCategory'}
+                      direction={orderBy === 'productCategory' ? order : 'asc'}
+                      onClick={() => handleRequestSort('productCategory')}
+                    >
+                      Product Category
+                    </TableSortLabel>
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {paginatedRows.map((row) => (
+                  <TableRow 
+                    key={row.productMasterId}
+                    onClick={() => setSelectedRow(row)}
+                    sx={{ 
+                      '&:hover': {
+                        backgroundColor: '#f1f1fa',
+                        cursor: 'pointer'
+                      }
+                    }}
+                  >
+                    <TableCell sx={{ py: 1 }}>{row.productId}</TableCell>
+                    <TableCell sx={{ py: 1 }}>{row.productType.productTypeDesc}</TableCell>
+                    <TableCell sx={{ py: 1 }}>{row.productGroup.productGroupDesc}</TableCell>
+                    <TableCell sx={{ py: 1 }}>{row.productCategory.productCategoryDesc}</TableCell>
+                    {/* <TableCell sx={{ py: 1 }}>
+                      <IconButton
+                        size="small"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleOpenViewDrawer("view", row);
+                        }}
+                        sx={{ color: 'primary.main' }}
+                      >
+                        <Visibility fontSize="small" />
+                      </IconButton>
+                      <IconButton
+                        size="small"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleOpenDrawer("edit", row);
+                        }}
+                        sx={{ color: 'primary.dark' }}
+                      >
+                        <Edit fontSize="small" />
+                      </IconButton>
+                      <IconButton
+                        size="small"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDelete(row.productMasterId);
+                        }}
+                        sx={{ color: 'error.main' }}
+                      >
+                        <Delete fontSize="small" />
+                      </IconButton>
+                    </TableCell> */}
+                  </TableRow>
+                ))}
+                {paginatedRows.length === 0 && (
+                  <TableRow>
+                    <TableCell
+                      colSpan={5}
+                      align="center"
+                      sx={{
+                        py: 2
+                      }}
+                    >
+                      No data found.
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+            <TablePagination
+              component="div"
+              count={filteredRows.length}
+              page={page}
+              onPageChange={handleChangePage}
+              rowsPerPage={rowsPerPage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+            />
+          </TableContainer>
+        </>
+      )}
       
-        {/* <ApplicationFormPage onCancel={() => setDrawerOpen(false)}/> */}
-      </Box>
-    </Drawer>
+      {selectedRow && !drawerOpen && (
+        <Box>
+          <ProductDetails 
+            product={selectedRow}
+            onBack={() => setSelectedRow(null)}
+            onEdit={(product) => onEdit ? onEdit(product) : handleOpenDrawer("edit", product)}
+          />
+        </Box>
+      )}
+      
+      {drawerOpen && (
+        <Box sx={{ backgroundColor: 'white', p: 2, borderRadius: 1 }}>
+          <ApplicationFormPage 
+            onCancel={() => setDrawerOpen(false)} 
+            initialData={drawerMode === "edit" && selectedRow ? {
+              productId: selectedRow.productId,
+              productTypeId: selectedRow.productTypeId,
+              productGroupId: selectedRow.productGroupId,
+              productCategoryId: selectedRow.productCategoryId,
+              salesStatusId: selectedRow.salesStatusId,
+              languageId: selectedRow.languageId,
+              shortDescription: selectedRow.shortDescription,
+              longDescription: selectedRow.longDescription,
+              attribute1: selectedRow.attribute1,
+              attribute2: selectedRow.attribute2,
+              attribute3: selectedRow.attribute3,
+              attribute4: selectedRow.attribute4,
+              attribute5: selectedRow.attribute5,
+              date1: selectedRow.date1,
+              date2: selectedRow.date2,
+              date3: selectedRow.date3,
+              date4: selectedRow.date4,
+              date5: selectedRow.date5,
+              number1: selectedRow.number1,
+              number2: selectedRow.number2,
+              number3: selectedRow.number3,
+              number4: selectedRow.number4,
+              number5: selectedRow.number5,
+              dropDown1: selectedRow.dropDown1,
+              dropDown2: selectedRow.dropDown2,
+              dropDown3: selectedRow.dropDown3,
+              dropDown4: selectedRow.dropDown4,
+              dropDown5: selectedRow.dropDown5,
+              productMasterUomDto: selectedRow.productMasterUomDto,
+              unitOfMeasurement: selectedRow.unitOfMeasurement,
+              manufacturerId: selectedRow.manufacturerId,
+              manufacturerPartNumber: selectedRow.manufacturerPartNumber,
+              notes: selectedRow.notes
+            } : null}
+            mode={drawerMode === "edit" ? "edit" : "add"}
+          />
+        </Box>
+      )}
+
+      {drawerViewOpen && (
+        <Box 
+          sx={{
+            position: 'fixed',
+            top: '64px', // Height of AppBar
+            right: 0,
+            bottom: 0,
+            width: '100%',
+            backgroundColor: 'white',
+            boxShadow: 1,
+            overflowY: 'auto',
+            p: 2,
+            zIndex: 1200
+          }}
+        >
+          <ProductMasterView />
+          <Button
+            variant="outlined"
+            onClick={() => setDrawerViewOpen(false)}
+            sx={{ position: 'absolute', top: 16, right: 16 }}
+          >
+            Close
+          </Button>
+        </Box>
+      )}
 
     </Box>
   );
@@ -257,7 +440,7 @@ const CrudTable: React.FC = () => {
 //         )}
 //       </Box>
 //     </Box>
- //);
+//);
 //};
 
 export default CrudTable;

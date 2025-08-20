@@ -4,6 +4,7 @@ import {
   TextField,
   IconButton,
   Autocomplete,
+  Grid,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -81,83 +82,124 @@ const UOMComponent: React.FC<UOMComponentProps> = ({
   return (
     <Stack spacing={2}>
             {rows.map((row, index) => (
-              <Stack
-                direction="row"
-                spacing={1}
-                key={row.id}
-                alignItems="center"
-              >
-              <Autocomplete
-                   disablePortal
-                   options={uomOptions}
-                   getOptionLabel={(option) => `${option.uomDesc} (${option.uomCode})` || ''}
-                   isOptionEqualToValue={(option, value) => option.uomId === value.uomId}
-                    onChange={
-                      (_, newValue) => handleChange(row.id, "uom", newValue?.uomId?.toString() || "")
-                   }
-                   size="medium"
-                   renderInput={(params) => <TextField {...params} label="Uom" required/>}
-                 />
-                 <TextField
-                label="Qty"
-                value={row.quantity}
-                onChange={(e) => handleChange(row.id, "quantity", e.target.value)}
-                />
-                 <TextField
-                label="Primary Qty"
-                value={row.primaryQty}
-                onChange={(e) => handleChange(row.id, "primaryQty", e.target.value)}
-                />
-                 <TextField
-                label="Length"
-                value={row.length}
-                onChange={(e) => handleChange(row.id, "length", e.target.value)}
-                />
-                 <TextField
-                label="Width"
-                value={row.width}
-                onChange={(e) => handleChange(row.id, "width", e.target.value)}
-                />
-                 <TextField
-                label="Height"
-                value={row.height}
-                onChange={(e) => handleChange(row.id, "height", e.target.value)}
-                />
-                 <TextField
-                label="Length UOM"
-                value={row.lengthUom}
-                onChange={(e) => handleChange(row.id, "lengthUom", e.target.value)}
-                />
-                  <TextField
-                label="Net Weight"
-                value={row.netWeight}
-                onChange={(e) => handleChange(row.id, "netWeight", e.target.value)}
-                />
-                 <TextField
-                label="Gross Weight"
-                value={row.grossWeight}
-                onChange={(e) => handleChange(row.id, "grossWeight", e.target.value)}
-                />
-               
-                 <TextField
-                label="Weight UOM"
-                value={row.weightUom}
-                onChange={(e) => handleChange(row.id, "weightUom", e.target.value)}
-                />
-               <TextField
-                  label="Volume"
-                  value={row.volume}
-                  onChange={(e) =>
-                    handleChange(row.id, "volume", e.target.value)
-                  }
-                />
-            <TextField
-              label="Volume UOM"
-              value={row.volumeUom}
-              onChange={(e) =>
-                handleChange(row.id, "volumeUom", e.target.value)
-              }
-            />
+              <Stack spacing={2} key={row.id}>
+                <Grid container spacing={2}>
+                  <Grid size={{xs:12, sm:6, md:3, lg:3}}>
+                    <Autocomplete
+                      fullWidth
+                      disablePortal
+                      options={uomOptions}
+                      getOptionLabel={(option) => `${option.uomDesc} (${option.uomCode})` || ''}
+                      isOptionEqualToValue={(option, value) => option.uomId === value.uomId}
+                      onChange={(_, newValue) => handleChange(row.id, "uom", newValue?.uomId?.toString() || "")}
+                      size="small"
+                      renderInput={(params) => <TextField {...params} label="UOM" required size="small"/>}
+                    />
+                  </Grid>
+                  <Grid size={{xs:12, sm:6, md:3, lg:3}}>
+                    <TextField
+                      fullWidth
+                      size="small"
+                      label="Qty"
+                      value={row.quantity}
+                      onChange={(e) => handleChange(row.id, "quantity", e.target.value)}
+                    />
+                  </Grid>
+                  <Grid size={{xs:12, sm:6, md:3, lg:3}}>
+                    <TextField
+                      fullWidth
+                      size="small"
+                      label="Primary Qty"
+                      value={row.primaryQty}
+                      onChange={(e) => handleChange(row.id, "primaryQty", e.target.value)}
+                    />
+                  </Grid>
+                  <Grid size={{xs:12, sm:6, md:3, lg:3}}>
+                    <TextField
+                      fullWidth
+                      size="small"
+                      label="Length"
+                      value={row.length}
+                      onChange={(e) => handleChange(row.id, "length", e.target.value)}
+                    />
+                  </Grid>
+                </Grid>
+
+                <Grid container spacing={2}>
+                  <Grid size={{xs:12, sm:6, md:3, lg:3}}>
+                    <TextField
+                      fullWidth
+                      size="small"
+                      label="Width"
+                      value={row.width}
+                      onChange={(e) => handleChange(row.id, "width", e.target.value)}
+                    />
+                  </Grid>
+                  <Grid size={{xs:12, sm:6, md:3, lg:3}}>
+                    <TextField
+                      fullWidth
+                      size="small"
+                      label="Height"
+                      value={row.height}
+                      onChange={(e) => handleChange(row.id, "height", e.target.value)}
+                    />
+                  </Grid>
+                  <Grid size={{xs:12, sm:6, md:3, lg:3}}>
+                    <TextField
+                      fullWidth
+                      size="small"
+                      label="Length UOM"
+                      value={row.lengthUom}
+                      onChange={(e) => handleChange(row.id, "lengthUom", e.target.value)}
+                    />
+                  </Grid>
+                  <Grid size={{xs:12, sm:6, md:3, lg:3}}>
+                    <TextField
+                      fullWidth
+                      size="small"
+                      label="Net Weight"
+                      value={row.netWeight}
+                      onChange={(e) => handleChange(row.id, "netWeight", e.target.value)}
+                    />
+                  </Grid>
+                </Grid>
+
+                <Grid container spacing={2}>
+                  <Grid size={{xs:12, sm:6, md:3, lg:3}}>
+                    <TextField
+                      fullWidth
+                      size="small"
+                      label="Gross Weight"
+                      value={row.grossWeight}
+                      onChange={(e) => handleChange(row.id, "grossWeight", e.target.value)}
+                    />
+                  </Grid>
+                  <Grid size={{xs:12, sm:6, md:3, lg:3}}>
+                    <TextField
+                      fullWidth
+                      size="small"
+                      label="Weight UOM"
+                      value={row.weightUom}
+                      onChange={(e) => handleChange(row.id, "weightUom", e.target.value)}
+                    />
+                  </Grid>
+                  <Grid size={{xs:12, sm:6, md:3, lg:3}}>
+                    <TextField
+                      fullWidth
+                      size="small"
+                      label="Volume"
+                      value={row.volume}
+                      onChange={(e) => handleChange(row.id, "volume", e.target.value)}
+                    />
+                  </Grid>
+                  <Grid size={{xs:12, sm:6, md:3, lg:3}}>
+                    <TextField
+                      fullWidth
+                      size="small"
+                      label="Volume UOM"
+                      value={row.volumeUom}
+                      onChange={(e) => handleChange(row.id, "volumeUom", e.target.value)}
+                    />
 
                 <IconButton
                   color="primary"
@@ -173,6 +215,9 @@ const UOMComponent: React.FC<UOMComponentProps> = ({
                 >
                   <DeleteIcon />
                 </IconButton> 
+              {/* </Stack> */}
+              </Grid>
+              </Grid>
               </Stack>
             ))}
           </Stack>
