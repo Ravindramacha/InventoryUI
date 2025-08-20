@@ -8,7 +8,8 @@
   "routes": [
     {
       "route": "/api/*",
-      "rewrite": "https://inventory-webapi-dev.azurewebsites.net/api/:*"
+      "rewrite": "https://inventory-webapi-dev.azurewebsites.net/api/:*",
+      "allowedRoles": ["anonymous"]
     }
   ]
 }
