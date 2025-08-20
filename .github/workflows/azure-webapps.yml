@@ -20,9 +20,11 @@ jobs:
 
       - name: Install dependencies
         run: npm install
+        working-directory: InventoryApp
 
       - name: Build React app
         run: npm run build
+        working-directory: InventoryApp
 
       - name: Upload build artifact for deployment
         uses: actions/upload-artifact@v4
