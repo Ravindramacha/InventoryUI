@@ -250,38 +250,7 @@ const filteredRows = Array.isArray(rows)
                     <TableCell sx={{ py: 1 }}>{row.productType.productTypeDesc}</TableCell>
                     <TableCell sx={{ py: 1 }}>{row.productGroup.productGroupDesc}</TableCell>
                     <TableCell sx={{ py: 1 }}>{row.productCategory.productCategoryDesc}</TableCell>
-                    {/* <TableCell sx={{ py: 1 }}>
-                      <IconButton
-                        size="small"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleOpenViewDrawer("view", row);
-                        }}
-                        sx={{ color: 'primary.main' }}
-                      >
-                        <Visibility fontSize="small" />
-                      </IconButton>
-                      <IconButton
-                        size="small"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleOpenDrawer("edit", row);
-                        }}
-                        sx={{ color: 'primary.dark' }}
-                      >
-                        <Edit fontSize="small" />
-                      </IconButton>
-                      <IconButton
-                        size="small"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDelete(row.productMasterId);
-                        }}
-                        sx={{ color: 'error.main' }}
-                      >
-                        <Delete fontSize="small" />
-                      </IconButton>
-                    </TableCell> */}
+                 
                   </TableRow>
                 ))}
                 {paginatedRows.length === 0 && (
