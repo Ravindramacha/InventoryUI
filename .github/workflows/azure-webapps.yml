@@ -27,11 +27,11 @@ jobs:
       - name: Build React app
         run: npm run build
         working-directory: InventoryApp
-        
+
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
           app-name: inventory-ui-dev
           slot-name: production
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}
-          package: InventoryApp/build
+          package: InventoryApp/dist
