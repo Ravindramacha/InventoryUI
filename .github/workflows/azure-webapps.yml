@@ -46,4 +46,4 @@ jobs:
           app-name: inventory-ui-dev
           slot-name: production
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}
-          package: ./build
+          package: InventoryApp/build
