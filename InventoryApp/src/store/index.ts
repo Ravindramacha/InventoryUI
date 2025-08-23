@@ -1,9 +1,15 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
+import createSagaMiddleware from 'redux-saga';
 import authReducer from './slices/authSlice';
 import vendorReducer from './slices/vendorSlice';
+import inventoryReducer from './slices/inventorySlice';
 import { listenerMiddleware } from './middleware';
 import { inventoryApi } from './api/inventoryApi';
+import rootSaga from './sagas';
+
+// Create the saga middleware
+const sagaMiddleware = createSagaMiddleware();
 
 // Simple UI slice
 const uiSlice = createSlice({
@@ -60,9 +66,9 @@ const notificationSlice = createSlice({
   },
 });
 
-// Simple inventory slice
-const inventorySlice = createSlice({
-  name: 'inventory',
+// Simple inventory slice for basic store functionality
+const inventoryDataSlice = createSlice({
+  name: 'inventoryData',
   initialState: {
     productTypes: [],
     productGroups: [],
@@ -82,6 +88,9 @@ const inventorySlice = createSlice({
     },
   },
 });
+
+// Export basic actions
+export const { setProductTypes: setBasicProductTypes, setProductGroups: setBasicProductGroups } = inventoryDataSlice.actions;
 
 // Simple cache slice
 const cacheSlice = createSlice({
@@ -110,7 +119,7 @@ export const store = configureStore({
     ui: uiSlice.reducer,
     vendor: vendorReducer,
     notifications: notificationSlice.reducer,
-    inventory: inventorySlice.reducer,
+    inventory: inventoryReducer,
     cache: cacheSlice.reducer,
     // Add the generated reducer as a specific top-level slice
     [inventoryApi.reducerPath]: inventoryApi.reducer,
@@ -139,7 +148,8 @@ export const store = configureStore({
     })
     // Adding the api middleware enables caching, invalidation, polling, and other features of RTK Query
     .concat(inventoryApi.middleware)
-    .concat(listenerMiddleware.middleware),
+    .concat(listenerMiddleware.middleware)
+    .concat(sagaMiddleware),
   devTools: process.env.NODE_ENV !== 'production' && {
     // Enhanced DevTools configuration
     name: 'Inventory Management Redux Store',
@@ -167,6 +177,9 @@ export const store = configureStore({
 // Infer the `RootState` and `AppDispatch` types from the store itself
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
+
+// Run the root saga
+sagaMiddleware.run(rootSaga);
 
 // Export store instance
 export default store;

@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk, type PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk, createAction, type PayloadAction } from '@reduxjs/toolkit';
 import type { 
   ProductTypeModel, 
   ProductGroupModel, 
@@ -7,8 +7,27 @@ import type {
   UomModel,
   UomDimensionModel,
   LanguageModel,
-  SalesStatusModel
+  SalesStatusModel,
+  PostProductType,
+  PostProductMasterForm
 } from '../../Models/MaterialModel';
+
+// Complex Data Structure for Saga Management
+export interface ComplexDataItem {
+  data: any;
+  metadata: {
+    fetchedAt?: string;
+    processedAt?: string;
+    version?: string;
+    count?: number;
+    id?: number;
+    [key: string]: any;
+  };
+}
+
+export interface ComplexDataState {
+  [key: string]: ComplexDataItem;
+}
 
 // Types
 export interface InventoryState {
@@ -78,7 +97,75 @@ export interface InventoryState {
     productCategory: ProductCategoryModel | null;
     productMaster: ReadProductMasterForm | null;
   };
+
+  // Complex Data Management for Saga
+  complexData: ComplexDataState;
+  
+  // Loading States for Different Operations
+  loadingStates: {
+    [key: string]: boolean;
+  };
+  
+  // Error States for Different Operations
+  errorStates: {
+    [key: string]: string | null;
+  };
 }
+
+// Saga Action Creators
+export const fetchLanguagesStart = createAction('inventory/fetchLanguagesStart');
+export const fetchLanguagesSuccess = createAction<LanguageModel[]>('inventory/fetchLanguagesSuccess');
+export const fetchLanguagesFailure = createAction<string>('inventory/fetchLanguagesFailure');
+
+export const fetchSalesStatusesStart = createAction('inventory/fetchSalesStatusesStart');
+export const fetchSalesStatusesSuccess = createAction<SalesStatusModel[]>('inventory/fetchSalesStatusesSuccess');
+export const fetchSalesStatusesFailure = createAction<string>('inventory/fetchSalesStatusesFailure');
+
+export const fetchUomDimensionsStart = createAction('inventory/fetchUomDimensionsStart');
+export const fetchUomDimensionsSuccess = createAction<UomDimensionModel[]>('inventory/fetchUomDimensionsSuccess');
+export const fetchUomDimensionsFailure = createAction<string>('inventory/fetchUomDimensionsFailure');
+
+export const fetchProductTypesStart = createAction('inventory/fetchProductTypesStart');
+export const fetchProductTypesSuccess = createAction<ProductTypeModel[]>('inventory/fetchProductTypesSuccess');
+export const fetchProductTypesFailure = createAction<string>('inventory/fetchProductTypesFailure');
+
+export const createProductTypeStart = createAction<PostProductType>('inventory/createProductTypeStart');
+export const createProductTypeSuccess = createAction<ProductTypeModel>('inventory/createProductTypeSuccess');
+export const createProductTypeFailure = createAction<string>('inventory/createProductTypeFailure');
+
+export const updateProductTypeStart = createAction<{ id: number; productType: Partial<ProductTypeModel> }>('inventory/updateProductTypeStart');
+export const updateProductTypeSuccess = createAction<ProductTypeModel>('inventory/updateProductTypeSuccess');
+export const updateProductTypeFailure = createAction<string>('inventory/updateProductTypeFailure');
+
+export const deleteProductTypeStart = createAction<number>('inventory/deleteProductTypeStart');
+export const deleteProductTypeSuccess = createAction<number>('inventory/deleteProductTypeSuccess');
+export const deleteProductTypeFailure = createAction<string>('inventory/deleteProductTypeFailure');
+
+export const fetchProductGroupsStart = createAction('inventory/fetchProductGroupsStart');
+export const fetchProductGroupsSuccess = createAction<ProductGroupModel[]>('inventory/fetchProductGroupsSuccess');
+export const fetchProductGroupsFailure = createAction<string>('inventory/fetchProductGroupsFailure');
+
+export const fetchProductCategoriesStart = createAction('inventory/fetchProductCategoriesStart');
+export const fetchProductCategoriesSuccess = createAction<ProductCategoryModel[]>('inventory/fetchProductCategoriesSuccess');
+export const fetchProductCategoriesFailure = createAction<string>('inventory/fetchProductCategoriesFailure');
+
+export const fetchProductMasterStart = createAction<number>('inventory/fetchProductMasterStart');
+export const fetchProductMasterSuccess = createAction<ReadProductMasterForm>('inventory/fetchProductMasterSuccess');
+export const fetchProductMasterFailure = createAction<string>('inventory/fetchProductMasterFailure');
+
+export const createProductMasterStart = createAction<PostProductMasterForm>('inventory/createProductMasterStart');
+export const createProductMasterSuccess = createAction<ReadProductMasterForm>('inventory/createProductMasterSuccess');
+export const createProductMasterFailure = createAction<string>('inventory/createProductMasterFailure');
+
+export const updateProductMasterStart = createAction<{ id: number; productMaster: Partial<PostProductMasterForm> }>('inventory/updateProductMasterStart');
+export const updateProductMasterSuccess = createAction<ReadProductMasterForm>('inventory/updateProductMasterSuccess');
+export const updateProductMasterFailure = createAction<string>('inventory/updateProductMasterFailure');
+
+// Complex Data Management Actions
+export const setComplexData = createAction<{ key: string; data: any; metadata: any }>('inventory/setComplexData');
+export const setLoadingState = createAction<{ key: string; loading: boolean }>('inventory/setLoadingState');
+export const setErrorState = createAction<{ key: string; error: string | null }>('inventory/setErrorState');
+export const processComplexData = createAction('inventory/processComplexData');
 
 // Initial state
 const initialState: InventoryState = {
@@ -133,6 +220,9 @@ const initialState: InventoryState = {
     productCategory: null,
     productMaster: null,
   },
+  complexData: {},
+  loadingStates: {},
+  errorStates: {},
 };
 
 // Async thunks would go here - for now I'll create placeholders
@@ -317,34 +407,167 @@ export const inventorySlice = createSlice({
         productMaster: null,
       };
     },
+
+    // Complex Data Management
+    setComplexDataItem: (state, action: PayloadAction<{ key: string; data: any; metadata: any }>) => {
+      const { key, data, metadata } = action.payload;
+      state.complexData[key] = { data, metadata };
+    },
+    
+    removeComplexDataItem: (state, action: PayloadAction<string>) => {
+      delete state.complexData[action.payload];
+    },
+    
+    updateComplexDataMetadata: (state, action: PayloadAction<{ key: string; metadata: any }>) => {
+      const { key, metadata } = action.payload;
+      if (state.complexData[key]) {
+        state.complexData[key].metadata = { ...state.complexData[key].metadata, ...metadata };
+      }
+    },
+    
+    // Loading States Management
+    setLoadingStateItem: (state, action: PayloadAction<{ key: string; loading: boolean }>) => {
+      const { key, loading } = action.payload;
+      state.loadingStates[key] = loading;
+    },
+    
+    clearLoadingState: (state, action: PayloadAction<string>) => {
+      delete state.loadingStates[action.payload];
+    },
+    
+    // Error States Management
+    setErrorStateItem: (state, action: PayloadAction<{ key: string; error: string | null }>) => {
+      const { key, error } = action.payload;
+      state.errorStates[key] = error;
+    },
+    
+    clearErrorState: (state, action: PayloadAction<string>) => {
+      delete state.errorStates[action.payload];
+    },
+    
+    clearAllErrors: (state) => {
+      state.errorStates = {};
+    },
   },
   extraReducers: (builder) => {
-    // Product Types
+    // Saga Action Reducers
     builder
-      .addCase(fetchProductTypes.pending, (state) => {
-        state.productTypes.loading = true;
-        state.productTypes.error = null;
+      // Languages
+      .addCase(fetchLanguagesSuccess, (state, action) => {
+        state.referenceData.languages = action.payload;
+        state.referenceData.lastFetch = new Date().toISOString();
       })
-      .addCase(fetchProductTypes.fulfilled, (state, action) => {
-        state.productTypes.loading = false;
+      .addCase(fetchLanguagesFailure, (state, action) => {
+        state.referenceData.error = action.payload;
+      })
+      
+      // Sales Statuses
+      .addCase(fetchSalesStatusesSuccess, (state, action) => {
+        state.referenceData.salesStatuses = action.payload;
+      })
+      .addCase(fetchSalesStatusesFailure, (state, action) => {
+        state.referenceData.error = action.payload;
+      })
+      
+      // UOM Dimensions
+      .addCase(fetchUomDimensionsSuccess, (state, action) => {
+        state.uom.dimensions = action.payload;
+        state.uom.lastFetch = new Date().toISOString();
+      })
+      .addCase(fetchUomDimensionsFailure, (state, action) => {
+        state.uom.error = action.payload;
+      })
+      
+      // Product Types
+      .addCase(fetchProductTypesSuccess, (state, action) => {
         state.productTypes.items = action.payload;
         state.productTypes.lastFetch = new Date().toISOString();
       })
-      .addCase(fetchProductTypes.rejected, (state, action) => {
-        state.productTypes.loading = false;
-        state.productTypes.error = action.payload as string;
+      .addCase(fetchProductTypesFailure, (state, action) => {
+        state.productTypes.error = action.payload;
       })
-      .addCase(createProductType.pending, (state) => {
-        state.productTypes.loading = true;
-        state.productTypes.error = null;
-      })
-      .addCase(createProductType.fulfilled, (state, action) => {
-        state.productTypes.loading = false;
+      .addCase(createProductTypeSuccess, (state, action) => {
         state.productTypes.items.push(action.payload);
       })
-      .addCase(createProductType.rejected, (state, action) => {
-        state.productTypes.loading = false;
-        state.productTypes.error = action.payload as string;
+      .addCase(createProductTypeFailure, (state, action) => {
+        state.productTypes.error = action.payload;
+      })
+      .addCase(updateProductTypeSuccess, (state, action) => {
+        const index = state.productTypes.items.findIndex(
+          item => item.productTypeId === action.payload.productTypeId
+        );
+        if (index !== -1) {
+          state.productTypes.items[index] = action.payload;
+        }
+      })
+      .addCase(updateProductTypeFailure, (state, action) => {
+        state.productTypes.error = action.payload;
+      })
+      .addCase(deleteProductTypeSuccess, (state, action) => {
+        state.productTypes.items = state.productTypes.items.filter(
+          item => item.productTypeId !== action.payload
+        );
+      })
+      .addCase(deleteProductTypeFailure, (state, action) => {
+        state.productTypes.error = action.payload;
+      })
+      
+      // Product Groups
+      .addCase(fetchProductGroupsSuccess, (state, action) => {
+        state.productGroups.items = action.payload;
+        state.productGroups.lastFetch = new Date().toISOString();
+      })
+      .addCase(fetchProductGroupsFailure, (state, action) => {
+        state.productGroups.error = action.payload;
+      })
+      
+      // Product Categories
+      .addCase(fetchProductCategoriesSuccess, (state, action) => {
+        state.productCategories.items = action.payload;
+        state.productCategories.lastFetch = new Date().toISOString();
+      })
+      .addCase(fetchProductCategoriesFailure, (state, action) => {
+        state.productCategories.error = action.payload;
+      })
+      
+      // Product Master
+      .addCase(fetchProductMasterSuccess, (state, action) => {
+        state.productMaster.currentItem = action.payload;
+      })
+      .addCase(fetchProductMasterFailure, (state, action) => {
+        state.productMaster.error = action.payload;
+      })
+      .addCase(createProductMasterSuccess, (state, action) => {
+        state.productMaster.items.push(action.payload);
+      })
+      .addCase(createProductMasterFailure, (state, action) => {
+        state.productMaster.error = action.payload;
+      })
+      .addCase(updateProductMasterSuccess, (state, action) => {
+        const index = state.productMaster.items.findIndex(
+          item => item.productMasterId === action.payload.productMasterId
+        );
+        if (index !== -1) {
+          state.productMaster.items[index] = action.payload;
+        }
+        state.productMaster.currentItem = action.payload;
+      })
+      .addCase(updateProductMasterFailure, (state, action) => {
+        state.productMaster.error = action.payload;
+      })
+      
+      // Complex Data Management
+      .addCase(setComplexData, (state, action) => {
+        const { key, data, metadata } = action.payload;
+        state.complexData[key] = { data, metadata };
+      })
+      .addCase(setLoadingState, (state, action) => {
+        const { key, loading } = action.payload;
+        state.loadingStates[key] = loading;
+      })
+      .addCase(setErrorState, (state, action) => {
+        const { key, error } = action.payload;
+        state.errorStates[key] = error;
       });
   },
 });
@@ -378,6 +601,14 @@ export const {
   setSelectedItem,
   clearSelectedItem,
   clearAllSelectedItems,
+  setComplexDataItem,
+  removeComplexDataItem,
+  updateComplexDataMetadata,
+  setLoadingStateItem,
+  clearLoadingState,
+  setErrorStateItem,
+  clearErrorState,
+  clearAllErrors,
 } = inventorySlice.actions;
 
 // Selectors (commented out to avoid circular dependencies)
