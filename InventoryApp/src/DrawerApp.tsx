@@ -26,8 +26,8 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 import HomeIcon from '@mui/icons-material/Home';
 import AddIcon from '@mui/icons-material/Add';
 
-const expandedWidth = 250;
-const collapsedWidth = 64;
+// const expandedWidth = 250;
+// const collapsedWidth = 64;
 
 const menuItems = [
   { text: 'Home', icon: <HomeIcon />, path: '/home' },

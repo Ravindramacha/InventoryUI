@@ -3,6 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import authReducer from './slices/authSlice';
 import vendorReducer from './slices/vendorSlice';
 import { listenerMiddleware } from './middleware';
+import { inventoryApi } from './api/inventoryApi';
 
 // Simple UI slice
 const uiSlice = createSlice({
@@ -111,6 +112,8 @@ export const store = configureStore({
     notifications: notificationSlice.reducer,
     inventory: inventorySlice.reducer,
     cache: cacheSlice.reducer,
+    // Add the generated reducer as a specific top-level slice
+    [inventoryApi.reducerPath]: inventoryApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
@@ -133,7 +136,10 @@ export const store = configureStore({
           // You can add extra services here like API clients
         },
       },
-    }).concat(listenerMiddleware.middleware),
+    })
+    // Adding the api middleware enables caching, invalidation, polling, and other features of RTK Query
+    .concat(inventoryApi.middleware)
+    .concat(listenerMiddleware.middleware),
   devTools: process.env.NODE_ENV !== 'production' && {
     // Enhanced DevTools configuration
     name: 'Inventory Management Redux Store',
