@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Button, TextField, Avatar,Grid } from '@mui/material';
-import { useNotification } from '../context/NotificationContext';
+import { useNotification } from '../../context/NotificationContext';
 import { useNavigate } from 'react-router-dom';
 
 // UserProfile type should match Profile.tsx

@@ -12,8 +12,8 @@ import {
 } from '@mui/material';
 import { Snackbar, CircularProgress, Backdrop } from '@mui/material';
 import type { BankModel, TaxInformationModel, VendorModel } from '../../Models/VendorModel';
-import TaxInformation from './TaxInformation';
-import BankData from './BankData';
+import TaxInformation from '../Vendor/TaxInformation';
+import BankData from '../Vendor/BankData';
 import { useLanguages, usePostVendorForm, useSalesStatus } from '../../api/ApiQueries';
 
 

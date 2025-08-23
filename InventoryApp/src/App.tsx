@@ -2,18 +2,18 @@ import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider } from "./context/AuthContext";
-import SignIn from "./components/SignIn"; // Import your SignIn component
+import SignIn from "./components/Login/SignIn"; // Import your SignIn component
 import Products from "./components/Product/Products"; // Import your Products component
-import ApplicationFormPage from "./components/ApplicationForm";
+import ApplicationFormPage from "./components/common/ApplicationForm";
 // import Home from "./components/Home"; // Import your Home component
 import MainLayout from "./MainLayout";
 import Dashboard from "./components/Dashboard"; // Import your Dashboard component
 import NotificationList from "./NotificationList";
-import Profile from "./components/Profile";
-import ProfileUpdate from "./components/ProfileUpdate";
+import Profile from "./components/Profile/Profile";
+import ProfileUpdate from "./components/Profile/ProfileUpdate";
 import VendorForm from "./components/common/VendorForm";
 import CrudTable from "./components/Curd/CrudTable";
-import Product from "./components/Product";
+import Product from "./components/Configuration/Product/Product";
 
 const queryClient = new QueryClient();
 
