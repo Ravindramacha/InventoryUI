@@ -21,7 +21,8 @@ export interface SalesStatusModel {
 
 
 export interface UomModel {
-  uomId: number;
+  uomId?:number
+  uom?: number;
   uomCode: string;
   uomDesc: string;
   uomDimId: number; // Assuming this is the dimension ID
@@ -85,6 +86,7 @@ export interface ProductCategoryModel {
 }
 export interface UomData {
   id: number;
+  uomDataId?: number; // Optional for new entries
   uom: number | undefined | null;
   quantity: string;
   primaryQty: string;
@@ -97,6 +99,9 @@ export interface UomData {
   weightUom: string;
   volume?: number | undefined | null;
   volumeUom?: string;
+}
+export interface UomDataUpdate extends UomData {
+  uomDataId: number;
 }
 export interface PostProductMasterForm {
   productId: string;
@@ -133,6 +138,14 @@ export interface PostProductMasterForm {
   manufacturerId: number | undefined | null;
   notes: string;
 }
+export interface UomDataUpdate extends UomData {
+  uomDataId: number;
+}
+export interface PutProductMasterForm extends PostProductMasterForm {
+  productMasterId: number;
+  productMasterUomDto: UomDataUpdate[];
+}
+
 
 export interface ReadProductMasterForm {
   productMasterId: number;

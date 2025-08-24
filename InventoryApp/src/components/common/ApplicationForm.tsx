@@ -8,24 +8,27 @@ import {
   Box,
   Grid
 } from '@mui/material';
-import { useGetAllProductCategories, useGetAllProductGroups, useGetUomsByDimensionId, useLanguages, usePostProductMasterForm, useProductTypes, useSalesStatus, useUomDimension } from '../../api/ApiQueries';
+import { useGetAllProductCategories, useGetAllProductGroups, useGetUomsByDimensionId, useLanguages, usePostProductMasterForm, useProductTypes, usePutProductMasterForm, useSalesStatus, useUomDimension } from '../../api/ApiQueries';
 import Autocomplete from '@mui/material/Autocomplete';
 import DynamicField, { type Attribute } from './DynamicField';
 import UOMComponent from './UOMComponent';
 import type { PostProductMasterForm, UomData } from '../../Models/MaterialModel';
 import { Snackbar, Alert, CircularProgress, Backdrop } from '@mui/material';
 import { useQueryClient } from '@tanstack/react-query';
+import dayjs from 'dayjs';
 
 interface ApplicationFormPageProps {
   onCancel: () => void;
   initialData?: PostProductMasterForm | null;
   mode?: 'add' | 'edit';
+  productMasterId?: number;
 }
 
-const ApplicationFormPage: React.FC<ApplicationFormPageProps> = ({ 
+const ApplicationForm: React.FC<ApplicationFormPageProps> = ({ 
   onCancel, 
   initialData = null,
-  mode = 'add'
+  mode = 'add',
+  productMasterId = 0
 }) => {
    const initialUOMRows = [
   {
@@ -44,11 +47,9 @@ const ApplicationFormPage: React.FC<ApplicationFormPageProps> = ({
     volumeUom: ""
   }
 ];
-   const [uomRows, setUomRows] = useState<UomData[]>(initialUOMRows);
-  const [formData, setFormData] = useState<PostProductMasterForm>(
-    initialData || {
-      productId: '',
-      productTypeId: null,
+const initialProductMasterForm: PostProductMasterForm = {
+    productId: '',
+    productTypeId: null,
     productGroupId:  null,
     productCategoryId:  null,
     salesStatusId: null,
@@ -75,21 +76,14 @@ const ApplicationFormPage: React.FC<ApplicationFormPageProps> = ({
     dropDown3: '',
     dropDown4: '',
     dropDown5: '',
-    productMasterUomDto: uomRows,
+    productMasterUomDto: initialUOMRows,
     unitOfMeasurement:  null,
     manufacturerId:null,
     manufacturerPartNumber: '',
     notes: '',
-  });
-  const initialTextFields: Attribute[] = [
-  {
-    id: 1,
-    name: "attribute1",
-    label: "Attribute 1",
-    type: "text",
-    value: "",
-  }
- ];
+}
+  const [uomRows, setUomRows] = useState<UomData[]>(initialData?.productMasterUomDto && initialData.productMasterUomDto.length > 0 ? initialData.productMasterUomDto : initialUOMRows);
+  const [formData, setFormData] = useState<PostProductMasterForm>(initialData || initialProductMasterForm);
  const initialNumberFields: Attribute[] = [
   {
     id: 1,
@@ -118,6 +112,95 @@ const ApplicationFormPage: React.FC<ApplicationFormPageProps> = ({
     value: null,
   }
  ];
+  const initialTextFields: Attribute[] = [
+  {
+    id: 1,
+    name: "attribute1",
+    label: "Attribute 1",
+    type: "text",
+    value: "",
+  }
+ ];
+if (mode === "edit" && initialData) {
+  // --- Text Attributes ---
+  const textAttrs = ["attribute1", "attribute2", "attribute3", "attribute4", "attribute5"] as const;
+  textAttrs.forEach((attr, index) => {
+    const value = initialData[attr];
+    if (value && value.trim() !== "") {
+      if (index === 0) {
+        // attribute1 already exists in initialTextFields[0]
+        initialTextFields[0].value = value;
+      } else {
+        initialTextFields.push({
+          id: index + 1,
+          name: attr,
+          label: `Attribute ${index + 1}`,
+          type: "text",
+          value,
+        });
+      }
+    }
+  });
+
+  // --- Number Attributes ---
+  const numberAttrs = ["number1", "number2", "number3", "number4", "number5"] as const;
+  numberAttrs.forEach((attr, index) => {
+    const value = initialData[attr];
+    if (value !== null && value !== undefined) {
+      if (index === 0) {
+        initialNumberFields[0].value = value;
+      } else {
+        initialNumberFields.push({
+          id: index + 1,
+          name: attr,
+          label: `Number ${index + 1}`,
+          type: "number",
+          value,
+        });
+      }
+    }
+  });
+
+  // --- Dropdown Attributes ---
+  const dropDownAttrs = ["dropDown1", "dropDown2", "dropDown3", "dropDown4", "dropDown5"] as const;
+  dropDownAttrs.forEach((attr, index) => {
+    const value = initialData[attr];
+    if (value && value.trim() !== "") {
+      if (index === 0) {
+        initialDropDownFields[0].value = value;
+      } else {
+        initialDropDownFields.push({
+          id: index + 1,
+          name: attr,
+          label: `DropDown ${index + 1}`,
+          type: "dropdown",
+          value,
+          options: ["Option 1", "Option 2", "Option 3"], // you can customize this per attr
+        });
+      }
+    }
+  });
+
+  // --- Date Attributes ---
+const dateAttrs = ["date1", "date2", "date3", "date4", "date5"] as const;
+dateAttrs.forEach((attr, index) => {
+  const value = initialData[attr];
+  if (value) {
+    const parsedValue = dayjs(value); // normalize backend Date to Dayjs
+    if (index === 0) {
+      initialDateFields[0].value = parsedValue;
+    } else {
+      initialDateFields.push({
+        id: index + 1,
+        name: attr,
+        label: `Date ${index + 1}`,
+        type: "date",
+        value: parsedValue,
+      });
+    }
+  }
+});
+}
 
   const queryClient = useQueryClient();
   const [textFields, setTextFields] = useState<Attribute[]>(initialTextFields);
@@ -139,6 +222,7 @@ const ApplicationFormPage: React.FC<ApplicationFormPageProps> = ({
     }));
   }, [uomRows]);
   const {mutate}= usePostProductMasterForm();
+  const {mutate: updateMutate}= usePutProductMasterForm();
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>)  => {
     const { name, value } = event.target;
@@ -243,29 +327,54 @@ const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     productMasterUomDto: uomRows,
   };
 
- 
-
-  mutate(finalFormData, {
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["readProductMasterForm"] });
-      setSnackbarMessage('Product Master Form submitted successfully!');
-      setSnackbarSeverity('success');
-      setSnackbarOpen(true);
-      resetForm();
-      onCancel();
-    },
-    onError: (error) => {
-      setSnackbarMessage(`Failed to submit: ${error.message}`);
-      setSnackbarSeverity('error');
-      setSnackbarOpen(true);
-    },
-    onSettled: () => {
-      setTimeout(() => {
-        setLoading(false);
-        setBackdropOpen(false); // hide after 2s
-      }, 2000);
-    },
-  });
+  if(mode === "edit" && productMasterId){
+    // --- Edit Mode ---
+    updateMutate({id: productMasterId, data: finalFormData}, {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["readProductMasterForm"] });
+        setSnackbarMessage('Product Master Form updated successfully!');
+        setSnackbarSeverity('success');
+        setSnackbarOpen(true);
+        resetForm();
+        onCancel();
+      },
+      onError: (error) => {
+        setSnackbarMessage(`Failed to update: ${error.message}`);
+        setSnackbarSeverity('error');
+        setSnackbarOpen(true);
+      },
+      onSettled: () => {
+        setTimeout(() => {
+          setLoading(false);
+          setBackdropOpen(false); // hide after 2s
+        }, 2000);
+      },
+    });
+  } 
+  else {
+    // --- Add Mode ---
+    mutate(finalFormData, {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["readProductMasterForm"] });
+        setSnackbarMessage('Product Master Form submitted successfully!');
+        setSnackbarSeverity('success');
+        setSnackbarOpen(true);
+        resetForm();
+        onCancel();
+      },
+      onError: (error) => {
+        setSnackbarMessage(`Failed to submit: ${error.message}`);
+        setSnackbarSeverity('error');
+        setSnackbarOpen(true);
+      },
+      onSettled: () => {
+        setTimeout(() => {
+          setLoading(false);
+          setBackdropOpen(false); // hide after 2s
+        }, 2000);
+      },
+    });
+  }
 };
 
 
@@ -459,18 +568,18 @@ const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
                   onChange={(updated) => setTextFields(updated)}
                 />
               </Grid>
+               <Grid  size={{xs:12, sm:6, md:6}}>
+                <DynamicField
+                  attributes={dateFields}
+                  maxFields={5}
+                  onChange={(updated) => setDateFields(updated)}
+                />
+              </Grid>
               <Grid  size={{xs:12, sm:6, md:6}}>
                 <DynamicField
                   attributes={numberFields}
                   maxFields={5}
                   onChange={(updated) => setNumberFields(updated)}
-                />
-              </Grid>
-              <Grid  size={{xs:12, sm:6, md:6}}>
-                <DynamicField
-                  attributes={dateFields}
-                  maxFields={5}
-                  onChange={(updated) => setDateFields(updated)}
                 />
               </Grid>
               <Grid size={{xs:12, sm:6, md:6}}>
@@ -588,4 +697,4 @@ const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
   );
 };
 
-export default ApplicationFormPage;
+export default ApplicationForm;

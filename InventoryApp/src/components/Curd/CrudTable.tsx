@@ -16,9 +16,10 @@ import {
 import { Add } from "@mui/icons-material";
 import { useGetAllProductMasterForm } from "../../api/ApiQueries";
 import type { ReadProductMasterForm } from "../../Models/MaterialModel";
-import ApplicationFormPage from "../common/ApplicationForm";
 import ProductMasterView from "../Configuration/Product/ProductMasterView";
 import ProductDetails from "../Configuration/Product/ProductDetails";
+import ApplicationForm from "../common/ApplicationForm";
+
 
 
 type Mode = "add" | "edit" | "view";
@@ -87,13 +88,6 @@ const CrudTable: React.FC<CrudTableProps> = ({ onEdit }) => {
 
   const [drawerViewOpen, setDrawerViewOpen] = useState(false);
 
-  // const handleOpenViewDrawer = (mode: Mode, row: ReadProductMasterForm | null = null) => {
-  //   setDrawerMode(mode);
-  //   setSelectedRow(row);
-  //   setDrawerViewOpen(true);
-  // };
-
-
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
@@ -103,25 +97,7 @@ const CrudTable: React.FC<CrudTableProps> = ({ onEdit }) => {
     setDrawerOpen(true);
   };
 
-  // const handleDelete = (id: number) => {
-  //   setRows((prev) => prev.filter((r) => r.productMasterId !== id));
-  //   if (drawerMode === "add" && selectedRow) {
-
-  //   } else if (drawerMode === "edit") {
-
-  //   }
-  //   setDrawerOpen(false);
-  // };
-
-  // const handleSubmit = (formData: ReadProductMasterForm) => {
-  //   if (drawerMode === "add") {
-  //     setRows((prev) => [...prev, { ...formData, id: formData.productMasterId }]);
-  //   } else if (drawerMode === "edit") {
-  //     setRows((prev) => prev.map((r) => (r.productMasterId === formData.productMasterId ? formData : r)));
-  //   }
-  //   setDrawerOpen(false);
-  // };
-
+  
   const handleChangePage = (_: unknown, newPage: number) => {
     setPage(newPage);
   };
@@ -292,44 +268,11 @@ const filteredRows = Array.isArray(rows)
       
       {drawerOpen && (
         <Box sx={{ backgroundColor: 'white', p: 2, borderRadius: 1 }}>
-          <ApplicationFormPage 
+          <ApplicationForm
             onCancel={() => setDrawerOpen(false)} 
-            initialData={drawerMode === "edit" && selectedRow ? {
-              productId: selectedRow.productId,
-              productTypeId: selectedRow.productTypeId,
-              productGroupId: selectedRow.productGroupId,
-              productCategoryId: selectedRow.productCategoryId,
-              salesStatusId: selectedRow.salesStatusId,
-              languageId: selectedRow.languageId,
-              shortDescription: selectedRow.shortDescription,
-              longDescription: selectedRow.longDescription,
-              attribute1: selectedRow.attribute1,
-              attribute2: selectedRow.attribute2,
-              attribute3: selectedRow.attribute3,
-              attribute4: selectedRow.attribute4,
-              attribute5: selectedRow.attribute5,
-              date1: selectedRow.date1,
-              date2: selectedRow.date2,
-              date3: selectedRow.date3,
-              date4: selectedRow.date4,
-              date5: selectedRow.date5,
-              number1: selectedRow.number1,
-              number2: selectedRow.number2,
-              number3: selectedRow.number3,
-              number4: selectedRow.number4,
-              number5: selectedRow.number5,
-              dropDown1: selectedRow.dropDown1,
-              dropDown2: selectedRow.dropDown2,
-              dropDown3: selectedRow.dropDown3,
-              dropDown4: selectedRow.dropDown4,
-              dropDown5: selectedRow.dropDown5,
-              productMasterUomDto: selectedRow.productMasterUomDto,
-              unitOfMeasurement: selectedRow.unitOfMeasurement,
-              manufacturerId: selectedRow.manufacturerId,
-              manufacturerPartNumber: selectedRow.manufacturerPartNumber,
-              notes: selectedRow.notes
-            } : null}
+            initialData={drawerMode === "edit" && selectedRow ? selectedRow : null}
             mode={drawerMode === "edit" ? "edit" : "add"}
+            productMasterId={selectedRow ? selectedRow.productMasterId : 0}
           />
         </Box>
       )}
@@ -363,58 +306,5 @@ const filteredRows = Array.isArray(rows)
     </Box>
   );
 };
-
-// interface CrudFormProps {
-//   mode: Mode;
-//   data: ReadProductMasterForm | null;
-//   onSubmit: (data: ReadProductMasterForm) => void;
-//   onCancel: () => void;
-// }
-
-// const CrudForm: React.FC<CrudFormProps> = ({ mode, data, onSubmit, onCancel }) => {
-//   const [formData, setFormData] = useState<ReadProductMasterForm>({
-//     id: data?.id || 0,
-//     name: data?.name || "",
-//     email: data?.email || "",
-//   });
-
-//   const readOnly = mode === "view";
-
-//   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-//     setFormData({ ...formData, [e.target.name]: e.target.value });
-//   };
-
-//   return (
-//     <Box display="flex" flexDirection="column" gap={2}>
-//       <TextField
-//         label="Name"
-//         name="name"
-//         value={formData.name}
-//         onChange={handleChange}
-//         disabled={readOnly}
-//         fullWidth
-//       />
-//       <TextField
-//         label="Email"
-//         name="email"
-//         value={formData.email}
-//         onChange={handleChange}
-//         disabled={readOnly}
-//         fullWidth
-//       />
-//       <Box display="flex" justifyContent="flex-end" gap={1}>
-//         <Button onClick={onCancel}>Cancel</Button>
-//         {mode !== "view" && (
-//           <Button
-//             variant="contained"
-//             onClick={() => onSubmit({ ...formData })}
-//           >
-//             {mode === "edit" ? "Update" : "Create"}
-//           </Button>
-//         )}
-//       </Box>
-//     </Box>
-//);
-//};
 
 export default CrudTable;

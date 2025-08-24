@@ -30,7 +30,7 @@ const UOMComponent: React.FC<UOMComponentProps> = ({
   useEffect(() => {
     onChange?.(rows);
   }, [rows, onChange]);
-
+ console.log("UOM Options:", uomOptions);
   const handleChange = (
     id: number,
     field: keyof UomData,
@@ -85,13 +85,15 @@ const UOMComponent: React.FC<UOMComponentProps> = ({
               <Stack spacing={2} key={row.id}>
                 <Grid container spacing={2}>
                   <Grid size={{xs:12, sm:6, md:3, lg:3}}>
+                    
                     <Autocomplete
                       fullWidth
                       disablePortal
                       options={uomOptions}
+                      value={uomOptions.find((option) => option.uomId === row.uom) || null}
                       getOptionLabel={(option) => `${option.uomDesc} (${option.uomCode})` || ''}
-                      isOptionEqualToValue={(option, value) => option.uomId === value.uomId}
-                      onChange={(_, newValue) => handleChange(row.id, "uom", newValue?.uomId?.toString() || "")}
+                      isOptionEqualToValue={(option, value) => option.uom === value.uom}
+                      onChange={(_, newValue) => handleChange(row.id, "uom", newValue?.uom?.toString() || "")}
                       size="small"
                       renderInput={(params) => <TextField {...params} label="UOM" required size="small"/>}
                     />

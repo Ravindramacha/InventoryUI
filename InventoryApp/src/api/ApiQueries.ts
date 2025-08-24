@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import type { LanguageModel, PostProductMasterForm, PostProductType, ProductCategoryModel, ProductGroupModel, ProductTypeModel, ReadProductMasterForm, SalesStatusModel, UomDimensionModel, UomModel } from "../Models/MaterialModel";
+import type { LanguageModel, PostProductMasterForm, PostProductType, ProductCategoryModel, ProductGroupModel, ProductTypeModel, PutProductMasterForm, ReadProductMasterForm, SalesStatusModel, UomDimensionModel, UomModel } from "../Models/MaterialModel";
 import type { VendorModel } from "../Models/VendorModel";
 
 // ✅ Hook with retry + enabled as parameters
@@ -168,6 +168,25 @@ export function usePostProductMasterForm() {
           "Cache-Control": "no-cache", 
         },
       });
+      return response.data;
+    },
+  });
+}
+
+export function usePutProductMasterForm() {
+  return useMutation({
+    mutationFn: async ({ id, data }: { id: number; data: PostProductMasterForm }) => {
+      const response = await axios.put(
+        `/api/ProductMasterForms/UpdateProductMasterForm/${id}`, 
+        data,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type": "application/json",
+            "Cache-Control": "no-cache",
+          },
+        }
+      );
       return response.data;
     },
   });
