@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
-import type { UomData, UomModel } from "../Models/MaterialModel";
+import type { UomData, UomModel } from "../../Models/MaterialModel";
 
 
 

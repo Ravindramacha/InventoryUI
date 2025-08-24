@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
 import { Box, Button } from '@mui/material';
-import ApplicationFormPage from '../ApplicationForm';
+import ApplicationFormPage from '../common/ApplicationForm';
 import CrudTable from '../Curd/CrudTable';
 import type { PostProductMasterForm, ReadProductMasterForm } from '../../Models/MaterialModel';
 

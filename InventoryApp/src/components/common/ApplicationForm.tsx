@@ -8,11 +8,11 @@ import {
   Box,
   Grid
 } from '@mui/material';
-import { useGetAllProductCategories, useGetAllProductGroups, useGetUomsByDimensionId, useLanguages, usePostProductMasterForm, useProductTypes, useSalesStatus, useUomDimension } from '../api/ApiQueries';
+import { useGetAllProductCategories, useGetAllProductGroups, useGetUomsByDimensionId, useLanguages, usePostProductMasterForm, useProductTypes, useSalesStatus, useUomDimension } from '../../api/ApiQueries';
 import Autocomplete from '@mui/material/Autocomplete';
-import DynamicField, { type Attribute } from './common/DynamicField';
+import DynamicField, { type Attribute } from './DynamicField';
 import UOMComponent from './UOMComponent';
-import type { PostProductMasterForm, UomData } from '../Models/MaterialModel';
+import type { PostProductMasterForm, UomData } from '../../Models/MaterialModel';
 import { Snackbar, Alert, CircularProgress, Backdrop } from '@mui/material';
 import { useQueryClient } from '@tanstack/react-query';
 

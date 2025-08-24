@@ -8,7 +8,7 @@ import {
   Tab,
 } from '@mui/material';
 import { Edit } from '@mui/icons-material';
-import  type { ReadProductMasterForm } from './../Models/MaterialModel';
+import  type { ReadProductMasterForm } from '../../../Models/MaterialModel';
 
 interface ProductDetailsProps {
   product: ReadProductMasterForm;

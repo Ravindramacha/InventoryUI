@@ -9,8 +9,8 @@ import {
   Typography,
   Paper,
 } from "@mui/material";
- import { loginUser } from "../api/authApi";
-import { useAuth } from "../context/AuthContext";
+ import { loginUser } from "../../api/authApi";
+import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
 export default function SignIn() {

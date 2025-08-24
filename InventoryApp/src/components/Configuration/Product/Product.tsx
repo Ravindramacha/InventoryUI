@@ -1,4 +1,4 @@
-import DataTable from "./common/DataTable";
+import DataTable from "../../Vendor/DataTable";
 
 // Example usage with mocked data
 const exampleRows = [
