@@ -37,10 +37,13 @@ const CrudTable: React.FC<CrudTableProps> = ({ onEdit }) => {
   const [orderBy, setOrderBy] = useState<keyof ReadProductMasterForm>('productId');
 
   useEffect(() => {
-    if (productMasterForm.length > 0) {
-      setRows(productMasterForm);
-    }
-  }, [productMasterForm]);
+  if (Array.isArray(productMasterForm)) {
+    setRows(productMasterForm);
+  } else {
+    console.warn("Unexpected data:", productMasterForm);
+    setRows([]); // fallback
+  }
+}, [productMasterForm]);
 
   const handleRequestSort = (property: keyof ReadProductMasterForm) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -131,20 +134,22 @@ const CrudTable: React.FC<CrudTableProps> = ({ onEdit }) => {
   };
 
   // First filter - Global search across all relevant fields
-  const filteredRows = rows.filter((row) => {
-    const searchTerm = search.toLowerCase();
-    return (
-      row.productId.toLowerCase().includes(searchTerm) ||
-      row.productType.productTypeDesc.toLowerCase().includes(searchTerm) ||
-      row.productType.productTypeCode.toLowerCase().includes(searchTerm) ||
-      row.productGroup.productGroupDesc.toLowerCase().includes(searchTerm) ||
-      row.productGroup.productGroupCode.toLowerCase().includes(searchTerm) ||
-      row.productCategory.productCategoryDesc.toLowerCase().includes(searchTerm) ||
-      row.productCategory.productCategoryCode.toLowerCase().includes(searchTerm) ||
-      (row.shortDescription || '').toLowerCase().includes(searchTerm) ||
-      (row.longDescription || '').toLowerCase().includes(searchTerm)
-    );
-  });
+const filteredRows = Array.isArray(rows)
+  ? rows.filter((row) => {
+      const searchTerm = search.toLowerCase();
+      return (
+        row.productId.toLowerCase().includes(searchTerm) ||
+        row.productType.productTypeDesc.toLowerCase().includes(searchTerm) ||
+        row.productType.productTypeCode.toLowerCase().includes(searchTerm) ||
+        row.productGroup.productGroupDesc.toLowerCase().includes(searchTerm) ||
+        row.productGroup.productGroupCode.toLowerCase().includes(searchTerm) ||
+        row.productCategory.productCategoryDesc.toLowerCase().includes(searchTerm) ||
+        row.productCategory.productCategoryCode.toLowerCase().includes(searchTerm) ||
+        (row.shortDescription || '').toLowerCase().includes(searchTerm) ||
+        (row.longDescription || '').toLowerCase().includes(searchTerm)
+      );
+    })
+  : [];
 
   // Then sort
   const sortedRows = [...filteredRows].sort(getComparator(order, orderBy));
@@ -245,38 +250,7 @@ const CrudTable: React.FC<CrudTableProps> = ({ onEdit }) => {
                     <TableCell sx={{ py: 1 }}>{row.productType.productTypeDesc}</TableCell>
                     <TableCell sx={{ py: 1 }}>{row.productGroup.productGroupDesc}</TableCell>
                     <TableCell sx={{ py: 1 }}>{row.productCategory.productCategoryDesc}</TableCell>
-                    {/* <TableCell sx={{ py: 1 }}>
-                      <IconButton
-                        size="small"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleOpenViewDrawer("view", row);
-                        }}
-                        sx={{ color: 'primary.main' }}
-                      >
-                        <Visibility fontSize="small" />
-                      </IconButton>
-                      <IconButton
-                        size="small"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleOpenDrawer("edit", row);
-                        }}
-                        sx={{ color: 'primary.dark' }}
-                      >
-                        <Edit fontSize="small" />
-                      </IconButton>
-                      <IconButton
-                        size="small"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDelete(row.productMasterId);
-                        }}
-                        sx={{ color: 'error.main' }}
-                      >
-                        <Delete fontSize="small" />
-                      </IconButton>
-                    </TableCell> */}
+                 
                   </TableRow>
                 ))}
                 {paginatedRows.length === 0 && (
