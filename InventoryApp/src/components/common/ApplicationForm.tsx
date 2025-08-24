@@ -347,7 +347,7 @@ const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
         setTimeout(() => {
           setLoading(false);
           setBackdropOpen(false); // hide after 2s
-        }, 2000);
+        }, 5000);
       },
     });
   } 
@@ -371,7 +371,7 @@ const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
         setTimeout(() => {
           setLoading(false);
           setBackdropOpen(false); // hide after 2s
-        }, 2000);
+        }, 5000);
       },
     });
   }

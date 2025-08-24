@@ -30,7 +30,7 @@ const UOMComponent: React.FC<UOMComponentProps> = ({
   useEffect(() => {
     onChange?.(rows);
   }, [rows, onChange]);
- console.log("UOM Options:", uomOptions);
+
   const handleChange = (
     id: number,
     field: keyof UomData,
@@ -53,6 +53,7 @@ const UOMComponent: React.FC<UOMComponentProps> = ({
         id: Date.now(),
         uom: null,
         quantity: "",
+        //uomDataId: null,
         primaryQty: "",
         length: null,
         width: null, 
@@ -92,10 +93,10 @@ const UOMComponent: React.FC<UOMComponentProps> = ({
                       options={uomOptions}
                       value={uomOptions.find((option) => option.uomId === row.uom) || null}
                       getOptionLabel={(option) => `${option.uomDesc} (${option.uomCode})` || ''}
-                      isOptionEqualToValue={(option, value) => option.uom === value.uom}
-                      onChange={(_, newValue) => handleChange(row.id, "uom", newValue?.uom?.toString() || "")}
+                      isOptionEqualToValue={(option, value) => option.uomId === value.uomId}
+                      onChange={(_, newValue) => handleChange(row.id, "uom", newValue?.uomId?.toString() || "")}
                       size="small"
-                      renderInput={(params) => <TextField {...params} label="UOM" required size="small"/>}
+                      renderInput={(params) => <TextField {...params} label="UOM"  size="small"/>}
                     />
                   </Grid>
                   <Grid size={{xs:12, sm:6, md:3, lg:3}}>
