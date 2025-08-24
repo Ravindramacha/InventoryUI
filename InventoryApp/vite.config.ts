@@ -23,6 +23,17 @@ export default defineConfig(({ mode }) => {
           rewrite: path => path.replace(/^\/api/, '/api'),
         }
       }
+    },
+    test: {
+      globals: true,
+      environment: 'jsdom',
+      setupFiles: ['./src/test/setup.ts'],
+      css: true,
+      coverage: {
+        provider: 'v8',
+        reporter: ['text', 'json', 'html'],
+        exclude: ['node_modules/', '**/*.test.ts', '**/test/']
+      },
     }
   };
 });

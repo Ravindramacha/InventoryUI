@@ -1,0 +1,19 @@
+{
+  "extends": "./tsconfig.app.json",
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.tests.tsbuildinfo",
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "strictNullChecks": true,
+    "moduleResolution": "node",
+    "types": ["vitest/globals", "node"]
+  },
+  "include": [
+    "src",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*/test-utils.ts",
+    "**/*/test-utils.tsx",
+    "**/*/setup.ts"
+  ]
+}
