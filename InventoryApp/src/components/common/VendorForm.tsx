@@ -43,7 +43,7 @@ const VendorForm = () => {
     email3: '',
     comments: '',
     salesStatusId: null,
-    taxInformation: [],
+    taxInformations: [],
     bankDetails: [],
     paymentId: null,
   });
@@ -114,7 +114,7 @@ const VendorForm = () => {
       email3: '',
       comments: '',
       salesStatusId: null,
-      taxInformation: [],
+      taxInformations: [],
       bankDetails: [],
       paymentId: null,
 
@@ -130,7 +130,7 @@ const VendorForm = () => {
 
     const finalFormData = {
       ...formData,
-      taxInformation: taxInformationRows,
+      taxInformations: taxInformationRows,
       bankDetails: bankRows,
     };
 

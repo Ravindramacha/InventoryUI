@@ -22,7 +22,7 @@ export interface VendorModel {
   email3: string;
   comments: string;
   salesStatusId: number | undefined | null;
-  taxInformation: TaxInformationModel[];
+  taxInformations: TaxInformationModel[];
   bankDetails: BankModel[];
   paymentId: number | undefined | null;
 }
@@ -50,7 +50,7 @@ export interface ReadVendorFormModel {
   companyName1: string;
   companyName2: string;
   dba:string;
-  keyword:string;
+  keyWord:string;
   houseNumber: string;
   streetName: string;
   buildingName: string;
@@ -70,11 +70,17 @@ export interface ReadVendorFormModel {
   email3: string;
   comments: string;
   salesStatusId: number | undefined | null;
-  taxInformation: TaxInformationModel[];
-  bankDetails: BankModel[];
+  taxInformationDto: TaxInformationDto[];
+  bankDetailDto: BankDetailDto[];
   paymentId: number | undefined | null;
 }
 
+export interface TaxInformationDto extends TaxInformationModel {
+  taxInformationId: number;
+}
+export interface BankDetailDto extends BankModel {
+  bankId: number; 
+}
 export const countryList = [
     { id: 1, name: 'United States' },
     { id: 2, name: 'Canada' },

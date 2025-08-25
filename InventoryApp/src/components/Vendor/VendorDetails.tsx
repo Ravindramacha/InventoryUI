@@ -6,13 +6,18 @@ import {
   Button,
   Tabs,
   Tab,
-  Grid,
+  TableContainer,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
 } from '@mui/material';
 import { Edit } from '@mui/icons-material';
 import { countryList, stateList, type ReadVendorFormModel } from '../../Models/VendorModel';
 
 interface VendorDetailsProps {
-  vendor: ReadVendorFormModel ;
+  vendor: ReadVendorFormModel;
   onBack: () => void;
   onEdit: (product: ReadVendorFormModel) => void;
 }
@@ -45,20 +50,20 @@ function TabPanel(props: TabPanelProps) {
 
 const VendorDetails: React.FC<VendorDetailsProps> = ({ vendor, onBack, onEdit }) => {
   const [activeTab, setActiveTab] = useState(0);
-
+ console.log("vendor",vendor);
   const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
     setActiveTab(newValue);
   };
 
   const renderDetailRow = (label: string, value: any) => (
     <Box sx={{ display: 'flex', py: 1 }}>
-      <Box sx={{ flex: '0 0 14%' }}>
-        <Typography variant="subtitle1" color="body1">
+      <Box sx={{ flex: '0 0 17%' }}>
+        <Typography variant="caption" color="textSecondary">
           {label}
         </Typography>
       </Box>
       <Box sx={{ flex: '1 1 auto' }}>
-        <Typography variant="subtitle1" color='textPrimary'>
+        <Typography variant="body2" color='textPrimary'>
           {value || '-'}
         </Typography>
       </Box>
@@ -109,22 +114,26 @@ const VendorDetails: React.FC<VendorDetailsProps> = ({ vendor, onBack, onEdit })
           sx={{ borderBottom: 1, borderColor: 'divider', px: 2 }}
         >
           <Tab label="Overview" />
-          <Tab label="Address" />
-          <Tab label="Commuincation" />
+          <Tab label="Tax Information" />
+          <Tab label="Bank Details" />
           <Tab label="View Details" />
         </Tabs>
 
         <Box sx={{ flex: 1, overflowY: 'auto', px: 3 }}>
           <TabPanel value={activeTab} index={0}>
+            <Typography variant="body2" color='textPrimary' fontWeight="bold">
+              Name
+            </Typography>
             <Typography variant="body2" color="text.secondary">
             {renderDetailRow('Company Name 1', vendor.companyName1)}
             {renderDetailRow('Company Name 2', vendor.companyName2)}
             {renderDetailRow('DBA (Doing Business As)', vendor.dba)}
-            {renderDetailRow('Keyword', vendor.keyword)}
+            {renderDetailRow('Keyword', vendor.keyWord)}
            </Typography>
-          </TabPanel>
-          
-          <TabPanel value={activeTab} index={1}>
+            <Box sx={{ my: 2 }} />
+            <Typography variant="body2" color='textPrimary' fontWeight="bold">
+              Address
+            </Typography>
             <Typography variant="body2" color="text.secondary">
               {renderDetailRow('House Number', vendor.houseNumber)}
               {renderDetailRow('Street Name', vendor.streetName)}
@@ -135,129 +144,243 @@ const VendorDetails: React.FC<VendorDetailsProps> = ({ vendor, onBack, onEdit })
               {renderDetailRow('Zip Code', vendor.zipCode)}
               {renderDetailRow('Digi Pin', vendor.digiPin)}
               {renderDetailRow('Maps URL', vendor.mapsUrl)}
+           </Typography>
+           <Box sx={{ my: 2 }} />
+            <Typography variant="body2" color='textPrimary' fontWeight="bold">
+              Communication
             </Typography>
-          </TabPanel>
-          
-          <TabPanel value={activeTab} index={2}>
             <Typography variant="body2" color="text.secondary">
               {renderDetailRow('Language', vendor.languageId)}
               {renderDetailRow('Phone Number 1', vendor.phoneNumber1)}
-              {renderDetailRow('Phone Number 2', vendor.phoneNumber2)}
+              {renderDetailRow('Phone Number 2', vendor.phoneNumber2)}  
               {renderDetailRow('Phone Number 3', vendor.phoneNumber3)}
               {renderDetailRow('Fax', vendor.fax)}
               {renderDetailRow('Email 1', vendor.email1)}
               {renderDetailRow('Email 2', vendor.email2)}
               {renderDetailRow('Email 3', vendor.email3)}
+           </Typography>
+            <Box sx={{ my: 3 }} />
+            <Typography variant="body2" color='textPrimary' fontWeight="bold">
+              Tax Information
+            </Typography>
+            <TableContainer component={Paper}>
+            <Table size="small">
+              <TableHead>
+                <TableRow>
+                  <TableCell sx={{ py: 1, fontWeight: 'bold' }}>
+                   Country
+                  </TableCell>
+                  <TableCell sx={{ py: 1, fontWeight: 'bold' }}>
+                    Category  
+                  </TableCell>
+                  <TableCell sx={{ py: 1, fontWeight: 'bold' }}>
+                    Name
+                  </TableCell>
+                  <TableCell sx={{ py: 1, fontWeight: 'bold' }}>  
+                    Tax Number
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+                          <TableBody>
+              {(vendor.taxInformationDto ?? []).map((row) => (
+                <TableRow 
+                  key={row.taxInformationId}
+                  sx={{ 
+                    '&:hover': {
+                      backgroundColor: '#f1f1fa',
+                      cursor: 'pointer'
+                    }
+                  }}
+                >
+                  <TableCell sx={{ py: 1 }}>{row.countryId}</TableCell>
+                  <TableCell sx={{ py: 1 }}>{row.category}</TableCell>
+                  <TableCell sx={{ py: 1 }}>{row.name}</TableCell>
+                  <TableCell sx={{ py: 1 }}>{row.taxNumber}</TableCell>
+                </TableRow>
+              ))}
+
+            {(!vendor.taxInformationDto || vendor.taxInformationDto.length === 0) && (
+              <TableRow>
+                <TableCell colSpan={5} align="center" sx={{ py: 2 }}>
+                  No data found.
+                </TableCell>
+              </TableRow>
+            )}
+         </TableBody>
+        </Table>
+          </TableContainer>
+           <Box sx={{ my: 3 }} />
+            <Typography variant="body2" color='textPrimary' fontWeight="bold">
+              Bank Details
+            </Typography>
+            <TableContainer component={Paper}>
+            <Table size="small">
+              <TableHead>
+                <TableRow>
+                  <TableCell sx={{ py: 1, fontWeight: 'bold' }}>
+                   Bank Name
+                  </TableCell>
+                  <TableCell sx={{ py: 1, fontWeight: 'bold' }}>
+                    Account Number  
+                  </TableCell>
+                  <TableCell sx={{ py: 1, fontWeight: 'bold' }}>
+                    Routing Number
+                  </TableCell>
+                  <TableCell sx={{ py: 1, fontWeight: 'bold' }}>  
+                    Account Name
+                  </TableCell>
+                  <TableCell sx={{ py: 1, fontWeight: 'bold' }}>  
+                    Phone Number
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+              {(vendor.bankDetailDto ?? []).map((row) => (
+                <TableRow 
+                  key={row.bankId}
+                  sx={{ 
+                    '&:hover': {
+                      backgroundColor: '#f1f1fa',
+                      cursor: 'pointer'
+                    }
+                  }}
+                >
+                  <TableCell sx={{ py: 1 }}>{row.bankName}</TableCell>
+                  <TableCell sx={{ py: 1 }}>{row.accountNumber}</TableCell>
+                  <TableCell sx={{ py: 1 }}>{row.routingNumber}</TableCell>
+                  <TableCell sx={{ py: 1 }}>{row.accountName}</TableCell>
+                  <TableCell sx={{ py: 1 }}>{row.phoneNumber}</TableCell>
+                </TableRow>
+              ))}
+
+            {(!vendor.bankDetailDto || vendor.bankDetailDto.length === 0) && (
+              <TableRow>
+                <TableCell colSpan={5} align="center" sx={{ py: 2 }}>
+                  No data found.
+                </TableCell>
+              </TableRow>
+            )}
+         </TableBody>
+
+            </Table>
+            
+          </TableContainer>
+            <Typography variant="body2" color="text.secondary">
+              {renderDetailRow('Comments', vendor.comments)}
+              {renderDetailRow('Status', vendor.salesStatusId)}
+              {renderDetailRow('Payment Terms', vendor.paymentId)}
+             
             </Typography>
           </TabPanel>
+          
+          <TabPanel value={activeTab} index={1}>
+          <TableContainer component={Paper}>
+            <Table size="small">
+              <TableHead>
+                <TableRow>
+                  <TableCell sx={{ py: 1, fontWeight: 'bold' }}>
+                   Country
+                  </TableCell>
+                  <TableCell sx={{ py: 1, fontWeight: 'bold' }}>
+                    Category  
+                  </TableCell>
+                  <TableCell sx={{ py: 1, fontWeight: 'bold' }}>
+                    Name
+                  </TableCell>
+                  <TableCell sx={{ py: 1, fontWeight: 'bold' }}>  
+                    Tax Number
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+                          <TableBody>
+              {(vendor.taxInformationDto ?? []).map((row) => (
+                <TableRow 
+                  key={row.taxInformationId}
+                  sx={{ 
+                    '&:hover': {
+                      backgroundColor: '#f1f1fa',
+                      cursor: 'pointer'
+                    }
+                  }}
+                >
+                  <TableCell sx={{ py: 1 }}>{row.countryId}</TableCell>
+                  <TableCell sx={{ py: 1 }}>{row.category}</TableCell>
+                  <TableCell sx={{ py: 1 }}>{row.name}</TableCell>
+                  <TableCell sx={{ py: 1 }}>{row.taxNumber}</TableCell>
+                </TableRow>
+              ))}
 
+            {(!vendor.taxInformationDto || vendor.taxInformationDto.length === 0) && (
+              <TableRow>
+                <TableCell colSpan={5} align="center" sx={{ py: 2 }}>
+                  No data found.
+                </TableCell>
+              </TableRow>
+            )}
+         </TableBody>
+
+        </Table>
+            
+          </TableContainer>
+          </TabPanel>
+          
+          <TabPanel value={activeTab} index={2}>
+           <TableContainer component={Paper}>
+            <Table size="small">
+              <TableHead>
+                <TableRow>
+                  <TableCell sx={{ py: 1, fontWeight: 'bold' }}>
+                   Bank Name
+                  </TableCell>
+                  <TableCell sx={{ py: 1, fontWeight: 'bold' }}>
+                    Account Number  
+                  </TableCell>
+                  <TableCell sx={{ py: 1, fontWeight: 'bold' }}>
+                    Routing Number
+                  </TableCell>
+                  <TableCell sx={{ py: 1, fontWeight: 'bold' }}>  
+                    Account Name
+                  </TableCell>
+                  <TableCell sx={{ py: 1, fontWeight: 'bold' }}>  
+                    Phone Number
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+              {(vendor.bankDetailDto ?? []).map((row) => (
+                <TableRow 
+                  key={row.bankId}
+                  sx={{ 
+                    '&:hover': {
+                      backgroundColor: '#f1f1fa',
+                      cursor: 'pointer'
+                    }
+                  }}
+                >
+                  <TableCell sx={{ py: 1 }}>{row.bankName}</TableCell>
+                  <TableCell sx={{ py: 1 }}>{row.accountNumber}</TableCell>
+                  <TableCell sx={{ py: 1 }}>{row.routingNumber}</TableCell>
+                  <TableCell sx={{ py: 1 }}>{row.accountName}</TableCell>
+                  <TableCell sx={{ py: 1 }}>{row.phoneNumber}</TableCell>
+                </TableRow>
+              ))}
+
+            {(!vendor.bankDetailDto || vendor.bankDetailDto.length === 0) && (
+              <TableRow>
+                <TableCell colSpan={5} align="center" sx={{ py: 2 }}>
+                  No data found.
+                </TableCell>
+              </TableRow>
+            )}
+         </TableBody>
+
+            </Table>
+            
+          </TableContainer>
+          </TabPanel>
+          
           <TabPanel value={activeTab} index={3}>
-            <Typography variant="body2" color="text.secondary">
-              <Grid container spacing={2}>
-                <Grid size={{ xs: 12 }}>
-                  <Box component="section">
-                    <Typography variant="subtitle1" gutterBottom color="textPrimary">
-                      Name
-                    </Typography>
-                  </Box>
-                </Grid>
-                <Grid size={{ xs: 12, sm: 12, md: 6, lg: 4 }}>
-                 <Typography variant="subtitle1" color="text.Secondary">
-                   Company Name 1
-                  </Typography>
-                  <Typography variant="subtitle1" color="body2">
-                    {vendor.companyName1}
-                  </Typography>
-                </Grid>
-                <Grid size={{ xs: 12, sm: 12, md: 6, lg: 4 }}>
-                 <Typography variant="subtitle1" color="text.Secondary">
-                   Company Name 2
-                  </Typography>
-                  <Typography variant="subtitle1" color="body2">
-                    {vendor.companyName2}
-                  </Typography>
-                </Grid>
-                <Grid size={{ xs: 12, sm: 12, md: 6, lg: 4 }}>
-                 <Typography variant="subtitle1" color="text.Secondary">
-                   DBA (Doing Business As)
-                  </Typography>
-                  <Typography variant="subtitle1" color="body2">
-                    {vendor.dba ?? '-'}
-                  </Typography>
-                </Grid>
-                <Grid size={{ xs: 12, sm: 12, md: 6, lg: 4 }}>
-                 <Typography variant="subtitle1" color="text.Secondary">
-                  Keyword
-                  </Typography>
-                  <Typography variant="subtitle1" color="body2">
-                    {vendor.keyword ?? '-'}
-                  </Typography>
-                </Grid>
-                <Grid size={{ xs: 12 }}>
-                  <Box component="section">
-                    <Typography variant="subtitle1" gutterBottom color="textPrimary">
-                      Address
-                    </Typography>
-                  </Box>
-                </Grid>
-                <Grid size={{ xs: 12, sm: 12, md: 6, lg: 4 }}>
-                 <Typography variant="subtitle1" color="text.Secondary">
-                  House Number
-                  </Typography>
-                  <Typography variant="subtitle1" color="body2">
-                    {vendor.houseNumber ?? '-'}
-                  </Typography>
-                </Grid>
-                <Grid size={{ xs: 12, sm: 12, md: 6, lg: 4 }}>
-                 <Typography variant="subtitle1" color="text.Secondary">
-                  Street Name
-                  </Typography>
-                  <Typography variant="subtitle1" color="body2">
-                    {vendor.streetName ?? '-'}
-                  </Typography>
-                </Grid>
-                <Grid size={{ xs: 12, sm: 12, md: 6, lg: 4 }}>
-                 <Typography variant="subtitle1" color="text.Secondary">
-                  Building Name
-                  </Typography>
-                  <Typography variant="subtitle1" color="body2">
-                    {vendor.buildingName ?? '-'}
-                  </Typography>
-                </Grid>
-                <Grid size={{ xs: 12, sm: 12, md: 6, lg: 4 }}>
-                 <Typography variant="subtitle1" color="text.Secondary">
-                  Landmark
-                  </Typography>
-                  <Typography variant="subtitle1" color="body2">
-                    {vendor.landmark ?? '-'}
-                  </Typography>
-                </Grid>
-                <Grid size={{ xs: 12, sm: 12, md: 6, lg: 4 }}>
-                 <Typography variant="subtitle1" color="text.Secondary">
-                  Country
-                  </Typography>
-                  <Typography variant="subtitle1" color="body2">
-                    {countryList.find(c => c.id === vendor.countryId)?.name || '-'}
-                  </Typography>
-                  </Grid>
-                <Grid size={{ xs: 12, sm: 12, md: 6, lg: 4 }}>
-                 <Typography variant="subtitle1" color="text.Secondary">
-                  State
-                  </Typography>
-                  <Typography variant="subtitle1" color="body2">
-                    {stateList.find(c => c.id === vendor.stateId)?.name || '-'}
-                  </Typography>
-                  </Grid>
-                <Grid size={{ xs: 12, sm: 12, md: 6, lg: 4 }}>
-                 <Typography variant="subtitle1" color="text.Secondary">
-                  Zip Code
-                  </Typography>
-                  <Typography variant="subtitle1" color="body2">
-                    {vendor.zipCode ?? '-'}
-                  </Typography>
-                  </Grid>
-              </Grid>
-            </Typography>
+           
           </TabPanel>
         </Box>
       </Box>

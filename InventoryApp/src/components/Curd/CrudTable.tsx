@@ -38,6 +38,7 @@ const CrudTable: React.FC<CrudTableProps> = ({ onEdit }) => {
   const [orderBy, setOrderBy] = useState<keyof ReadProductMasterForm>('productId');
 
   useEffect(() => {
+    
   if (Array.isArray(productMasterForm)) {
     setRows(productMasterForm);
   } else {

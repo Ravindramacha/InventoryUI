@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import type { LanguageModel, PostProductMasterForm, PostProductType, ProductCategoryModel, ProductGroupModel, ProductTypeModel, PutProductMasterForm, ReadProductMasterForm, SalesStatusModel, UomDimensionModel, UomModel } from "../Models/MaterialModel";
+import type { LanguageModel, PostProductMasterForm, PostProductType, ProductCategoryModel, ProductGroupModel, ProductTypeModel, ReadProductMasterForm, SalesStatusModel, UomDimensionModel, UomModel } from "../Models/MaterialModel";
 import type { ReadVendorFormModel, VendorModel } from "../Models/VendorModel";
 
 // ✅ Hook with retry + enabled as parameters

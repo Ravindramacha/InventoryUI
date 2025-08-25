@@ -6,6 +6,12 @@ import {
   Button,
   Tabs,
   Tab,
+  TableContainer,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
 } from '@mui/material';
 import { Edit } from '@mui/icons-material';
 import  type { ReadProductMasterForm } from '../../../Models/MaterialModel';
@@ -123,12 +129,111 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product, onBack, onEdit
             {renderDetailRow('Unit of Measurement', product.unitOfMeasurement)}
             {renderDetailRow('Short Description', product.shortDescription)}
             {renderDetailRow('Long Description', product.longDescription)}
+            <Typography variant="h6" sx={{ mt: 3, mb: 1 }}>
+              UOM Details 
+            </Typography>
+            {product.productMasterUomDto && product.productMasterUomDto.length > 0 ? (
+              product.productMasterUomDto.map((uom, index) => (
+                <Box key={index} sx={{ mb: 2, p: 2, border: '1px solid', borderColor: 'divider', borderRadius: 1 }}>
+                  {renderDetailRow('UOM', uom.uom)}
+                  {renderDetailRow('Quantity', uom.quantity)}
+                  {renderDetailRow('Price', uom.quantity)}
+                  {renderDetailRow('Currency', uom.primaryQty)}
+                  
+                </Box>
+              ))
+            ) : (
+              <Typography variant="body2" color="text.secondary">
+                No UOM details available.
+              </Typography>
+            )}
           </TabPanel>
           
           <TabPanel value={activeTab} index={1}>
-            <Typography variant="body2" color="text.secondary">
-              Transaction history will be displayed here
-            </Typography>
+            <TableContainer component={Paper}>
+            <Table size="small">
+              <TableHead>
+                <TableRow>
+                  <TableCell sx={{ py: 1, fontWeight: 'bold' }}>
+                   Uom
+                  </TableCell>
+                   <TableCell sx={{ py: 1, fontWeight: 'bold' }}>
+                   Quantity
+                  </TableCell>
+                   <TableCell sx={{ py: 1, fontWeight: 'bold' }}>
+                    Primary Qty
+                  </TableCell>
+                  <TableCell sx={{ py: 1, fontWeight: 'bold' }}>
+                      Length
+                  </TableCell>
+                  <TableCell sx={{ py: 1, fontWeight: 'bold' }}>
+                      Width 
+                  </TableCell>
+                  <TableCell sx={{ py: 1, fontWeight: 'bold' }}>
+                      Height
+                  </TableCell>
+                  <TableCell sx={{ py: 1, fontWeight: 'bold' }}>
+                      Length Uom
+                  </TableCell>
+                  <TableCell sx={{ py: 1, fontWeight: 'bold' }}>
+                      Net Weight
+                  </TableCell>
+                  <TableCell sx={{ py: 1, fontWeight: 'bold' }}>
+                      Gross Weight
+                  </TableCell>
+                  <TableCell sx={{ py: 1, fontWeight: 'bold' }}>
+                      Weight Uom
+                  </TableCell>
+                  <TableCell sx={{ py: 1, fontWeight: 'bold' }}>
+                      Volume
+                  </TableCell>
+                  <TableCell sx={{ py: 1, fontWeight: 'bold' }}>
+                      Volume Uom
+                  </TableCell>  
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {product.productMasterUomDto.map((row) => (
+                  <TableRow 
+                    key={row.uomDataId}
+                    sx={{ 
+                      '&:hover': {
+                        backgroundColor: '#f1f1fa',
+                        cursor: 'pointer'
+                      }
+                    }}
+                  >
+                    <TableCell sx={{ py: 1 }}>{row.uom}</TableCell>
+                    <TableCell sx={{ py: 1 }}>{row.quantity}</TableCell>
+                    <TableCell sx={{ py: 1 }}>{row.primaryQty}</TableCell>
+                    <TableCell sx={{ py: 1 }}>{row.length}</TableCell>
+                    <TableCell sx={{ py: 1 }}>{row.width}</TableCell>
+                    <TableCell sx={{ py: 1 }}>{row.height}</TableCell>
+                    <TableCell sx={{ py: 1 }}>{row.lengthUom}</TableCell>
+                    <TableCell sx={{ py: 1 }}>{row.netWeight}</TableCell>
+                    <TableCell sx={{ py: 1 }}>{row.grossWeight}</TableCell>
+                    <TableCell sx={{ py: 1 }}>{row.weightUom}</TableCell>
+                    <TableCell sx={{ py: 1 }}>{row.volume}</TableCell>
+                    <TableCell sx={{ py: 1 }}>{row.volumeUom}</TableCell>
+                  </TableRow>
+                ))}
+                {product.productMasterUomDto.length === 0 && (
+                  <TableRow>
+                    <TableCell
+                      colSpan={5}
+                      align="center"
+                      sx={{
+                        py: 2
+                      }}
+                    >
+                      No data found.
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+            
+          </TableContainer>
           </TabPanel>
           
           <TabPanel value={activeTab} index={2}>
