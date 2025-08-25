@@ -8,7 +8,7 @@ import {
   Box,
   Grid
 } from '@mui/material';
-import { useGetAllProductCategories, useGetAllProductGroups, useGetUomsByDimensionId, useLanguages, usePostProductMasterForm, useProductTypes, usePutProductMasterForm, useSalesStatus, useUomDimension } from '../../api/ApiQueries';
+import { useGetAllProductCategories, useGetAllProductGroups, useGetProductFormById, useGetUomsByDimensionId, useLanguages, usePostProductMasterForm, useProductTypes, usePutProductMasterForm, useSalesStatus, useUomDimension } from '../../api/ApiQueries';
 import Autocomplete from '@mui/material/Autocomplete';
 import DynamicField, { type Attribute } from './DynamicField';
 import UOMComponent from './UOMComponent';
@@ -82,6 +82,8 @@ const initialProductMasterForm: PostProductMasterForm = {
     manufacturerPartNumber: '',
     notes: '',
 }
+  //const { data: initialData = [] } = useGetProductFormById(productMasterId);
+
   const [uomRows, setUomRows] = useState<UomData[]>(initialData?.productMasterUomDto && initialData.productMasterUomDto.length > 0 ? initialData.productMasterUomDto : initialUOMRows);
   const [formData, setFormData] = useState<PostProductMasterForm>(initialData || initialProductMasterForm);
  const initialNumberFields: Attribute[] = [
@@ -328,6 +330,8 @@ const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
   };
 
   if(mode === "edit" && productMasterId){
+      setLoading(true);
+    setBackdropOpen(true); // show backdrop
     // --- Edit Mode ---
     updateMutate({id: productMasterId, data: finalFormData}, {
       onSuccess: () => {

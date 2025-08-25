@@ -11,27 +11,14 @@ import {
   Alert,
 } from '@mui/material';
 import { Snackbar, CircularProgress, Backdrop } from '@mui/material';
-import type { BankModel, TaxInformationModel, VendorModel } from '../../Models/VendorModel';
+import { countryList, stateList, type BankModel, type TaxInformationModel, type VendorModel } from '../../Models/VendorModel';
 import TaxInformation from '../Vendor/TaxInformation';
 import BankData from '../Vendor/BankData';
 import { useLanguages, usePostVendorForm, useSalesStatus } from '../../api/ApiQueries';
 
 
 const VendorForm = () => {
-  const countryList = [
-    { id: 1, name: 'United States' },
-    { id: 2, name: 'Canada' },
-    { id: 3, name: 'India' },
-  ];
-
-  const stateList = [
-    { id: 1, countryId: 1, name: 'California' },
-    { id: 2, countryId: 1, name: 'Texas' },
-    { id: 3, countryId: 2, name: 'Ontario' },
-    { id: 4, countryId: 3, name: 'Maharashtra' },
-    // add more states with countryId mappings
-  ];
-
+ 
   const [formData, setFormData] = useState<VendorModel>({
     companyName1: '',
     companyName2: '',

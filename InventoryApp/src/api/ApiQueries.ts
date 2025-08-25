@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import type { LanguageModel, PostProductMasterForm, PostProductType, ProductCategoryModel, ProductGroupModel, ProductTypeModel, PutProductMasterForm, ReadProductMasterForm, SalesStatusModel, UomDimensionModel, UomModel } from "../Models/MaterialModel";
-import type { VendorModel } from "../Models/VendorModel";
+import type { ReadVendorFormModel, VendorModel } from "../Models/VendorModel";
 
 // ✅ Hook with retry + enabled as parameters
 export function useLanguages(
@@ -78,6 +78,21 @@ export function useGetUomsByDimensionId(dimensionId?: number | null) {
       return response.data;
     },
     enabled: !!dimensionId,
+  });
+}
+export function useGetProductFormById(Id?: number | null) {
+  return useQuery<PostProductMasterForm, Error>({
+    queryKey: ['ReadProductMasterFormById', Id],
+    queryFn: async () => {
+      if (!Id) return [];
+      const response = await axios.get(`/api/ProductMasterForms/GetAllProductMasterForm/${Id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+      return response.data;
+    },
+    enabled: !!Id,
   });
 }
 
@@ -215,6 +230,27 @@ export function useGetAllProductMasterForm(
     queryKey: ["readProductMasterForm"],
     queryFn: async () => {
       const response = await axios.get<ReadProductMasterForm[]>("/api/ProductMasterForms/GetAllProductMasterForm", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          "Cache-Control": "no-cache", 
+        },
+      });
+      return response.data;
+    },
+    staleTime: 1000 * 60 * 5,
+    retry,      // 👈 dynamic retry
+    enabled,    // 👈 only fetch if enabled === true
+  });
+}
+
+export function useGetAllVendorForm(
+  retry: number = 1,
+  enabled: boolean = true
+) {
+  return useQuery<ReadVendorFormModel[], Error>({
+    queryKey: ["readVendorForm"],
+    queryFn: async () => {
+      const response = await axios.get<ReadVendorFormModel[]>("/api/VendorForms/GetAllVendorForm", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
           "Cache-Control": "no-cache", 

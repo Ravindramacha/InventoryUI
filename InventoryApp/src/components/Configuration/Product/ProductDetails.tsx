@@ -115,10 +115,14 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product, onBack, onEdit
         <Box sx={{ flex: 1, overflowY: 'auto', px: 3 }}>
           <TabPanel value={activeTab} index={0}>
             {renderDetailRow('Product ID', product.productId)}
-            {renderDetailRow('Product Master ID', product.productMasterId)}
             {renderDetailRow('Product Type', product.productType.productTypeDesc)}
             {renderDetailRow('Product Group', product.productGroup.productGroupDesc)}
             {renderDetailRow('Product Category', product.productCategory.productCategoryDesc)}
+            {renderDetailRow('Language', product.languageId)}
+            {renderDetailRow('Status', product.salesStatusId)}
+            {renderDetailRow('Unit of Measurement', product.unitOfMeasurement)}
+            {renderDetailRow('Short Description', product.shortDescription)}
+            {renderDetailRow('Long Description', product.longDescription)}
           </TabPanel>
           
           <TabPanel value={activeTab} index={1}>
