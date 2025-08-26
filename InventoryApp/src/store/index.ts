@@ -60,7 +60,7 @@ const notificationSlice = createSlice({
       state.unreadCount += 1;
     },
     removeNotification: (state, action) => {
-      state.items = state.items.filter(item => item.id !== action.payload);
+      state.items = state.items.filter((item) => item.id !== action.payload);
       state.unreadCount = Math.max(0, state.unreadCount - 1);
     },
   },
@@ -90,7 +90,10 @@ const inventoryDataSlice = createSlice({
 });
 
 // Export basic actions
-export const { setProductTypes: setBasicProductTypes, setProductGroups: setBasicProductGroups } = inventoryDataSlice.actions;
+export const {
+  setProductTypes: setBasicProductTypes,
+  setProductGroups: setBasicProductGroups,
+} = inventoryDataSlice.actions;
 
 // Simple cache slice
 const cacheSlice = createSlice({
@@ -109,8 +112,10 @@ const cacheSlice = createSlice({
 });
 
 // Export actions
-export const { setThemeMode, setDensity, toggleSidebar, setLoading, setError } = uiSlice.actions;
-export const { addNotification, removeNotification } = notificationSlice.actions;
+export const { setThemeMode, setDensity, toggleSidebar, setLoading, setError } =
+  uiSlice.actions;
+export const { addNotification, removeNotification } =
+  notificationSlice.actions;
 
 // Configure the Redux store
 export const store = configureStore({
@@ -129,13 +134,17 @@ export const store = configureStore({
       serializableCheck: {
         // Ignore these action types for serialization checks
         ignoredActions: [
-          'cache/setCacheData', 
+          'cache/setCacheData',
           'notifications/addNotification',
           'persist/PERSIST',
           'persist/REHYDRATE',
         ],
         // Ignore these field paths in all actions
-        ignoredActionsPaths: ['meta.arg', 'payload.timestamp', 'payload.action.handler'],
+        ignoredActionsPaths: [
+          'meta.arg',
+          'payload.timestamp',
+          'payload.action.handler',
+        ],
         // Ignore these paths in the state
         ignoredPaths: ['notifications.items', 'cache.apiCache'],
       },
@@ -146,10 +155,10 @@ export const store = configureStore({
         },
       },
     })
-    // Adding the api middleware enables caching, invalidation, polling, and other features of RTK Query
-    .concat(inventoryApi.middleware)
-    .concat(listenerMiddleware.middleware)
-    .concat(sagaMiddleware),
+      // Adding the api middleware enables caching, invalidation, polling, and other features of RTK Query
+      .concat(inventoryApi.middleware)
+      .concat(listenerMiddleware.middleware)
+      .concat(sagaMiddleware),
   devTools: process.env.NODE_ENV !== 'production' && {
     // Enhanced DevTools configuration
     name: 'Inventory Management Redux Store',
@@ -158,9 +167,10 @@ export const store = configureStore({
     actionSanitizer: (action: any) => ({
       ...action,
       // Sanitize sensitive data in DevTools
-      payload: action.type.includes('auth') && action.payload?.password
-        ? { ...action.payload, password: '[REDACTED]' }
-        : action.payload,
+      payload:
+        action.type.includes('auth') && action.payload?.password
+          ? { ...action.payload, password: '[REDACTED]' }
+          : action.payload,
     }),
     stateSanitizer: (state: any) => ({
       ...state,

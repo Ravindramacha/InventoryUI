@@ -12,10 +12,9 @@ import {
 import MenuIcon from '@mui/icons-material/Menu';
 import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from './context/AuthContext'; 
+import { useAuth } from './context/AuthContext';
 import { useNotification } from './context/NotificationContext';
 import { deepPurple } from '@mui/material/colors';
-
 
 interface MenuBarProps {
   onMenuClick: () => void;
@@ -25,7 +24,7 @@ const MenuBar: React.FC<MenuBarProps> = ({ onMenuClick }) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const { logout } = useAuth();
   const navigate = useNavigate();
-  const { notifications} = useNotification();
+  const { notifications } = useNotification();
 
   const handleAccountMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -47,7 +46,10 @@ const MenuBar: React.FC<MenuBarProps> = ({ onMenuClick }) => {
   };
 
   return (
-    <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+    <AppBar
+      position="fixed"
+      sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
+    >
       <Toolbar>
         <IconButton
           size="large"

@@ -1,13 +1,29 @@
 import React, { useEffect, useState } from 'react';
 import { useNotification } from '../../context/NotificationContext';
 import {
-  Button, Dialog, DialogActions, DialogContent, DialogTitle,
-  TextField, Typography, Box,
-  Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper,
-  TablePagination, TableSortLabel,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  TextField,
+  Typography,
+  Box,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  TablePagination,
+  TableSortLabel,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
-import type { PostProductType, ProductTypeModel } from '../../Models/MaterialModel';
+import type {
+  PostProductType,
+  ProductTypeModel,
+} from '../../Models/MaterialModel';
 import { usePostProductType, useProductTypes } from '../../api/ApiQueries';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
@@ -15,7 +31,6 @@ import type { AlertColor } from '@mui/material/Alert';
 import { useQueryClient } from '@tanstack/react-query';
 
 export default function Products() {
-
   const queryClient = useQueryClient();
   const { data: productTypes = [] } = useProductTypes();
   const [products, setProducts] = useState<ProductTypeModel[]>([]);
@@ -26,23 +41,26 @@ export default function Products() {
 
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
-  const [snackbarSeverity, setSnackbarSeverity] = useState<AlertColor>('success');
+  const [snackbarSeverity, setSnackbarSeverity] =
+    useState<AlertColor>('success');
   const [open, setOpen] = useState(false);
-  const [editingProduct, setEditingProduct] = useState<ProductTypeModel | null>(null);
+  const [editingProduct, setEditingProduct] = useState<ProductTypeModel | null>(
+    null
+  );
   const { addNotification } = useNotification();
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [page, setPage] = useState(0);
 
   const [formValues, setFormValues] = useState({
     productTypeCode: '',
-    productTypeDesc: ''
+    productTypeDesc: '',
   });
 
   const handleOpen = (productType?: ProductTypeModel) => {
     setEditingProduct(productType || null);
     setFormValues({
       productTypeCode: productType?.productTypeCode || '',
-      productTypeDesc: productType?.productTypeDesc.toString() || ''
+      productTypeDesc: productType?.productTypeDesc.toString() || '',
     });
     setOpen(true);
   };
@@ -64,7 +82,9 @@ export default function Products() {
     if (editingProduct) {
       setProducts((prev) =>
         prev.map((p) =>
-          p.productTypeId === editingProduct.productTypeId ? { ...p, productTypeCode, productTypeDesc } : p
+          p.productTypeId === editingProduct.productTypeId
+            ? { ...p, productTypeCode, productTypeDesc }
+            : p
         )
       );
     } else {
@@ -72,24 +92,24 @@ export default function Products() {
         productTypeCode: productTypeCode,
         productTypeDesc: productTypeDesc,
         TranscationById: 1, // Assuming a static user ID for now
-
       };
       mutate(newProduct, {
         onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: ["productTypes"] });
+          queryClient.invalidateQueries({ queryKey: ['productTypes'] });
           setSnackbarMessage('Product type added successfully');
           setSnackbarSeverity('success');
           setSnackbarOpen(true);
           handleClose();
-          addNotification('Product type added successfully', 'success')
+          addNotification('Product type added successfully', 'success');
         },
         onError: (error) => {
-          addNotification(`Error adding product type: ${error.message}`, 'error');
+          addNotification(
+            `Error adding product type: ${error.message}`,
+            'error'
+          );
         },
       });
     }
-
-
   };
 
   // const handleDelete = (id: number) => {
@@ -100,7 +120,8 @@ export default function Products() {
   // const [productTypeDescFilter, setproductTypeDescFilter] = useState('');
 
   const [globalSearch, setGlobalSearch] = useState('');
-  const [orderBy, setOrderBy] = useState<keyof ProductTypeModel>('productTypeCode');
+  const [orderBy, setOrderBy] =
+    useState<keyof ProductTypeModel>('productTypeCode');
   const [order, setOrder] = useState<'asc' | 'desc'>('asc');
 
   const handleRequestSort = (property: keyof ProductTypeModel) => {
@@ -117,7 +138,7 @@ export default function Products() {
 
   function getComparator<T>(
     order: 'asc' | 'desc',
-    orderBy: keyof T,
+    orderBy: keyof T
   ): (a: T, b: T) => number {
     return order === 'desc'
       ? (a, b) => descendingComparator(a, b, orderBy)
@@ -139,8 +160,12 @@ export default function Products() {
   const filteredProducts = products
     .filter((productType) => {
       const searchText = globalSearch.toLowerCase();
-      const productTypeCodeMatch = productType.productTypeCode.toLowerCase().includes(searchText);
-      const productTypeDescMatch = productType.productTypeDesc.toLowerCase().includes(searchText);
+      const productTypeCodeMatch = productType.productTypeCode
+        .toLowerCase()
+        .includes(searchText);
+      const productTypeDescMatch = productType.productTypeDesc
+        .toLowerCase()
+        .includes(searchText);
       return productTypeCodeMatch || productTypeDescMatch;
     })
     .sort(getComparator(order, orderBy));
@@ -155,7 +180,10 @@ export default function Products() {
     setPage(newPage);
   };
   // Pagination logic for table rows
-  const paginatedProducts = filteredProducts.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+  const paginatedProducts = filteredProducts.slice(
+    page * rowsPerPage,
+    page * rowsPerPage + rowsPerPage
+  );
 
   return (
     <>
@@ -178,7 +206,12 @@ export default function Products() {
         <Typography variant="h5" gutterBottom>
           Product Type
         </Typography>
-        <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+        <Box
+          display="flex"
+          justifyContent="space-between"
+          alignItems="center"
+          mb={2}
+        >
           <TextField
             label="Search"
             variant="outlined"
@@ -190,66 +223,72 @@ export default function Products() {
             }}
             sx={{ width: 250 }}
           />
-          <Button 
-            variant="contained" 
+          <Button
+            variant="contained"
             onClick={() => handleOpen()}
             size="small"
             sx={{
               borderRadius: '8px',
               minWidth: '100px',
-            }} 
+            }}
             startIcon={<AddIcon />}
           >
             Add
           </Button>
         </Box>
-          </Box>
+      </Box>
 
-          <TableContainer component={Paper}>
-            <Table stickyHeader size="small">
-              <TableHead>
-                <TableRow>
-                  <TableCell sx={{ py: 1.5, fontWeight: 600 }}>
-                    <TableSortLabel
-                      active={orderBy === 'productTypeCode'}
-                      direction={orderBy === 'productTypeCode' ? order : 'asc'}
-                      onClick={() => handleRequestSort('productTypeCode')}
-                    >
-                      Product Type Code
-                    </TableSortLabel>
-                  </TableCell>
-                  <TableCell sx={{ py: 1.5, fontWeight: 600 }}>
-                    <TableSortLabel
-                      active={orderBy === 'productTypeDesc'}
-                      direction={orderBy === 'productTypeDesc' ? order : 'asc'}
-                      onClick={() => handleRequestSort('productTypeDesc')}
-                    >
-                      Product Type Description
-                    </TableSortLabel>
-                  </TableCell>
-                  {/* <TableCell sx={{ py: 1.5, fontWeight: 600 }}>Actions</TableCell> */}
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {paginatedProducts.map((productType) => (
-                  <TableRow 
-                    key={productType.productTypeId}
-                    onClick={(event) => {
-                      // Prevent row click if clicking on action buttons
-                      if (!(event.target as HTMLElement).closest('.action-buttons')) {
-                        handleOpen(productType);
-                      }
-                    }}
-                    sx={{ 
-                      '&:hover': {
-                        backgroundColor: '#f1f1fa',
-                        cursor: 'pointer'
-                      }
-                    }}
-                  >
-                    <TableCell sx={{ py: 1 }}>{productType.productTypeCode}</TableCell>
-                    <TableCell sx={{ py: 1 }}>{productType.productTypeDesc}</TableCell>
-                    {/* <TableCell sx={{ py: 1 }} className="action-buttons">
+      <TableContainer component={Paper}>
+        <Table stickyHeader size="small">
+          <TableHead>
+            <TableRow>
+              <TableCell sx={{ py: 1.5, fontWeight: 600 }}>
+                <TableSortLabel
+                  active={orderBy === 'productTypeCode'}
+                  direction={orderBy === 'productTypeCode' ? order : 'asc'}
+                  onClick={() => handleRequestSort('productTypeCode')}
+                >
+                  Product Type Code
+                </TableSortLabel>
+              </TableCell>
+              <TableCell sx={{ py: 1.5, fontWeight: 600 }}>
+                <TableSortLabel
+                  active={orderBy === 'productTypeDesc'}
+                  direction={orderBy === 'productTypeDesc' ? order : 'asc'}
+                  onClick={() => handleRequestSort('productTypeDesc')}
+                >
+                  Product Type Description
+                </TableSortLabel>
+              </TableCell>
+              {/* <TableCell sx={{ py: 1.5, fontWeight: 600 }}>Actions</TableCell> */}
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {paginatedProducts.map((productType) => (
+              <TableRow
+                key={productType.productTypeId}
+                onClick={(event) => {
+                  // Prevent row click if clicking on action buttons
+                  if (
+                    !(event.target as HTMLElement).closest('.action-buttons')
+                  ) {
+                    handleOpen(productType);
+                  }
+                }}
+                sx={{
+                  '&:hover': {
+                    backgroundColor: '#f1f1fa',
+                    cursor: 'pointer',
+                  },
+                }}
+              >
+                <TableCell sx={{ py: 1 }}>
+                  {productType.productTypeCode}
+                </TableCell>
+                <TableCell sx={{ py: 1 }}>
+                  {productType.productTypeDesc}
+                </TableCell>
+                {/* <TableCell sx={{ py: 1 }} className="action-buttons">
                       <IconButton size="small" onClick={() => handleOpen(productType)}>
                         <EditIcon fontSize="small" />
                       </IconButton>
@@ -257,21 +296,21 @@ export default function Products() {
                         <DeleteIcon fontSize="small" />
                       </IconButton>
                     </TableCell> */}
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-            <TablePagination
-              component="div"
-              count={filteredProducts.length}
-              page={page}
-              onPageChange={handleChangePage}
-              rowsPerPage={rowsPerPage}
-              onRowsPerPageChange={handleChangeRowsPerPage}
-            />
-          </TableContainer>
-          {/* Filter popover */}
-          {/* <Popover
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+        <TablePagination
+          component="div"
+          count={filteredProducts.length}
+          page={page}
+          onPageChange={handleChangePage}
+          rowsPerPage={rowsPerPage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
+      </TableContainer>
+      {/* Filter popover */}
+      {/* <Popover
           open={Boolean(anchorEl)}
           anchorEl={anchorEl}
           onClose={handleFilterPopoverClose}
@@ -300,43 +339,47 @@ export default function Products() {
             />
           </Box>
         </Popover> */}
-        {/* Rows per page dropdown */}
-       
-        <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
-          <DialogTitle sx={{ p: 1, mb: 0 }}>
-            {editingProduct ? 'Edit' : 'Add'} Product</DialogTitle>
-          <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 0 }}>
-            <span></span>
-            <TextField
-              name="productTypeCode"
-              label="Product Type Code"
-              value={formValues.productTypeCode}
-              onChange={handleChange}
-              required
-              size="small"
-            />
-            <TextField
-              name="productTypeDesc"
-              label="Product Type Description"
-              value={formValues.productTypeDesc}
-              onChange={handleChange}
-              required
-              size="small"
-            />
+      {/* Rows per page dropdown */}
 
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleClose} size="small">Cancel</Button>
-            <Button 
-              onClick={handleSubmit} 
-              variant="contained" 
-              size="small"
-              sx={{ borderRadius: '8px', minWidth: '100px' }}
-            >
-              {editingProduct ? 'Update' : 'Create'}
-            </Button>
-          </DialogActions>
-        </Dialog>
+      <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
+        <DialogTitle sx={{ p: 1, mb: 0 }}>
+          {editingProduct ? 'Edit' : 'Add'} Product
+        </DialogTitle>
+        <DialogContent
+          sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 0 }}
+        >
+          <span></span>
+          <TextField
+            name="productTypeCode"
+            label="Product Type Code"
+            value={formValues.productTypeCode}
+            onChange={handleChange}
+            required
+            size="small"
+          />
+          <TextField
+            name="productTypeDesc"
+            label="Product Type Description"
+            value={formValues.productTypeDesc}
+            onChange={handleChange}
+            required
+            size="small"
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} size="small">
+            Cancel
+          </Button>
+          <Button
+            onClick={handleSubmit}
+            variant="contained"
+            size="small"
+            sx={{ borderRadius: '8px', minWidth: '100px' }}
+          >
+            {editingProduct ? 'Update' : 'Create'}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 }

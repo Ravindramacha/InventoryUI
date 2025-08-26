@@ -20,14 +20,18 @@ const NotificationContext = createContext<NotificationContextType | null>(null);
 
 export const useNotification = () => {
   const context = useContext(NotificationContext);
-  if (!context) throw new Error('useNotification must be used within NotificationProvider');
+  if (!context)
+    throw new Error('useNotification must be used within NotificationProvider');
   return context;
 };
 
 export const NotificationProvider = ({ children }: { children: ReactNode }) => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
 
-  const addNotification = (message: string, type: Notification['type'] = 'info') => {
+  const addNotification = (
+    message: string,
+    type: Notification['type'] = 'info'
+  ) => {
     const newNotification: Notification = {
       id: crypto.randomUUID(), // ✅ ensures uniqueness
       message,
@@ -42,8 +46,9 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-   
-    <NotificationContext.Provider value={{ notifications, addNotification, clearNotifications }}>
+    <NotificationContext.Provider
+      value={{ notifications, addNotification, clearNotifications }}
+    >
       {children}
     </NotificationContext.Provider>
   );

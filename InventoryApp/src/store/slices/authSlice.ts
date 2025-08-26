@@ -1,4 +1,8 @@
-import { createSlice, createAsyncThunk, type PayloadAction } from '@reduxjs/toolkit';
+import {
+  createSlice,
+  createAsyncThunk,
+  type PayloadAction,
+} from '@reduxjs/toolkit';
 import type { RootState } from '../index';
 
 // Types
@@ -34,7 +38,10 @@ const initialState: AuthState = {
 // Async thunks
 export const loginAsync = createAsyncThunk(
   'auth/login',
-  async (credentials: { email: string; password: string }, { rejectWithValue }) => {
+  async (
+    credentials: { email: string; password: string },
+    { rejectWithValue }
+  ) => {
     try {
       // This would normally call your API
       const response = await fetch('/api/auth/login', {
@@ -42,15 +49,17 @@ export const loginAsync = createAsyncThunk(
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(credentials),
       });
-      
+
       if (!response.ok) {
         throw new Error('Login failed');
       }
-      
+
       const data = await response.json();
       return data;
     } catch (error) {
-      return rejectWithValue(error instanceof Error ? error.message : 'Login failed');
+      return rejectWithValue(
+        error instanceof Error ? error.message : 'Login failed'
+      );
     }
   }
 );
@@ -60,14 +69,14 @@ export const logoutAsync = createAsyncThunk(
   async (_, { getState }) => {
     const state = getState() as RootState;
     const token = state.auth.token;
-    
+
     if (token) {
       try {
         await fetch('/api/auth/logout', {
           method: 'POST',
-          headers: { 
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json' 
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
           },
         });
       } catch (error) {
@@ -84,25 +93,27 @@ export const refreshTokenAsync = createAsyncThunk(
     try {
       const state = getState() as RootState;
       const refreshToken = state.auth.refreshToken;
-      
+
       if (!refreshToken) {
         throw new Error('No refresh token available');
       }
-      
+
       const response = await fetch('/api/auth/refresh', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ refreshToken }),
       });
-      
+
       if (!response.ok) {
         throw new Error('Token refresh failed');
       }
-      
+
       const data = await response.json();
       return data;
     } catch (error) {
-      return rejectWithValue(error instanceof Error ? error.message : 'Token refresh failed');
+      return rejectWithValue(
+        error instanceof Error ? error.message : 'Token refresh failed'
+      );
     }
   }
 );
@@ -112,19 +123,28 @@ export const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    setCredentials: (state, action: PayloadAction<{ user: User; token: string; refreshToken?: string }>) => {
+    setCredentials: (
+      state,
+      action: PayloadAction<{
+        user: User;
+        token: string;
+        refreshToken?: string;
+      }>
+    ) => {
       const { user, token, refreshToken } = action.payload;
       state.user = user;
       state.token = token;
       state.isAuthenticated = true;
       state.lastLoginTime = new Date().toISOString();
-      state.sessionExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(); // 24 hours
-      
+      state.sessionExpiry = new Date(
+        Date.now() + 24 * 60 * 60 * 1000
+      ).toISOString(); // 24 hours
+
       if (refreshToken) {
         state.refreshToken = refreshToken;
         localStorage.setItem('refreshToken', refreshToken);
       }
-      
+
       localStorage.setItem('token', token);
       state.loginAttempts = 0;
     },
@@ -176,7 +196,9 @@ export const authSlice = createSlice({
           localStorage.setItem('refreshToken', refreshToken);
         }
         localStorage.setItem('token', token);
-        state.sessionExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
+        state.sessionExpiry = new Date(
+          Date.now() + 24 * 60 * 60 * 1000
+        ).toISOString();
       })
       .addCase(refreshTokenAsync.rejected, (state) => {
         authSlice.caseReducers.clearCredentials(state);
@@ -197,9 +219,12 @@ export const {
 // Selectors
 export const selectUser = (state: RootState) => state.auth.user;
 export const selectToken = (state: RootState) => state.auth.token;
-export const selectIsAuthenticated = (state: RootState) => state.auth.isAuthenticated;
-export const selectLoginAttempts = (state: RootState) => state.auth.loginAttempts;
-export const selectSessionExpiry = (state: RootState) => state.auth.sessionExpiry;
+export const selectIsAuthenticated = (state: RootState) =>
+  state.auth.isAuthenticated;
+export const selectLoginAttempts = (state: RootState) =>
+  state.auth.loginAttempts;
+export const selectSessionExpiry = (state: RootState) =>
+  state.auth.sessionExpiry;
 export const selectIsSessionExpired = (state: RootState) => {
   const expiry = state.auth.sessionExpiry;
   return expiry ? new Date(expiry) < new Date() : false;

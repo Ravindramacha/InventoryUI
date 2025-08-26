@@ -20,7 +20,7 @@ export const useErrorState = (actionType: string) => {
 export const useAsyncActionStatus = (actionType: string) => {
   const loading = useLoadingState(actionType);
   const error = useErrorState(actionType);
-  
+
   return {
     loading,
     error,

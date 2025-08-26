@@ -9,30 +9,31 @@ import { NotificationProvider } from '../context/NotificationContext';
 import { useAppSelector } from './hooks';
 
 // Enhanced QueryClient with Redux integration
-const createQueryClient = () => new QueryClient({
-  defaultOptions: {
-    queries: {
-      // Cache queries for 5 minutes by default
-      staleTime: 5 * 60 * 1000,
-      // Retry failed requests 3 times with exponential backoff
-      retry: (failureCount) => {
-        if (failureCount < 3) {
-          return true;
-        }
-        return false;
+const createQueryClient = () =>
+  new QueryClient({
+    defaultOptions: {
+      queries: {
+        // Cache queries for 5 minutes by default
+        staleTime: 5 * 60 * 1000,
+        // Retry failed requests 3 times with exponential backoff
+        retry: (failureCount) => {
+          if (failureCount < 3) {
+            return true;
+          }
+          return false;
+        },
+        retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+        // Enable background refetching
+        refetchOnWindowFocus: true,
+        refetchOnReconnect: true,
       },
-      retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
-      // Enable background refetching
-      refetchOnWindowFocus: true,
-      refetchOnReconnect: true,
+      mutations: {
+        // Retry mutations once
+        retry: 1,
+        retryDelay: 1000,
+      },
     },
-    mutations: {
-      // Retry mutations once
-      retry: 1,
-      retryDelay: 1000,
-    },
-  },
-});
+  });
 
 // Theme provider that integrates with Redux UI state
 const ThemedApp: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -40,43 +41,47 @@ const ThemedApp: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const uiState = useAppSelector((state) => state.ui || {});
   const themeMode = (uiState as any)?.theme?.mode || 'light';
   const primaryColor = (uiState as any)?.theme?.primaryColor || '#1976d2';
-  
-  const theme = React.useMemo(() => createTheme({
-    palette: {
-      mode: themeMode,
-      primary: {
-        main: primaryColor,
-      },
-    },
-    components: {
-      // Enhanced Material-UI component defaults for large-scale apps
-      MuiButton: {
-        defaultProps: {
-          disableElevation: true,
-        },
-        styleOverrides: {
-          root: {
-            textTransform: 'none',
-            borderRadius: 8,
+
+  const theme = React.useMemo(
+    () =>
+      createTheme({
+        palette: {
+          mode: themeMode,
+          primary: {
+            main: primaryColor,
           },
         },
-      },
-      MuiCard: {
-        styleOverrides: {
-          root: {
-            borderRadius: 12,
+        components: {
+          // Enhanced Material-UI component defaults for large-scale apps
+          MuiButton: {
+            defaultProps: {
+              disableElevation: true,
+            },
+            styleOverrides: {
+              root: {
+                textTransform: 'none',
+                borderRadius: 8,
+              },
+            },
+          },
+          MuiCard: {
+            styleOverrides: {
+              root: {
+                borderRadius: 12,
+              },
+            },
+          },
+          MuiTextField: {
+            defaultProps: {
+              variant: 'outlined',
+              size: 'small',
+            },
           },
         },
-      },
-      MuiTextField: {
-        defaultProps: {
-          variant: 'outlined',
-          size: 'small',
-        },
-      },
-    },
-  }), [themeMode, primaryColor]);
-  
+      }),
+    [themeMode, primaryColor]
+  );
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
@@ -92,23 +97,21 @@ interface AppProvidersProps {
 
 export const AppProviders: React.FC<AppProvidersProps> = ({ children }) => {
   const [queryClient] = React.useState(() => createQueryClient());
-  
+
   React.useEffect(() => {
     // Cleanup function to clear caches on unmount
     return () => {
       queryClient.clear();
     };
   }, [queryClient]);
-  
+
   return (
     <ReduxProvider store={store}>
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
           <ThemedApp>
             <AuthProvider>
-              <NotificationProvider>
-                {children}
-              </NotificationProvider>
+              <NotificationProvider>{children}</NotificationProvider>
             </AuthProvider>
           </ThemedApp>
         </BrowserRouter>
@@ -139,33 +142,37 @@ export class AppErrorBoundary extends React.Component<
     super(props);
     this.state = { hasError: false };
   }
-  
+
   static getDerivedStateFromError(error: Error): ErrorBoundaryState {
     return { hasError: true, error };
   }
-  
+
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     console.error('App Error Boundary caught an error:', error, errorInfo);
-    
+
     // You can log the error to an error reporting service here
     // Example: errorReportingService.captureException(error, { extra: errorInfo });
   }
-  
+
   render() {
     if (this.state.hasError) {
       return (
-        <div style={{ 
-          padding: '2rem', 
-          textAlign: 'center',
-          minHeight: '100vh',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'center'
-        }}>
+        <div
+          style={{
+            padding: '2rem',
+            textAlign: 'center',
+            minHeight: '100vh',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
           <h1>Oops! Something went wrong</h1>
-          <p>We apologize for the inconvenience. Please try refreshing the page.</p>
-          <button 
+          <p>
+            We apologize for the inconvenience. Please try refreshing the page.
+          </p>
+          <button
             onClick={() => window.location.reload()}
             style={{
               padding: '0.5rem 1rem',
@@ -174,7 +181,7 @@ export class AppErrorBoundary extends React.Component<
               color: 'white',
               border: 'none',
               borderRadius: '4px',
-              cursor: 'pointer'
+              cursor: 'pointer',
             }}
           >
             Refresh Page
@@ -182,13 +189,15 @@ export class AppErrorBoundary extends React.Component<
           {process.env.NODE_ENV === 'development' && (
             <details style={{ marginTop: '2rem', textAlign: 'left' }}>
               <summary>Error Details (Development Only)</summary>
-              <pre style={{ 
-                background: '#f5f5f5', 
-                padding: '1rem', 
-                marginTop: '1rem',
-                borderRadius: '4px',
-                overflow: 'auto'
-              }}>
+              <pre
+                style={{
+                  background: '#f5f5f5',
+                  padding: '1rem',
+                  marginTop: '1rem',
+                  borderRadius: '4px',
+                  overflow: 'auto',
+                }}
+              >
                 {this.state.error?.stack}
               </pre>
             </details>
@@ -196,18 +205,18 @@ export class AppErrorBoundary extends React.Component<
         </div>
       );
     }
-    
+
     return this.props.children;
   }
 }
 
 // Main App wrapper with all providers and error boundary
-export const AppWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const AppWrapper: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   return (
     <AppErrorBoundary>
-      <AppProviders>
-        {children}
-      </AppProviders>
+      <AppProviders>{children}</AppProviders>
     </AppErrorBoundary>
   );
 };

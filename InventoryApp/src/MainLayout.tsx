@@ -15,7 +15,6 @@ export default function MainLayout() {
     }
   }, [isSmallScreen]);
 
-
   const toggleDrawer = () => {
     setDrawerOpen((prev) => !prev);
   };
@@ -57,8 +56,8 @@ export default function MainLayout() {
           boxSizing: 'border-box',
         }}
       > */}
-        <Outlet/>
-      {/* </Box> */}
+        <Outlet />
+        {/* </Box> */}
       </Box>
     </Box>
   );

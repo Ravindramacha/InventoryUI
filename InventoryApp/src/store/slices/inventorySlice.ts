@@ -1,7 +1,12 @@
-import { createSlice, createAsyncThunk, createAction, type PayloadAction } from '@reduxjs/toolkit';
-import type { 
-  ProductTypeModel, 
-  ProductGroupModel, 
+import {
+  createSlice,
+  createAsyncThunk,
+  createAction,
+  type PayloadAction,
+} from '@reduxjs/toolkit';
+import type {
+  ProductTypeModel,
+  ProductGroupModel,
   ProductCategoryModel,
   ReadProductMasterForm,
   UomModel,
@@ -9,7 +14,7 @@ import type {
   LanguageModel,
   SalesStatusModel,
   PostProductType,
-  PostProductMasterForm
+  PostProductMasterForm,
 } from '../../Models/MaterialModel';
 
 // Complex Data Structure for Saga Management
@@ -38,7 +43,7 @@ export interface InventoryState {
     error: string | null;
     lastFetch: string | null;
   };
-  
+
   // Product Groups
   productGroups: {
     items: ProductGroupModel[];
@@ -46,7 +51,7 @@ export interface InventoryState {
     error: string | null;
     lastFetch: string | null;
   };
-  
+
   // Product Categories
   productCategories: {
     items: ProductCategoryModel[];
@@ -54,7 +59,7 @@ export interface InventoryState {
     error: string | null;
     lastFetch: string | null;
   };
-  
+
   // Product Master
   productMaster: {
     items: ReadProductMasterForm[];
@@ -63,7 +68,7 @@ export interface InventoryState {
     lastFetch: string | null;
     currentItem: ReadProductMasterForm | null;
   };
-  
+
   // UOM Management
   uom: {
     dimensions: UomDimensionModel[];
@@ -72,7 +77,7 @@ export interface InventoryState {
     error: string | null;
     lastFetch: string | null;
   };
-  
+
   // Reference Data
   referenceData: {
     languages: LanguageModel[];
@@ -81,7 +86,7 @@ export interface InventoryState {
     error: string | null;
     lastFetch: string | null;
   };
-  
+
   // Search and Filters
   search: {
     productTypes: string;
@@ -89,7 +94,7 @@ export interface InventoryState {
     productCategories: string;
     productMaster: string;
   };
-  
+
   // Selected Items
   selectedItems: {
     productType: ProductTypeModel | null;
@@ -100,12 +105,12 @@ export interface InventoryState {
 
   // Complex Data Management for Saga
   complexData: ComplexDataState;
-  
+
   // Loading States for Different Operations
   loadingStates: {
     [key: string]: boolean;
   };
-  
+
   // Error States for Different Operations
   errorStates: {
     [key: string]: string | null;
@@ -113,58 +118,141 @@ export interface InventoryState {
 }
 
 // Saga Action Creators
-export const fetchLanguagesStart = createAction('inventory/fetchLanguagesStart');
-export const fetchLanguagesSuccess = createAction<LanguageModel[]>('inventory/fetchLanguagesSuccess');
-export const fetchLanguagesFailure = createAction<string>('inventory/fetchLanguagesFailure');
+export const fetchLanguagesStart = createAction(
+  'inventory/fetchLanguagesStart'
+);
+export const fetchLanguagesSuccess = createAction<LanguageModel[]>(
+  'inventory/fetchLanguagesSuccess'
+);
+export const fetchLanguagesFailure = createAction<string>(
+  'inventory/fetchLanguagesFailure'
+);
 
-export const fetchSalesStatusesStart = createAction('inventory/fetchSalesStatusesStart');
-export const fetchSalesStatusesSuccess = createAction<SalesStatusModel[]>('inventory/fetchSalesStatusesSuccess');
-export const fetchSalesStatusesFailure = createAction<string>('inventory/fetchSalesStatusesFailure');
+export const fetchSalesStatusesStart = createAction(
+  'inventory/fetchSalesStatusesStart'
+);
+export const fetchSalesStatusesSuccess = createAction<SalesStatusModel[]>(
+  'inventory/fetchSalesStatusesSuccess'
+);
+export const fetchSalesStatusesFailure = createAction<string>(
+  'inventory/fetchSalesStatusesFailure'
+);
 
-export const fetchUomDimensionsStart = createAction('inventory/fetchUomDimensionsStart');
-export const fetchUomDimensionsSuccess = createAction<UomDimensionModel[]>('inventory/fetchUomDimensionsSuccess');
-export const fetchUomDimensionsFailure = createAction<string>('inventory/fetchUomDimensionsFailure');
+export const fetchUomDimensionsStart = createAction(
+  'inventory/fetchUomDimensionsStart'
+);
+export const fetchUomDimensionsSuccess = createAction<UomDimensionModel[]>(
+  'inventory/fetchUomDimensionsSuccess'
+);
+export const fetchUomDimensionsFailure = createAction<string>(
+  'inventory/fetchUomDimensionsFailure'
+);
 
-export const fetchProductTypesStart = createAction('inventory/fetchProductTypesStart');
-export const fetchProductTypesSuccess = createAction<ProductTypeModel[]>('inventory/fetchProductTypesSuccess');
-export const fetchProductTypesFailure = createAction<string>('inventory/fetchProductTypesFailure');
+export const fetchProductTypesStart = createAction(
+  'inventory/fetchProductTypesStart'
+);
+export const fetchProductTypesSuccess = createAction<ProductTypeModel[]>(
+  'inventory/fetchProductTypesSuccess'
+);
+export const fetchProductTypesFailure = createAction<string>(
+  'inventory/fetchProductTypesFailure'
+);
 
-export const createProductTypeStart = createAction<PostProductType>('inventory/createProductTypeStart');
-export const createProductTypeSuccess = createAction<ProductTypeModel>('inventory/createProductTypeSuccess');
-export const createProductTypeFailure = createAction<string>('inventory/createProductTypeFailure');
+export const createProductTypeStart = createAction<PostProductType>(
+  'inventory/createProductTypeStart'
+);
+export const createProductTypeSuccess = createAction<ProductTypeModel>(
+  'inventory/createProductTypeSuccess'
+);
+export const createProductTypeFailure = createAction<string>(
+  'inventory/createProductTypeFailure'
+);
 
-export const updateProductTypeStart = createAction<{ id: number; productType: Partial<ProductTypeModel> }>('inventory/updateProductTypeStart');
-export const updateProductTypeSuccess = createAction<ProductTypeModel>('inventory/updateProductTypeSuccess');
-export const updateProductTypeFailure = createAction<string>('inventory/updateProductTypeFailure');
+export const updateProductTypeStart = createAction<{
+  id: number;
+  productType: Partial<ProductTypeModel>;
+}>('inventory/updateProductTypeStart');
+export const updateProductTypeSuccess = createAction<ProductTypeModel>(
+  'inventory/updateProductTypeSuccess'
+);
+export const updateProductTypeFailure = createAction<string>(
+  'inventory/updateProductTypeFailure'
+);
 
-export const deleteProductTypeStart = createAction<number>('inventory/deleteProductTypeStart');
-export const deleteProductTypeSuccess = createAction<number>('inventory/deleteProductTypeSuccess');
-export const deleteProductTypeFailure = createAction<string>('inventory/deleteProductTypeFailure');
+export const deleteProductTypeStart = createAction<number>(
+  'inventory/deleteProductTypeStart'
+);
+export const deleteProductTypeSuccess = createAction<number>(
+  'inventory/deleteProductTypeSuccess'
+);
+export const deleteProductTypeFailure = createAction<string>(
+  'inventory/deleteProductTypeFailure'
+);
 
-export const fetchProductGroupsStart = createAction('inventory/fetchProductGroupsStart');
-export const fetchProductGroupsSuccess = createAction<ProductGroupModel[]>('inventory/fetchProductGroupsSuccess');
-export const fetchProductGroupsFailure = createAction<string>('inventory/fetchProductGroupsFailure');
+export const fetchProductGroupsStart = createAction(
+  'inventory/fetchProductGroupsStart'
+);
+export const fetchProductGroupsSuccess = createAction<ProductGroupModel[]>(
+  'inventory/fetchProductGroupsSuccess'
+);
+export const fetchProductGroupsFailure = createAction<string>(
+  'inventory/fetchProductGroupsFailure'
+);
 
-export const fetchProductCategoriesStart = createAction('inventory/fetchProductCategoriesStart');
-export const fetchProductCategoriesSuccess = createAction<ProductCategoryModel[]>('inventory/fetchProductCategoriesSuccess');
-export const fetchProductCategoriesFailure = createAction<string>('inventory/fetchProductCategoriesFailure');
+export const fetchProductCategoriesStart = createAction(
+  'inventory/fetchProductCategoriesStart'
+);
+export const fetchProductCategoriesSuccess = createAction<
+  ProductCategoryModel[]
+>('inventory/fetchProductCategoriesSuccess');
+export const fetchProductCategoriesFailure = createAction<string>(
+  'inventory/fetchProductCategoriesFailure'
+);
 
-export const fetchProductMasterStart = createAction<number>('inventory/fetchProductMasterStart');
-export const fetchProductMasterSuccess = createAction<ReadProductMasterForm>('inventory/fetchProductMasterSuccess');
-export const fetchProductMasterFailure = createAction<string>('inventory/fetchProductMasterFailure');
+export const fetchProductMasterStart = createAction<number>(
+  'inventory/fetchProductMasterStart'
+);
+export const fetchProductMasterSuccess = createAction<ReadProductMasterForm>(
+  'inventory/fetchProductMasterSuccess'
+);
+export const fetchProductMasterFailure = createAction<string>(
+  'inventory/fetchProductMasterFailure'
+);
 
-export const createProductMasterStart = createAction<PostProductMasterForm>('inventory/createProductMasterStart');
-export const createProductMasterSuccess = createAction<ReadProductMasterForm>('inventory/createProductMasterSuccess');
-export const createProductMasterFailure = createAction<string>('inventory/createProductMasterFailure');
+export const createProductMasterStart = createAction<PostProductMasterForm>(
+  'inventory/createProductMasterStart'
+);
+export const createProductMasterSuccess = createAction<ReadProductMasterForm>(
+  'inventory/createProductMasterSuccess'
+);
+export const createProductMasterFailure = createAction<string>(
+  'inventory/createProductMasterFailure'
+);
 
-export const updateProductMasterStart = createAction<{ id: number; productMaster: Partial<PostProductMasterForm> }>('inventory/updateProductMasterStart');
-export const updateProductMasterSuccess = createAction<ReadProductMasterForm>('inventory/updateProductMasterSuccess');
-export const updateProductMasterFailure = createAction<string>('inventory/updateProductMasterFailure');
+export const updateProductMasterStart = createAction<{
+  id: number;
+  productMaster: Partial<PostProductMasterForm>;
+}>('inventory/updateProductMasterStart');
+export const updateProductMasterSuccess = createAction<ReadProductMasterForm>(
+  'inventory/updateProductMasterSuccess'
+);
+export const updateProductMasterFailure = createAction<string>(
+  'inventory/updateProductMasterFailure'
+);
 
 // Complex Data Management Actions
-export const setComplexData = createAction<{ key: string; data: any; metadata: any }>('inventory/setComplexData');
-export const setLoadingState = createAction<{ key: string; loading: boolean }>('inventory/setLoadingState');
-export const setErrorState = createAction<{ key: string; error: string | null }>('inventory/setErrorState');
+export const setComplexData = createAction<{
+  key: string;
+  data: any;
+  metadata: any;
+}>('inventory/setComplexData');
+export const setLoadingState = createAction<{ key: string; loading: boolean }>(
+  'inventory/setLoadingState'
+);
+export const setErrorState = createAction<{
+  key: string;
+  error: string | null;
+}>('inventory/setErrorState');
 export const processComplexData = createAction('inventory/processComplexData');
 
 // Initial state
@@ -235,14 +323,19 @@ export const fetchProductTypes = createAsyncThunk(
       if (!response.ok) throw new Error('Failed to fetch product types');
       return await response.json();
     } catch (error) {
-      return rejectWithValue(error instanceof Error ? error.message : 'Failed to fetch');
+      return rejectWithValue(
+        error instanceof Error ? error.message : 'Failed to fetch'
+      );
     }
   }
 );
 
 export const createProductType = createAsyncThunk(
   'inventory/createProductType',
-  async (productType: Omit<ProductTypeModel, 'productTypeId'>, { rejectWithValue }) => {
+  async (
+    productType: Omit<ProductTypeModel, 'productTypeId'>,
+    { rejectWithValue }
+  ) => {
     try {
       const response = await fetch('/api/products/types', {
         method: 'POST',
@@ -252,7 +345,9 @@ export const createProductType = createAsyncThunk(
       if (!response.ok) throw new Error('Failed to create product type');
       return await response.json();
     } catch (error) {
-      return rejectWithValue(error instanceof Error ? error.message : 'Failed to create');
+      return rejectWithValue(
+        error instanceof Error ? error.message : 'Failed to create'
+      );
     }
   }
 );
@@ -272,7 +367,7 @@ export const inventorySlice = createSlice({
     },
     updateProductType: (state, action: PayloadAction<ProductTypeModel>) => {
       const index = state.productTypes.items.findIndex(
-        item => item.productTypeId === action.payload.productTypeId
+        (item) => item.productTypeId === action.payload.productTypeId
       );
       if (index !== -1) {
         state.productTypes.items[index] = action.payload;
@@ -280,10 +375,10 @@ export const inventorySlice = createSlice({
     },
     removeProductType: (state, action: PayloadAction<number>) => {
       state.productTypes.items = state.productTypes.items.filter(
-        item => item.productTypeId !== action.payload
+        (item) => item.productTypeId !== action.payload
       );
     },
-    
+
     // Product Groups
     setProductGroups: (state, action: PayloadAction<ProductGroupModel[]>) => {
       state.productGroups.items = action.payload;
@@ -294,7 +389,7 @@ export const inventorySlice = createSlice({
     },
     updateProductGroup: (state, action: PayloadAction<ProductGroupModel>) => {
       const index = state.productGroups.items.findIndex(
-        item => item.productGroupId === action.payload.productGroupId
+        (item) => item.productGroupId === action.payload.productGroupId
       );
       if (index !== -1) {
         state.productGroups.items[index] = action.payload;
@@ -302,21 +397,30 @@ export const inventorySlice = createSlice({
     },
     removeProductGroup: (state, action: PayloadAction<number>) => {
       state.productGroups.items = state.productGroups.items.filter(
-        item => item.productGroupId !== action.payload
+        (item) => item.productGroupId !== action.payload
       );
     },
-    
+
     // Product Categories
-    setProductCategories: (state, action: PayloadAction<ProductCategoryModel[]>) => {
+    setProductCategories: (
+      state,
+      action: PayloadAction<ProductCategoryModel[]>
+    ) => {
       state.productCategories.items = action.payload;
       state.productCategories.lastFetch = new Date().toISOString();
     },
-    addProductCategory: (state, action: PayloadAction<ProductCategoryModel>) => {
+    addProductCategory: (
+      state,
+      action: PayloadAction<ProductCategoryModel>
+    ) => {
       state.productCategories.items.push(action.payload);
     },
-    updateProductCategory: (state, action: PayloadAction<ProductCategoryModel>) => {
+    updateProductCategory: (
+      state,
+      action: PayloadAction<ProductCategoryModel>
+    ) => {
       const index = state.productCategories.items.findIndex(
-        item => item.productCategoryId === action.payload.productCategoryId
+        (item) => item.productCategoryId === action.payload.productCategoryId
       );
       if (index !== -1) {
         state.productCategories.items[index] = action.payload;
@@ -324,21 +428,27 @@ export const inventorySlice = createSlice({
     },
     removeProductCategory: (state, action: PayloadAction<number>) => {
       state.productCategories.items = state.productCategories.items.filter(
-        item => item.productCategoryId !== action.payload
+        (item) => item.productCategoryId !== action.payload
       );
     },
-    
+
     // Product Master
-    setProductMaster: (state, action: PayloadAction<ReadProductMasterForm[]>) => {
+    setProductMaster: (
+      state,
+      action: PayloadAction<ReadProductMasterForm[]>
+    ) => {
       state.productMaster.items = action.payload;
       state.productMaster.lastFetch = new Date().toISOString();
     },
     addProductMaster: (state, action: PayloadAction<ReadProductMasterForm>) => {
       state.productMaster.items.push(action.payload);
     },
-    updateProductMaster: (state, action: PayloadAction<ReadProductMasterForm>) => {
+    updateProductMaster: (
+      state,
+      action: PayloadAction<ReadProductMasterForm>
+    ) => {
       const index = state.productMaster.items.findIndex(
-        item => item.productMasterId === action.payload.productMasterId
+        (item) => item.productMasterId === action.payload.productMasterId
       );
       if (index !== -1) {
         state.productMaster.items[index] = action.payload;
@@ -346,13 +456,16 @@ export const inventorySlice = createSlice({
     },
     removeProductMaster: (state, action: PayloadAction<number>) => {
       state.productMaster.items = state.productMaster.items.filter(
-        item => item.productMasterId !== action.payload
+        (item) => item.productMasterId !== action.payload
       );
     },
-    setCurrentProductMaster: (state, action: PayloadAction<ReadProductMasterForm | null>) => {
+    setCurrentProductMaster: (
+      state,
+      action: PayloadAction<ReadProductMasterForm | null>
+    ) => {
       state.productMaster.currentItem = action.payload;
     },
-    
+
     // UOM Management
     setUomDimensions: (state, action: PayloadAction<UomDimensionModel[]>) => {
       state.uom.dimensions = action.payload;
@@ -361,7 +474,7 @@ export const inventorySlice = createSlice({
     setUomUnits: (state, action: PayloadAction<UomModel[]>) => {
       state.uom.units = action.payload;
     },
-    
+
     // Reference Data
     setLanguages: (state, action: PayloadAction<LanguageModel[]>) => {
       state.referenceData.languages = action.payload;
@@ -370,13 +483,22 @@ export const inventorySlice = createSlice({
     setSalesStatuses: (state, action: PayloadAction<SalesStatusModel[]>) => {
       state.referenceData.salesStatuses = action.payload;
     },
-    
+
     // Search
-    setSearch: (state, action: PayloadAction<{ category: keyof InventoryState['search']; value: string }>) => {
+    setSearch: (
+      state,
+      action: PayloadAction<{
+        category: keyof InventoryState['search'];
+        value: string;
+      }>
+    ) => {
       const { category, value } = action.payload;
       state.search[category] = value;
     },
-    clearSearch: (state, action: PayloadAction<keyof InventoryState['search']>) => {
+    clearSearch: (
+      state,
+      action: PayloadAction<keyof InventoryState['search']>
+    ) => {
       state.search[action.payload] = '';
     },
     clearAllSearch: (state) => {
@@ -387,16 +509,22 @@ export const inventorySlice = createSlice({
         productMaster: '',
       };
     },
-    
+
     // Selected Items
-    setSelectedItem: (state, action: PayloadAction<{ 
-      category: keyof InventoryState['selectedItems']; 
-      item: any 
-    }>) => {
+    setSelectedItem: (
+      state,
+      action: PayloadAction<{
+        category: keyof InventoryState['selectedItems'];
+        item: any;
+      }>
+    ) => {
       const { category, item } = action.payload;
       state.selectedItems[category] = item;
     },
-    clearSelectedItem: (state, action: PayloadAction<keyof InventoryState['selectedItems']>) => {
+    clearSelectedItem: (
+      state,
+      action: PayloadAction<keyof InventoryState['selectedItems']>
+    ) => {
       state.selectedItems[action.payload] = null;
     },
     clearAllSelectedItems: (state) => {
@@ -409,42 +537,57 @@ export const inventorySlice = createSlice({
     },
 
     // Complex Data Management
-    setComplexDataItem: (state, action: PayloadAction<{ key: string; data: any; metadata: any }>) => {
+    setComplexDataItem: (
+      state,
+      action: PayloadAction<{ key: string; data: any; metadata: any }>
+    ) => {
       const { key, data, metadata } = action.payload;
       state.complexData[key] = { data, metadata };
     },
-    
+
     removeComplexDataItem: (state, action: PayloadAction<string>) => {
       delete state.complexData[action.payload];
     },
-    
-    updateComplexDataMetadata: (state, action: PayloadAction<{ key: string; metadata: any }>) => {
+
+    updateComplexDataMetadata: (
+      state,
+      action: PayloadAction<{ key: string; metadata: any }>
+    ) => {
       const { key, metadata } = action.payload;
       if (state.complexData[key]) {
-        state.complexData[key].metadata = { ...state.complexData[key].metadata, ...metadata };
+        state.complexData[key].metadata = {
+          ...state.complexData[key].metadata,
+          ...metadata,
+        };
       }
     },
-    
+
     // Loading States Management
-    setLoadingStateItem: (state, action: PayloadAction<{ key: string; loading: boolean }>) => {
+    setLoadingStateItem: (
+      state,
+      action: PayloadAction<{ key: string; loading: boolean }>
+    ) => {
       const { key, loading } = action.payload;
       state.loadingStates[key] = loading;
     },
-    
+
     clearLoadingState: (state, action: PayloadAction<string>) => {
       delete state.loadingStates[action.payload];
     },
-    
+
     // Error States Management
-    setErrorStateItem: (state, action: PayloadAction<{ key: string; error: string | null }>) => {
+    setErrorStateItem: (
+      state,
+      action: PayloadAction<{ key: string; error: string | null }>
+    ) => {
       const { key, error } = action.payload;
       state.errorStates[key] = error;
     },
-    
+
     clearErrorState: (state, action: PayloadAction<string>) => {
       delete state.errorStates[action.payload];
     },
-    
+
     clearAllErrors: (state) => {
       state.errorStates = {};
     },
@@ -460,7 +603,7 @@ export const inventorySlice = createSlice({
       .addCase(fetchLanguagesFailure, (state, action) => {
         state.referenceData.error = action.payload;
       })
-      
+
       // Sales Statuses
       .addCase(fetchSalesStatusesSuccess, (state, action) => {
         state.referenceData.salesStatuses = action.payload;
@@ -468,7 +611,7 @@ export const inventorySlice = createSlice({
       .addCase(fetchSalesStatusesFailure, (state, action) => {
         state.referenceData.error = action.payload;
       })
-      
+
       // UOM Dimensions
       .addCase(fetchUomDimensionsSuccess, (state, action) => {
         state.uom.dimensions = action.payload;
@@ -477,7 +620,7 @@ export const inventorySlice = createSlice({
       .addCase(fetchUomDimensionsFailure, (state, action) => {
         state.uom.error = action.payload;
       })
-      
+
       // Product Types
       .addCase(fetchProductTypesSuccess, (state, action) => {
         state.productTypes.items = action.payload;
@@ -494,7 +637,7 @@ export const inventorySlice = createSlice({
       })
       .addCase(updateProductTypeSuccess, (state, action) => {
         const index = state.productTypes.items.findIndex(
-          item => item.productTypeId === action.payload.productTypeId
+          (item) => item.productTypeId === action.payload.productTypeId
         );
         if (index !== -1) {
           state.productTypes.items[index] = action.payload;
@@ -505,13 +648,13 @@ export const inventorySlice = createSlice({
       })
       .addCase(deleteProductTypeSuccess, (state, action) => {
         state.productTypes.items = state.productTypes.items.filter(
-          item => item.productTypeId !== action.payload
+          (item) => item.productTypeId !== action.payload
         );
       })
       .addCase(deleteProductTypeFailure, (state, action) => {
         state.productTypes.error = action.payload;
       })
-      
+
       // Product Groups
       .addCase(fetchProductGroupsSuccess, (state, action) => {
         state.productGroups.items = action.payload;
@@ -520,7 +663,7 @@ export const inventorySlice = createSlice({
       .addCase(fetchProductGroupsFailure, (state, action) => {
         state.productGroups.error = action.payload;
       })
-      
+
       // Product Categories
       .addCase(fetchProductCategoriesSuccess, (state, action) => {
         state.productCategories.items = action.payload;
@@ -529,7 +672,7 @@ export const inventorySlice = createSlice({
       .addCase(fetchProductCategoriesFailure, (state, action) => {
         state.productCategories.error = action.payload;
       })
-      
+
       // Product Master
       .addCase(fetchProductMasterSuccess, (state, action) => {
         state.productMaster.currentItem = action.payload;
@@ -545,7 +688,7 @@ export const inventorySlice = createSlice({
       })
       .addCase(updateProductMasterSuccess, (state, action) => {
         const index = state.productMaster.items.findIndex(
-          item => item.productMasterId === action.payload.productMasterId
+          (item) => item.productMasterId === action.payload.productMasterId
         );
         if (index !== -1) {
           state.productMaster.items[index] = action.payload;
@@ -555,7 +698,7 @@ export const inventorySlice = createSlice({
       .addCase(updateProductMasterFailure, (state, action) => {
         state.productMaster.error = action.payload;
       })
-      
+
       // Complex Data Management
       .addCase(setComplexData, (state, action) => {
         const { key, data, metadata } = action.payload;

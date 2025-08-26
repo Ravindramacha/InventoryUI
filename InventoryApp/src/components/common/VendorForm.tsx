@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import type { ChangeEvent, FormEvent } from 'react';
 import {
@@ -11,10 +10,21 @@ import {
   Alert,
 } from '@mui/material';
 import { Snackbar, CircularProgress, Backdrop } from '@mui/material';
-import { countryList, stateList, type BankDetailDto, type BankModel, type ReadVendorFormModel, type TaxInformationDto, type TaxInformationModel, type VendorModel } from '../../Models/VendorModel';
+import {
+  countryList,
+  stateList,
+  type BankDetailDto,
+  type ReadVendorFormModel,
+  type TaxInformationDto,
+} from '../../Models/VendorModel';
 import TaxInformation from '../Vendor/TaxInformation';
 import BankData from '../Vendor/BankData';
-import { useLanguages, usePostVendorForm, usePutVendorForm, useSalesStatus } from '../../api/ApiQueries';
+import {
+  useLanguages,
+  usePostVendorForm,
+  usePutVendorForm,
+  useSalesStatus,
+} from '../../api/ApiQueries';
 
 interface VendorFormPageProps {
   onCancel: () => void;
@@ -23,11 +33,11 @@ interface VendorFormPageProps {
   vendorId?: number;
 }
 
-const VendorForm: React.FC<VendorFormPageProps> = ({ 
-  onCancel, 
+const VendorForm: React.FC<VendorFormPageProps> = ({
+  onCancel,
   initialData = null,
   mode = 'add',
-  vendorId = 0
+  vendorId = 0,
 }) => {
   const initialTaxInformationRows = [
     {
@@ -36,9 +46,8 @@ const VendorForm: React.FC<VendorFormPageProps> = ({
       category: '',
       name: '',
       taxNumber: '',
-    }
+    },
   ];
-
 
   const initialBankRows = [
     {
@@ -49,10 +58,9 @@ const VendorForm: React.FC<VendorFormPageProps> = ({
       accountName: '',
       phoneNumber: '',
       primary: false,
-
-    }
+    },
   ];
-  const initialVendorData : ReadVendorFormModel = initialData || {
+  const initialVendorData: ReadVendorFormModel = initialData || {
     vendorId: 0,
     companyName1: '',
     companyName2: '',
@@ -80,19 +88,31 @@ const VendorForm: React.FC<VendorFormPageProps> = ({
     taxInformationDto: initialTaxInformationRows,
     bankDetailDto: initialBankRows,
     paymentId: null,
-  }
-  const [formData, setFormData] = useState<ReadVendorFormModel>(initialData || initialVendorData);
+  };
+  const [formData, setFormData] = useState<ReadVendorFormModel>(
+    initialData || initialVendorData
+  );
 
+  const [taxInformationRows, setTaxInformationRows] = useState<
+    TaxInformationDto[]
+  >(
+    initialData?.taxInformationDto && initialData.taxInformationDto.length > 0
+      ? initialData.taxInformationDto
+      : initialTaxInformationRows
+  );
 
-  const [taxInformationRows, setTaxInformationRows] = useState<TaxInformationDto[]>(initialData?.taxInformationDto && initialData.taxInformationDto.length > 0 ? initialData.taxInformationDto : initialTaxInformationRows);
-
-  const [bankRows, setBankRows] = useState<BankDetailDto[]>(initialData?.bankDetailDto && initialData.bankDetailDto.length > 0 ? initialData.bankDetailDto : initialBankRows);
-
+  const [bankRows, setBankRows] = useState<BankDetailDto[]>(
+    initialData?.bankDetailDto && initialData.bankDetailDto.length > 0
+      ? initialData.bankDetailDto
+      : initialBankRows
+  );
 
   const [loading, setLoading] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
-  const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('success');
+  const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>(
+    'success'
+  );
   const [backdropOpen, setBackdropOpen] = useState(false);
 
   const { data: salesStatuses = [] } = useSalesStatus();
@@ -101,7 +121,7 @@ const VendorForm: React.FC<VendorFormPageProps> = ({
   const filteredStates = stateList.filter(
     (state) => state.countryId === formData.countryId
   );
-   const {mutate: updateMutate}= usePutVendorForm();
+  const { mutate: updateMutate } = usePutVendorForm();
   const { mutate } = usePostVendorForm();
   const resetForm = () => {
     setFormData({
@@ -133,9 +153,7 @@ const VendorForm: React.FC<VendorFormPageProps> = ({
       bankDetailDto: [],
       paymentId: null,
     });
-
   };
-
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -147,54 +165,56 @@ const VendorForm: React.FC<VendorFormPageProps> = ({
       taxInformationDto: taxInformationRows,
       bankDetailDto: bankRows,
     };
-if(mode === "edit" && vendorId){
+    if (mode === 'edit' && vendorId) {
       setLoading(true);
-    setBackdropOpen(true); // show backdrop
-    // --- Edit Mode ---
-    updateMutate({id: vendorId, data: finalFormData}, {
-      onSuccess: () => {
-       // queryClient.invalidateQueries({ queryKey: ["readProductMasterForm"] });
-        setSnackbarMessage('Product Master Form updated successfully!');
-        setSnackbarSeverity('success');
-        setSnackbarOpen(true);
-        resetForm();
-        onCancel();
-      },
-      onError: (error) => {
-        setSnackbarMessage(`Failed to update: ${error.message}`);
-        setSnackbarSeverity('error');
-        setSnackbarOpen(true);
-      },
-      onSettled: () => {
-        setTimeout(() => {
-          setLoading(false);
-          setBackdropOpen(false); // hide after 2s
-        }, 5000);
-      },
-    });
-  } 
-  else {
-    mutate(finalFormData, {
-      onSuccess: () => {
-        setSnackbarMessage('Vendor submitted successfully!');
-        setSnackbarSeverity('success');
-        setSnackbarOpen(true);
-        resetForm();
-      },
-      onError: (error) => {
-        setSnackbarMessage(`Failed to submit: ${error.message}`);
-        setSnackbarSeverity('error');
-        setSnackbarOpen(true);
-      },
-      onSettled: () => {
-        setTimeout(() => {
-          setLoading(false);
-          setBackdropOpen(false); // hide after 2s
-        }, 2000);
-      },
-    });
+      setBackdropOpen(true); // show backdrop
+      // --- Edit Mode ---
+      updateMutate(
+        { id: vendorId, data: finalFormData },
+        {
+          onSuccess: () => {
+            // queryClient.invalidateQueries({ queryKey: ["readProductMasterForm"] });
+            setSnackbarMessage('Product Master Form updated successfully!');
+            setSnackbarSeverity('success');
+            setSnackbarOpen(true);
+            resetForm();
+            onCancel();
+          },
+          onError: (error) => {
+            setSnackbarMessage(`Failed to update: ${error.message}`);
+            setSnackbarSeverity('error');
+            setSnackbarOpen(true);
+          },
+          onSettled: () => {
+            setTimeout(() => {
+              setLoading(false);
+              setBackdropOpen(false); // hide after 2s
+            }, 5000);
+          },
+        }
+      );
+    } else {
+      mutate(finalFormData, {
+        onSuccess: () => {
+          setSnackbarMessage('Vendor submitted successfully!');
+          setSnackbarSeverity('success');
+          setSnackbarOpen(true);
+          resetForm();
+        },
+        onError: (error) => {
+          setSnackbarMessage(`Failed to submit: ${error.message}`);
+          setSnackbarSeverity('error');
+          setSnackbarOpen(true);
+        },
+        onSettled: () => {
+          setTimeout(() => {
+            setLoading(false);
+            setBackdropOpen(false); // hide after 2s
+          }, 2000);
+        },
+      });
+    }
   };
-}
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setFormData((prev) => ({
@@ -204,30 +224,36 @@ if(mode === "edit" && vendorId){
   };
 
   return (
-
-       <Box sx={{ maxWidth: '100%', width: '100%' }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-          <Typography variant="h5">
-            {mode === 'add' ? 'Add Vendor' : 'Edit Vendor'}
-          </Typography>
-          <Button
-            variant="outlined"
-            color="primary"
-            onClick={onCancel}
-            size="small"
-            sx={{ 
-              borderRadius: '8px',
-              minWidth: '100px'
-            }}
-          >
-            Back
-          </Button>
-        </Box>
+    <Box sx={{ maxWidth: '100%', width: '100%' }}>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          mb: 2,
+        }}
+      >
+        <Typography variant="h5">
+          {mode === 'add' ? 'Add Vendor' : 'Edit Vendor'}
+        </Typography>
+        <Button
+          variant="outlined"
+          color="primary"
+          onClick={onCancel}
+          size="small"
+          sx={{
+            borderRadius: '8px',
+            minWidth: '100px',
+          }}
+        >
+          Back
+        </Button>
+      </Box>
       <form onSubmit={handleSubmit}>
         <Grid container spacing={2}>
           <Grid size={{ xs: 12 }}>
             <Box component="section">
-              <Typography variant="body1" gutterBottom >
+              <Typography variant="body1" gutterBottom>
                 Name
               </Typography>
             </Box>
@@ -278,7 +304,7 @@ if(mode === "edit" && vendorId){
           </Grid>
           <Grid size={{ xs: 12 }}>
             <Box component="section">
-              <Typography variant="body1" gutterBottom >
+              <Typography variant="body1" gutterBottom>
                 Address
               </Typography>
             </Box>
@@ -329,7 +355,9 @@ if(mode === "edit" && vendorId){
             <Autocomplete
               disablePortal
               options={countryList}
-              value={countryList.find(c => c.id === formData.countryId) || null}
+              value={
+                countryList.find((c) => c.id === formData.countryId) || null
+              }
               getOptionLabel={(option) => option.name}
               isOptionEqualToValue={(option, value) => option.id === value.id}
               onChange={(_, newValue) => {
@@ -340,7 +368,13 @@ if(mode === "edit" && vendorId){
                 }));
               }}
               renderInput={(params) => (
-                <TextField {...params} label="Country" size="small" required fullWidth />
+                <TextField
+                  {...params}
+                  label="Country"
+                  size="small"
+                  required
+                  fullWidth
+                />
               )}
             />
           </Grid>
@@ -349,7 +383,9 @@ if(mode === "edit" && vendorId){
               disablePortal
               size="small"
               options={filteredStates}
-              value={filteredStates.find(s => s.id === formData.stateId) || null}
+              value={
+                filteredStates.find((s) => s.id === formData.stateId) || null
+              }
               getOptionLabel={(option) => option.name}
               isOptionEqualToValue={(option, value) => option.id === value.id}
               onChange={(_, newValue) => {
@@ -359,7 +395,13 @@ if(mode === "edit" && vendorId){
                 }));
               }}
               renderInput={(params) => (
-                <TextField {...params} label="State" size="small" required fullWidth />
+                <TextField
+                  {...params}
+                  label="State"
+                  size="small"
+                  required
+                  fullWidth
+                />
               )}
               disabled={!formData.countryId}
             />
@@ -397,7 +439,7 @@ if(mode === "edit" && vendorId){
           </Grid>
           <Grid size={{ xs: 12 }}>
             <Box component="section">
-              <Typography variant="body1" gutterBottom >
+              <Typography variant="body1" gutterBottom>
                 Communication
               </Typography>
             </Box>
@@ -407,10 +449,15 @@ if(mode === "edit" && vendorId){
               disablePortal
               options={languages}
               value={
-                languages.find(p => p.languageId === formData.languageId) || null
+                languages.find((p) => p.languageId === formData.languageId) ??
+                null
               }
-              getOptionLabel={(option) => `${option.languageDesc} (${option.languageCode})` || ''}
-              isOptionEqualToValue={(option, value) => option.languageId === value.languageId}
+              getOptionLabel={(option) =>
+                `${option.languageDesc} (${option.languageCode})` || ''
+              }
+              isOptionEqualToValue={(option, value) =>
+                option.languageId === value.languageId
+              }
               onChange={(_, newValue) => {
                 setFormData((prev) => ({
                   ...prev,
@@ -419,7 +466,15 @@ if(mode === "edit" && vendorId){
               }}
               fullWidth
               size="small"
-              renderInput={(params) => <TextField {...params} label="Language" size="small" fullWidth required />}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Language"
+                  size="small"
+                  fullWidth
+                  required
+                />
+              )}
             />
           </Grid>
           <Grid size={{ xs: 12, sm: 12, md: 6, lg: 4 }}>
@@ -498,7 +553,7 @@ if(mode === "edit" && vendorId){
           </Grid>
           <Grid size={{ xs: 12 }}>
             <Box component="section">
-              <Typography variant="body1" gutterBottom >
+              <Typography variant="body1" gutterBottom>
                 Tax Information
               </Typography>
             </Box>
@@ -515,7 +570,7 @@ if(mode === "edit" && vendorId){
 
           <Grid size={{ xs: 12 }}>
             <Box component="section">
-              <Typography variant="body1" gutterBottom >
+              <Typography variant="body1" gutterBottom>
                 Bank Details
               </Typography>
             </Box>
@@ -545,10 +600,16 @@ if(mode === "edit" && vendorId){
               options={salesStatuses}
               size="small"
               value={
-                salesStatuses.find(p => p.salesStatusId === formData.salesStatusId) || null
+                salesStatuses.find(
+                  (p) => p.salesStatusId === formData.salesStatusId
+                ) || null
               }
-              getOptionLabel={(option) => `${option.salesStatusDesc} (${option.salesStatusCode})` || ''}
-              isOptionEqualToValue={(option, value) => option.salesStatusId === value.salesStatusId}
+              getOptionLabel={(option) =>
+                `${option.salesStatusDesc} (${option.salesStatusCode})` || ''
+              }
+              isOptionEqualToValue={(option, value) =>
+                option.salesStatusId === value.salesStatusId
+              }
               onChange={(_, newValue) => {
                 setFormData((prev) => ({
                   ...prev,
@@ -556,7 +617,15 @@ if(mode === "edit" && vendorId){
                 }));
               }}
               fullWidth
-              renderInput={(params) => <TextField {...params} label="Status" size="small" fullWidth required />}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Status"
+                  size="small"
+                  fullWidth
+                  required
+                />
+              )}
             />
           </Grid>
           <Grid size={{ xs: 12, sm: 12, md: 6, lg: 4 }}>
@@ -578,10 +647,16 @@ if(mode === "edit" && vendorId){
               size="small"
               sx={{
                 borderRadius: '8px',
-                minWidth: '100px'
+                minWidth: '100px',
               }}
             >
-               {loading ? <CircularProgress size={20} color="inherit" /> : mode === 'add' ? 'Submit' : 'Update'}
+              {loading ? (
+                <CircularProgress size={20} color="inherit" />
+              ) : mode === 'add' ? (
+                'Submit'
+              ) : (
+                'Update'
+              )}
             </Button>
             <Button
               variant="outlined"
@@ -592,7 +667,7 @@ if(mode === "edit" && vendorId){
               sx={{
                 marginLeft: '10px',
                 borderRadius: '8px',
-                minWidth: '100px'
+                minWidth: '100px',
               }}
             >
               Reset
@@ -609,16 +684,20 @@ if(mode === "edit" && vendorId){
         <Snackbar
           open={snackbarOpen}
           autoHideDuration={3000}
-
           onClose={() => setSnackbarOpen(false)}
           anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
         >
-          <Alert variant='filled' onClose={() => setSnackbarOpen(false)} severity={snackbarSeverity} sx={{ width: '100%' }}>
+          <Alert
+            variant="filled"
+            onClose={() => setSnackbarOpen(false)}
+            severity={snackbarSeverity}
+            sx={{ width: '100%' }}
+          >
             {snackbarMessage}
           </Alert>
         </Snackbar>
       </form>
-      </Box>
+    </Box>
   );
 };
 

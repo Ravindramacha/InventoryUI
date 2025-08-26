@@ -2,14 +2,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useCallback, useMemo } from 'react';
 import type { TypedUseSelectorHook } from 'react-redux';
 import type { RootState, AppDispatch } from './index';
-import { 
-  setThemeMode, 
-  setDensity, 
-  toggleSidebar, 
-  setLoading, 
+import {
+  setThemeMode,
+  setDensity,
+  toggleSidebar,
+  setLoading,
   setError,
   addNotification,
-  removeNotification
+  removeNotification,
 } from './index';
 
 // Use throughout your app instead of plain `useDispatch` and `useSelector`
@@ -30,21 +30,29 @@ export const useErrorState = (actionType: string) => {
 export const useNotifications = () => {
   const dispatch = useAppDispatch();
   const notifications = useAppSelector((state) => state.notifications.items);
-  const unreadCount = useAppSelector((state) => state.notifications.unreadCount);
+  const unreadCount = useAppSelector(
+    (state) => state.notifications.unreadCount
+  );
 
-  const addNotificationHandler = useCallback((notification: any) => {
-    const notificationWithId = {
-      id: Date.now().toString(),
-      timestamp: new Date().toISOString(),
-      isRead: false,
-      ...notification,
-    };
-    dispatch(addNotification(notificationWithId));
-  }, [dispatch]);
+  const addNotificationHandler = useCallback(
+    (notification: any) => {
+      const notificationWithId = {
+        id: Date.now().toString(),
+        timestamp: new Date().toISOString(),
+        isRead: false,
+        ...notification,
+      };
+      dispatch(addNotification(notificationWithId));
+    },
+    [dispatch]
+  );
 
-  const removeNotificationHandler = useCallback((id: string) => {
-    dispatch(removeNotification(id));
-  }, [dispatch]);
+  const removeNotificationHandler = useCallback(
+    (id: string) => {
+      dispatch(removeNotification(id));
+    },
+    [dispatch]
+  );
 
   return {
     notifications,
@@ -58,14 +66,20 @@ export const useNotifications = () => {
 export const useTheme = () => {
   const dispatch = useAppDispatch();
   const theme = useAppSelector((state) => state.ui.theme);
-  
-  const setMode = useCallback((mode: 'light' | 'dark') => {
-    dispatch(setThemeMode(mode));
-  }, [dispatch]);
 
-  const setDensityMode = useCallback((density: string) => {
-    dispatch(setDensity(density));
-  }, [dispatch]);
+  const setMode = useCallback(
+    (mode: 'light' | 'dark') => {
+      dispatch(setThemeMode(mode));
+    },
+    [dispatch]
+  );
+
+  const setDensityMode = useCallback(
+    (density: string) => {
+      dispatch(setDensity(density));
+    },
+    [dispatch]
+  );
 
   return {
     theme,
@@ -78,7 +92,7 @@ export const useTheme = () => {
 export const useSidebar = () => {
   const dispatch = useAppDispatch();
   const sidebar = useAppSelector((state) => state.ui.sidebar);
-  
+
   const toggle = useCallback(() => {
     dispatch(toggleSidebar());
   }, [dispatch]);
@@ -95,13 +109,19 @@ export const useAsyncState = (key: string) => {
   const isLoading = useLoadingState(key);
   const error = useErrorState(key);
 
-  const setLoadingState = useCallback((loading: boolean) => {
-    dispatch(setLoading({ key, loading }));
-  }, [dispatch, key]);
+  const setLoadingState = useCallback(
+    (loading: boolean) => {
+      dispatch(setLoading({ key, loading }));
+    },
+    [dispatch, key]
+  );
 
-  const setErrorState = useCallback((error: any) => {
-    dispatch(setError({ key, error }));
-  }, [dispatch, key]);
+  const setErrorState = useCallback(
+    (error: any) => {
+      dispatch(setError({ key, error }));
+    },
+    [dispatch, key]
+  );
 
   return {
     isLoading,
@@ -114,7 +134,7 @@ export const useAsyncState = (key: string) => {
 // Inventory state hook
 export const useInventory = () => {
   const inventory = useAppSelector((state) => state.inventory);
-  
+
   return {
     productTypes: inventory.productTypes || [],
     productGroups: inventory.productGroups || [],

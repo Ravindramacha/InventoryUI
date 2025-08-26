@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Button,
@@ -11,18 +11,16 @@ import {
   Paper,
   TextField,
   TablePagination,
-  TableSortLabel
-} from "@mui/material";
-import { Add } from "@mui/icons-material";
-import { useGetAllProductMasterForm } from "../../api/ApiQueries";
-import type { ReadProductMasterForm } from "../../Models/MaterialModel";
-import ProductMasterView from "../Configuration/Product/ProductMasterView";
-import ProductDetails from "../Configuration/Product/ProductDetails";
-import ApplicationForm from "../common/ApplicationForm";
+  TableSortLabel,
+} from '@mui/material';
+import { Add } from '@mui/icons-material';
+import { useGetAllProductMasterForm } from '../../api/ApiQueries';
+import type { ReadProductMasterForm } from '../../Models/MaterialModel';
+import ProductMasterView from '../Configuration/Product/ProductMasterView';
+import ProductDetails from '../Configuration/Product/ProductDetails';
+import ApplicationForm from '../common/ApplicationForm';
 
-
-
-type Mode = "add" | "edit" | "view";
+type Mode = 'add' | 'edit' | 'view';
 
 interface CrudTableProps {
   onEdit?: (data: ReadProductMasterForm) => void;
@@ -35,17 +33,17 @@ const CrudTable: React.FC<CrudTableProps> = ({ onEdit }) => {
 
   const [rows, setRows] = useState<ReadProductMasterForm[]>([]);
   const [order, setOrder] = useState<Order>('asc');
-  const [orderBy, setOrderBy] = useState<keyof ReadProductMasterForm>('productId');
+  const [orderBy, setOrderBy] =
+    useState<keyof ReadProductMasterForm>('productId');
 
   useEffect(() => {
-    
-  if (Array.isArray(productMasterForm)) {
-    setRows(productMasterForm);
-  } else {
-    console.warn("Unexpected data:", productMasterForm);
-    setRows([]); // fallback
-  }
-}, [productMasterForm]);
+    if (Array.isArray(productMasterForm)) {
+      setRows(productMasterForm);
+    } else {
+      console.warn('Unexpected data:', productMasterForm);
+      setRows([]); // fallback
+    }
+  }, [productMasterForm]);
 
   const handleRequestSort = (property: keyof ReadProductMasterForm) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -55,7 +53,7 @@ const CrudTable: React.FC<CrudTableProps> = ({ onEdit }) => {
 
   function getComparator<Key extends keyof any>(
     order: Order,
-    orderBy: Key,
+    orderBy: Key
   ): (a: { [key in Key]: any }, b: { [key in Key]: any }) => number {
     return order === 'desc'
       ? (a, b) => descendingComparator(a, b, orderBy)
@@ -67,12 +65,18 @@ const CrudTable: React.FC<CrudTableProps> = ({ onEdit }) => {
     let bValue = b[orderBy];
 
     // Handle nested properties for productType, productGroup, and productCategory
-    if (orderBy === 'productType' as keyof T) aValue = (a as any).productType.productTypeDesc;
-    if (orderBy === 'productGroup' as keyof T) aValue = (a as any).productGroup.productGroupDesc;
-    if (orderBy === 'productCategory' as keyof T) aValue = (a as any).productCategory.productCategoryDesc;
-    if (orderBy === 'productType' as keyof T) bValue = (b as any).productType.productTypeDesc;
-    if (orderBy === 'productGroup' as keyof T) bValue = (b as any).productGroup.productGroupDesc;
-    if (orderBy === 'productCategory' as keyof T) bValue = (b as any).productCategory.productCategoryDesc;
+    if (orderBy === ('productType' as keyof T))
+      aValue = (a as any).productType.productTypeDesc;
+    if (orderBy === ('productGroup' as keyof T))
+      aValue = (a as any).productGroup.productGroupDesc;
+    if (orderBy === ('productCategory' as keyof T))
+      aValue = (a as any).productCategory.productCategoryDesc;
+    if (orderBy === ('productType' as keyof T))
+      bValue = (b as any).productType.productTypeDesc;
+    if (orderBy === ('productGroup' as keyof T))
+      bValue = (b as any).productGroup.productGroupDesc;
+    if (orderBy === ('productCategory' as keyof T))
+      bValue = (b as any).productCategory.productCategoryDesc;
 
     if (bValue < aValue) {
       return -1;
@@ -82,23 +86,27 @@ const CrudTable: React.FC<CrudTableProps> = ({ onEdit }) => {
     }
     return 0;
   }
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState('');
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [drawerMode, setDrawerMode] = useState<Mode>("add");
-  const [selectedRow, setSelectedRow] = useState<ReadProductMasterForm | null>(null);
+  const [drawerMode, setDrawerMode] = useState<Mode>('add');
+  const [selectedRow, setSelectedRow] = useState<ReadProductMasterForm | null>(
+    null
+  );
 
   const [drawerViewOpen, setDrawerViewOpen] = useState(false);
 
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
-  const handleOpenDrawer = (mode: Mode, row: ReadProductMasterForm | null = null) => {
+  const handleOpenDrawer = (
+    mode: Mode,
+    row: ReadProductMasterForm | null = null
+  ) => {
     setDrawerMode(mode);
     setSelectedRow(row);
     setDrawerOpen(true);
   };
 
-  
   const handleChangePage = (_: unknown, newPage: number) => {
     setPage(newPage);
   };
@@ -111,22 +119,30 @@ const CrudTable: React.FC<CrudTableProps> = ({ onEdit }) => {
   };
 
   // First filter - Global search across all relevant fields
-const filteredRows = Array.isArray(rows)
-  ? rows.filter((row) => {
-      const searchTerm = search.toLowerCase();
-      return (
-        row.productId.toLowerCase().includes(searchTerm) ||
-        row.productType.productTypeDesc.toLowerCase().includes(searchTerm) ||
-        row.productType.productTypeCode.toLowerCase().includes(searchTerm) ||
-        row.productGroup.productGroupDesc.toLowerCase().includes(searchTerm) ||
-        row.productGroup.productGroupCode.toLowerCase().includes(searchTerm) ||
-        row.productCategory.productCategoryDesc.toLowerCase().includes(searchTerm) ||
-        row.productCategory.productCategoryCode.toLowerCase().includes(searchTerm) ||
-        (row.shortDescription || '').toLowerCase().includes(searchTerm) ||
-        (row.longDescription || '').toLowerCase().includes(searchTerm)
-      );
-    })
-  : [];
+  const filteredRows = Array.isArray(rows)
+    ? rows.filter((row) => {
+        const searchTerm = search.toLowerCase();
+        return (
+          row.productId.toLowerCase().includes(searchTerm) ||
+          row.productType.productTypeDesc.toLowerCase().includes(searchTerm) ||
+          row.productType.productTypeCode.toLowerCase().includes(searchTerm) ||
+          row.productGroup.productGroupDesc
+            .toLowerCase()
+            .includes(searchTerm) ||
+          row.productGroup.productGroupCode
+            .toLowerCase()
+            .includes(searchTerm) ||
+          row.productCategory.productCategoryDesc
+            .toLowerCase()
+            .includes(searchTerm) ||
+          row.productCategory.productCategoryCode
+            .toLowerCase()
+            .includes(searchTerm) ||
+          (row.shortDescription || '').toLowerCase().includes(searchTerm) ||
+          (row.longDescription || '').toLowerCase().includes(searchTerm)
+        );
+      })
+    : [];
 
   // Then sort
   const sortedRows = [...filteredRows].sort(getComparator(order, orderBy));
@@ -138,13 +154,17 @@ const filteredRows = Array.isArray(rows)
   );
 
   return (
-    <Box >
+    <Box>
       {!drawerOpen && !selectedRow && (
         <>
-          <Box display="flex" justifyContent="space-between" sx={{ 
-          p: 2,
-          mt: 0
-        }}>
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            sx={{
+              p: 2,
+              mt: 0,
+            }}
+          >
             <TextField
               label="Search"
               placeholder="search"
@@ -161,9 +181,9 @@ const filteredRows = Array.isArray(rows)
               sx={{
                 borderRadius: '10px',
                 minWidth: '100px',
-                textTransform: 'none'
+                textTransform: 'none',
               }}
-              onClick={() => handleOpenDrawer("add")}
+              onClick={() => handleOpenDrawer('add')}
             >
               Add New
             </Button>
@@ -213,21 +233,26 @@ const filteredRows = Array.isArray(rows)
               </TableHead>
               <TableBody>
                 {paginatedRows.map((row) => (
-                  <TableRow 
+                  <TableRow
                     key={row.productMasterId}
                     onClick={() => setSelectedRow(row)}
-                    sx={{ 
+                    sx={{
                       '&:hover': {
                         backgroundColor: '#f1f1fa',
-                        cursor: 'pointer'
-                      }
+                        cursor: 'pointer',
+                      },
                     }}
                   >
                     <TableCell sx={{ py: 1 }}>{row.productId}</TableCell>
-                    <TableCell sx={{ py: 1 }}>{row.productType.productTypeDesc}</TableCell>
-                    <TableCell sx={{ py: 1 }}>{row.productGroup.productGroupDesc}</TableCell>
-                    <TableCell sx={{ py: 1 }}>{row.productCategory.productCategoryDesc}</TableCell>
-                 
+                    <TableCell sx={{ py: 1 }}>
+                      {row.productType.productTypeDesc}
+                    </TableCell>
+                    <TableCell sx={{ py: 1 }}>
+                      {row.productGroup.productGroupDesc}
+                    </TableCell>
+                    <TableCell sx={{ py: 1 }}>
+                      {row.productCategory.productCategoryDesc}
+                    </TableCell>
                   </TableRow>
                 ))}
                 {paginatedRows.length === 0 && (
@@ -236,7 +261,7 @@ const filteredRows = Array.isArray(rows)
                       colSpan={5}
                       align="center"
                       sx={{
-                        py: 2
+                        py: 2,
                       }}
                     >
                       No data found.
@@ -256,30 +281,34 @@ const filteredRows = Array.isArray(rows)
           </TableContainer>
         </>
       )}
-      
+
       {selectedRow && !drawerOpen && (
         <Box>
-          <ProductDetails 
+          <ProductDetails
             product={selectedRow}
             onBack={() => setSelectedRow(null)}
-            onEdit={(product) => onEdit ? onEdit(product) : handleOpenDrawer("edit", product)}
+            onEdit={(product) =>
+              onEdit ? onEdit(product) : handleOpenDrawer('edit', product)
+            }
           />
         </Box>
       )}
-      
+
       {drawerOpen && (
         <Box sx={{ backgroundColor: 'white', p: 2, borderRadius: 1 }}>
           <ApplicationForm
-            onCancel={() => setDrawerOpen(false)} 
-            initialData={drawerMode === "edit" && selectedRow ? selectedRow : null}
-            mode={drawerMode === "edit" ? "edit" : "add"}
+            onCancel={() => setDrawerOpen(false)}
+            initialData={
+              drawerMode === 'edit' && selectedRow ? selectedRow : null
+            }
+            mode={drawerMode === 'edit' ? 'edit' : 'add'}
             productMasterId={selectedRow ? selectedRow.productMasterId : 0}
           />
         </Box>
       )}
 
       {drawerViewOpen && (
-        <Box 
+        <Box
           sx={{
             position: 'fixed',
             top: '64px', // Height of AppBar
@@ -290,7 +319,7 @@ const filteredRows = Array.isArray(rows)
             boxShadow: 1,
             overflowY: 'auto',
             p: 2,
-            zIndex: 1200
+            zIndex: 1200,
           }}
         >
           <ProductMasterView />
@@ -303,7 +332,6 @@ const filteredRows = Array.isArray(rows)
           </Button>
         </Box>
       )}
-
     </Box>
   );
 };

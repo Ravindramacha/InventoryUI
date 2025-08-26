@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Button,
@@ -11,18 +11,16 @@ import {
   Paper,
   TextField,
   TablePagination,
-  TableSortLabel
-} from "@mui/material";
-import { Add } from "@mui/icons-material";
-import { useGetAllVendorForm } from "../../api/ApiQueries";
-import ProductMasterView from "../Configuration/Product/ProductMasterView";
-import type { ReadVendorFormModel } from "../../Models/VendorModel";
-import VendorForm from "../common/VendorForm";
-import VendorDetails from "./VendorDetails";
+  TableSortLabel,
+} from '@mui/material';
+import { Add } from '@mui/icons-material';
+import { useGetAllVendorForm } from '../../api/ApiQueries';
+import ProductMasterView from '../Configuration/Product/ProductMasterView';
+import type { ReadVendorFormModel } from '../../Models/VendorModel';
+import VendorForm from '../common/VendorForm';
+import VendorDetails from './VendorDetails';
 
-
-
-type Mode = "add" | "edit" | "view";
+type Mode = 'add' | 'edit' | 'view';
 
 interface VendorListProps {
   onEdit?: (data: ReadVendorFormModel) => void;
@@ -31,20 +29,20 @@ interface VendorListProps {
 type Order = 'asc' | 'desc';
 
 const VendorList: React.FC<VendorListProps> = ({ onEdit }) => {
-  const { data: vendorForm = [] } = useGetAllVendorForm ();
+  const { data: vendorForm = [] } = useGetAllVendorForm();
 
   const [rows, setRows] = useState<ReadVendorFormModel[]>([]);
   const [order, setOrder] = useState<Order>('asc');
   const [orderBy, setOrderBy] = useState<keyof ReadVendorFormModel>('vendorId');
 
   useEffect(() => {
-  if (Array.isArray(vendorForm)) {
-    setRows(vendorForm);
-  } else {
-    console.warn("Unexpected data:", vendorForm);
-    setRows([]); // fallback
-  }
-}, [vendorForm]);
+    if (Array.isArray(vendorForm)) {
+      setRows(vendorForm);
+    } else {
+      console.warn('Unexpected data:', vendorForm);
+      setRows([]); // fallback
+    }
+  }, [vendorForm]);
 
   const handleRequestSort = (property: keyof ReadVendorFormModel) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -54,7 +52,7 @@ const VendorList: React.FC<VendorListProps> = ({ onEdit }) => {
 
   function getComparator<Key extends keyof any>(
     order: Order,
-    orderBy: Key,
+    orderBy: Key
   ): (a: { [key in Key]: any }, b: { [key in Key]: any }) => number {
     return order === 'desc'
       ? (a, b) => descendingComparator(a, b, orderBy)
@@ -66,12 +64,18 @@ const VendorList: React.FC<VendorListProps> = ({ onEdit }) => {
     let bValue = b[orderBy];
 
     // Handle nested properties for productType, productGroup, and productCategory
-    if (orderBy === 'productType' as keyof T) aValue = (a as any).productType.productTypeDesc;
-    if (orderBy === 'productGroup' as keyof T) aValue = (a as any).productGroup.productGroupDesc;
-    if (orderBy === 'productCategory' as keyof T) aValue = (a as any).productCategory.productCategoryDesc;
-    if (orderBy === 'productType' as keyof T) bValue = (b as any).productType.productTypeDesc;
-    if (orderBy === 'productGroup' as keyof T) bValue = (b as any).productGroup.productGroupDesc;
-    if (orderBy === 'productCategory' as keyof T) bValue = (b as any).productCategory.productCategoryDesc;
+    if (orderBy === ('productType' as keyof T))
+      aValue = (a as any).productType.productTypeDesc;
+    if (orderBy === ('productGroup' as keyof T))
+      aValue = (a as any).productGroup.productGroupDesc;
+    if (orderBy === ('productCategory' as keyof T))
+      aValue = (a as any).productCategory.productCategoryDesc;
+    if (orderBy === ('productType' as keyof T))
+      bValue = (b as any).productType.productTypeDesc;
+    if (orderBy === ('productGroup' as keyof T))
+      bValue = (b as any).productGroup.productGroupDesc;
+    if (orderBy === ('productCategory' as keyof T))
+      bValue = (b as any).productCategory.productCategoryDesc;
 
     if (bValue < aValue) {
       return -1;
@@ -81,23 +85,27 @@ const VendorList: React.FC<VendorListProps> = ({ onEdit }) => {
     }
     return 0;
   }
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState('');
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [drawerMode, setDrawerMode] = useState<Mode>("add");
-  const [selectedRow, setSelectedRow] = useState<ReadVendorFormModel | null>(null);
+  const [drawerMode, setDrawerMode] = useState<Mode>('add');
+  const [selectedRow, setSelectedRow] = useState<ReadVendorFormModel | null>(
+    null
+  );
 
   const [drawerViewOpen, setDrawerViewOpen] = useState(false);
 
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
-  const handleOpenDrawer = (mode: Mode, row: ReadVendorFormModel | null = null) => {
+  const handleOpenDrawer = (
+    mode: Mode,
+    row: ReadVendorFormModel | null = null
+  ) => {
     setDrawerMode(mode);
     setSelectedRow(row);
     setDrawerOpen(true);
   };
 
-  
   const handleChangePage = (_: unknown, newPage: number) => {
     setPage(newPage);
   };
@@ -110,17 +118,17 @@ const VendorList: React.FC<VendorListProps> = ({ onEdit }) => {
   };
 
   // First filter - Global search across all relevant fields
-const filteredRows = Array.isArray(rows)
-  ? rows.filter((row) => {
-      const searchTerm = search.toLowerCase();
-      return (
-        row.companyName1.toLowerCase().includes(searchTerm) ||
-        row.companyName2.toLowerCase().includes(searchTerm) ||
-        row.phoneNumber1.toLowerCase().includes(searchTerm) ||
-        row.email1.toLowerCase().includes(searchTerm)
-      );
-    })
-  : [];
+  const filteredRows = Array.isArray(rows)
+    ? rows.filter((row) => {
+        const searchTerm = search.toLowerCase();
+        return (
+          row.companyName1.toLowerCase().includes(searchTerm) ||
+          row.companyName2.toLowerCase().includes(searchTerm) ||
+          row.phoneNumber1.toLowerCase().includes(searchTerm) ||
+          row.email1.toLowerCase().includes(searchTerm)
+        );
+      })
+    : [];
 
   // Then sort
   const sortedRows = [...filteredRows].sort(getComparator(order, orderBy));
@@ -132,13 +140,17 @@ const filteredRows = Array.isArray(rows)
   );
 
   return (
-    <Box >
+    <Box>
       {!drawerOpen && !selectedRow && (
         <>
-          <Box display="flex" justifyContent="space-between" sx={{ 
-          p: 2,
-          mt: 0
-        }}>
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            sx={{
+              p: 2,
+              mt: 0,
+            }}
+          >
             <TextField
               label="Search"
               placeholder="search"
@@ -155,9 +167,9 @@ const filteredRows = Array.isArray(rows)
               sx={{
                 borderRadius: '10px',
                 minWidth: '100px',
-                textTransform: 'none'
+                textTransform: 'none',
               }}
-              onClick={() => handleOpenDrawer("add")}
+              onClick={() => handleOpenDrawer('add')}
             >
               Add New
             </Button>
@@ -207,21 +219,20 @@ const filteredRows = Array.isArray(rows)
               </TableHead>
               <TableBody>
                 {paginatedRows.map((row) => (
-                  <TableRow 
+                  <TableRow
                     key={row.vendorId}
                     onClick={() => setSelectedRow(row)}
-                    sx={{ 
+                    sx={{
                       '&:hover': {
                         backgroundColor: '#f1f1fa',
-                        cursor: 'pointer'
-                      }
+                        cursor: 'pointer',
+                      },
                     }}
                   >
                     <TableCell sx={{ py: 1 }}>{row.companyName1}</TableCell>
                     <TableCell sx={{ py: 1 }}>{row.companyName2}</TableCell>
                     <TableCell sx={{ py: 1 }}>{row.phoneNumber1}</TableCell>
                     <TableCell sx={{ py: 1 }}>{row.email1}</TableCell>
-                 
                   </TableRow>
                 ))}
                 {paginatedRows.length === 0 && (
@@ -230,7 +241,7 @@ const filteredRows = Array.isArray(rows)
                       colSpan={5}
                       align="center"
                       sx={{
-                        py: 2
+                        py: 2,
                       }}
                     >
                       No data found.
@@ -250,24 +261,28 @@ const filteredRows = Array.isArray(rows)
           </TableContainer>
         </>
       )}
-      
+
       {selectedRow && !drawerOpen && (
         <Box>
-          <VendorDetails 
+          <VendorDetails
             vendor={selectedRow}
             onBack={() => setSelectedRow(null)}
-            onEdit={(vendor) => onEdit ? onEdit(vendor) : handleOpenDrawer("edit", vendor)}
+            onEdit={(vendor) =>
+              onEdit ? onEdit(vendor) : handleOpenDrawer('edit', vendor)
+            }
           />
         </Box>
       )}
-      
+
       {drawerOpen && (
         <Box sx={{ backgroundColor: 'white', p: 2, borderRadius: 1 }}>
-          <VendorForm 
-           onCancel={() => setDrawerOpen(false)}
-            initialData={drawerMode === "edit" && selectedRow ? selectedRow : null}
-            mode={drawerMode === "edit" ? "edit" : "add"}
-            vendorId={selectedRow ? selectedRow.vendorId : 0} 
+          <VendorForm
+            onCancel={() => setDrawerOpen(false)}
+            initialData={
+              drawerMode === 'edit' && selectedRow ? selectedRow : null
+            }
+            mode={drawerMode === 'edit' ? 'edit' : 'add'}
+            vendorId={selectedRow ? selectedRow.vendorId : 0}
           />
           {/* <ApplicationForm
             onCancel={() => setDrawerOpen(false)} 
@@ -279,7 +294,7 @@ const filteredRows = Array.isArray(rows)
       )}
 
       {drawerViewOpen && (
-        <Box 
+        <Box
           sx={{
             position: 'fixed',
             top: '64px', // Height of AppBar
@@ -290,7 +305,7 @@ const filteredRows = Array.isArray(rows)
             boxShadow: 1,
             overflowY: 'auto',
             p: 2,
-            zIndex: 1200
+            zIndex: 1200,
           }}
         >
           <ProductMasterView />
@@ -303,7 +318,6 @@ const filteredRows = Array.isArray(rows)
           </Button>
         </Box>
       )}
-
     </Box>
   );
 };

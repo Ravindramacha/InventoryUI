@@ -1,13 +1,8 @@
-import React, { useState, useEffect } from "react";
-import {
-  Stack,
-  TextField,
-  IconButton,
-  Box,
-} from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
-import DeleteIcon from "@mui/icons-material/Delete";
-import type { BankModel } from "../../Models/VendorModel";
+import React, { useState, useEffect } from 'react';
+import { Stack, TextField, IconButton, Box } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
+import DeleteIcon from '@mui/icons-material/Delete';
+import type { BankModel } from '../../Models/VendorModel';
 interface BankDataProps {
   initialRows?: BankModel[];
   maxRows?: number;
@@ -15,7 +10,17 @@ interface BankDataProps {
 }
 
 const BankData: React.FC<BankDataProps> = ({
-  initialRows = [{ id: Date.now(), bankName: "", accountNumber: "", routingNumber: "", accountName: "" ,phoneNumber: "", primary: false }],
+  initialRows = [
+    {
+      id: Date.now(),
+      bankName: '',
+      accountNumber: '',
+      routingNumber: '',
+      accountName: '',
+      phoneNumber: '',
+      primary: false,
+    },
+  ],
   maxRows = 5,
   onChange,
 }) => {
@@ -25,18 +30,14 @@ const BankData: React.FC<BankDataProps> = ({
     onChange?.(rows);
   }, [rows, onChange]);
 
-  const handleChange = (
-    id: number,
-    field: keyof BankModel,
-    value: string
-  ) => {
+  const handleChange = (id: number, field: keyof BankModel, value: string) => {
     const updated = rows.map((row) =>
       row.id === id
         ? {
             ...row,
             [field]: value,
           }
-        : row 
+        : row
     );
     setRows(updated);
   };
@@ -44,12 +45,12 @@ const BankData: React.FC<BankDataProps> = ({
   const handleAddRow = (index: number) => {
     if (rows.length < maxRows) {
       const newRow: BankModel = {
-        id: Date.now(), 
-        bankName: "",
-        accountNumber: "",
-        routingNumber: "",
-        accountName: "",
-        phoneNumber: "",
+        id: Date.now(),
+        bankName: '',
+        accountNumber: '',
+        routingNumber: '',
+        accountName: '',
+        phoneNumber: '',
         primary: false,
       };
       const updated = [
@@ -70,51 +71,59 @@ const BankData: React.FC<BankDataProps> = ({
   return (
     <Stack spacing={2}>
       {rows.map((row, index) => (
-        <Box 
+        <Box
           key={row.id}
-          sx={{ 
+          sx={{
             display: 'grid',
             gap: 2,
             gridTemplateColumns: {
-              xs: '1fr',               // 1 column on mobile
-              sm: '1fr 1fr',           // 2 columns on tablet
-              md: '1fr 1fr 1fr'        // 3 columns on desktop
-            }
+              xs: '1fr', // 1 column on mobile
+              sm: '1fr 1fr', // 2 columns on tablet
+              md: '1fr 1fr 1fr', // 3 columns on desktop
+            },
           }}
         >
           <TextField
             size="small"
             label="Bank Name"
             value={row.bankName}
-            onChange={(e) => handleChange(row.id, "bankName", e.target.value)}
+            onChange={(e) => handleChange(row.id, 'bankName', e.target.value)}
             fullWidth
           />
           <TextField
             size="small"
             label="Account Number"
             value={row.accountNumber}
-            onChange={(e) => handleChange(row.id, "accountNumber", e.target.value)}
+            onChange={(e) =>
+              handleChange(row.id, 'accountNumber', e.target.value)
+            }
             fullWidth
           />
           <TextField
             size="small"
             label="Routing Number"
             value={row.routingNumber}
-            onChange={(e) => handleChange(row.id, "routingNumber", e.target.value)}
+            onChange={(e) =>
+              handleChange(row.id, 'routingNumber', e.target.value)
+            }
             fullWidth
           />
           <TextField
             size="small"
             label="Account Name"
             value={row.accountName}
-            onChange={(e) => handleChange(row.id, "accountName", e.target.value)}
+            onChange={(e) =>
+              handleChange(row.id, 'accountName', e.target.value)
+            }
             fullWidth
           />
           <TextField
             size="small"
-            label="Phone Number"  
+            label="Phone Number"
             value={row.phoneNumber}
-            onChange={(e) => handleChange(row.id, "phoneNumber", e.target.value)}
+            onChange={(e) =>
+              handleChange(row.id, 'phoneNumber', e.target.value)
+            }
             fullWidth
           />
           <Box sx={{ display: 'flex', alignItems: 'center', height: '100%' }}>
@@ -124,11 +133,11 @@ const BankData: React.FC<BankDataProps> = ({
                 color="primary"
                 onClick={() => handleAddRow(index)}
                 disabled={rows.length >= maxRows}
-                sx={{ 
+                sx={{
                   borderRadius: '8px',
                   border: '1px solid',
                   borderColor: 'primary.main',
-                  mr: 1
+                  mr: 1,
                 }}
               >
                 <AddIcon fontSize="small" />
@@ -138,10 +147,10 @@ const BankData: React.FC<BankDataProps> = ({
                 color="error"
                 onClick={() => handleDeleteRow(row.id)}
                 disabled={rows.length === 1}
-                sx={{ 
+                sx={{
                   borderRadius: '8px',
                   border: '1px solid',
-                  borderColor: 'error.main'
+                  borderColor: 'error.main',
                 }}
               >
                 <DeleteIcon fontSize="small" />
@@ -151,11 +160,10 @@ const BankData: React.FC<BankDataProps> = ({
         </Box>
       ))}
     </Stack>
-          //       </Box>
-          //     </Stack>
-          //   ))}
-          // </Stack>
-
+    //       </Box>
+    //     </Stack>
+    //   ))}
+    // </Stack>
   );
 };
 
