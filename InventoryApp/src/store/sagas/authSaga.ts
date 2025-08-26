@@ -24,9 +24,9 @@ class AuthApiService {
   static async refreshToken(token: string) {
     const response = await fetch('/api/auth/refresh', {
       method: 'POST',
-      headers: { 
+      headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
+        Authorization: `Bearer ${token}`,
       },
     });
     if (!response.ok) throw new Error('Token refresh failed');
@@ -51,7 +51,9 @@ class AuthApiService {
 }
 
 // Saga workers
-function* loginSaga(action: PayloadAction<{ username: string; password: string }>): Generator<any, void, any> {
+function* loginSaga(
+  action: PayloadAction<{ username: string; password: string }>
+): Generator<any, void, any> {
   try {
     const result = yield call(AuthApiService.login, action.payload);
     // Put success action here when auth slice is properly set up
@@ -73,7 +75,9 @@ function* logoutSaga(): Generator<any, void, any> {
   }
 }
 
-function* refreshTokenSaga(action: PayloadAction<string>): Generator<any, void, any> {
+function* refreshTokenSaga(
+  action: PayloadAction<string>
+): Generator<any, void, any> {
   try {
     const result = yield call(AuthApiService.refreshToken, action.payload);
     // Put success action here when auth slice is properly set up

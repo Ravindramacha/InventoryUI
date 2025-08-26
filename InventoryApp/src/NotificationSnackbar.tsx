@@ -21,14 +21,13 @@ export default function NotificationSnackbar() {
   }, [notifications]);
 
   useEffect(() => {
-  if (!open && queue.length > 0) {
-    const [next, ...rest] = queue;
-    setCurrent(next);
-    setQueue(rest);
-    setOpen(true);
-  }
-}, [queue, open]);
-
+    if (!open && queue.length > 0) {
+      const [next, ...rest] = queue;
+      setCurrent(next);
+      setQueue(rest);
+      setOpen(true);
+    }
+  }, [queue, open]);
 
   const handleClose = () => {
     setOpen(false);
@@ -43,11 +42,7 @@ export default function NotificationSnackbar() {
           onClose={handleClose}
           anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
         >
-          <Alert
-            severity={current.type}
-            variant="filled"
-            onClose={handleClose}
-          >
+          <Alert severity={current.type} variant="filled" onClose={handleClose}>
             {current.message}
           </Alert>
         </Snackbar>

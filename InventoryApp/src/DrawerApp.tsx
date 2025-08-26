@@ -33,9 +33,13 @@ const menuItems = [
     text: 'Master Data',
     icon: <Inventory2Icon />,
     children: [
-      { text: 'Material / Product', path: '/form',icon: <PreviewIcon /> },
-      { text: 'Customer', path: '/products/categories',icon: <CategoryIcon /> },
-      { text: 'Supplier / Vendor', path: '/vendor',icon: <AddIcon /> },
+      { text: 'Material / Product', path: '/form', icon: <PreviewIcon /> },
+      {
+        text: 'Customer',
+        path: '/products/categories',
+        icon: <CategoryIcon />,
+      },
+      { text: 'Supplier / Vendor', path: '/vendor', icon: <AddIcon /> },
     ],
   },
 
@@ -43,11 +47,15 @@ const menuItems = [
     text: 'Transational Data',
     icon: <AccountBoxIcon />,
     children: [
-      { text: 'Purchase Requisition', path: '/form' ,icon: <AddIcon />},
-      { text: 'Purchase Orders', path: '/form/submitted',icon: <ArrowUpward /> },
-      { text: 'Quotations', path: '/form/submitted',icon: <ArrowUpward /> },
-      { text: 'Sales Orders', path: '/form/submitted',icon: <ArrowUpward /> },
-      { text: 'Inventory', path: '/form/submitted',icon: <ArrowUpward /> },
+      { text: 'Purchase Requisition', path: '/form', icon: <AddIcon /> },
+      {
+        text: 'Purchase Orders',
+        path: '/form/submitted',
+        icon: <ArrowUpward />,
+      },
+      { text: 'Quotations', path: '/form/submitted', icon: <ArrowUpward /> },
+      { text: 'Sales Orders', path: '/form/submitted', icon: <ArrowUpward /> },
+      { text: 'Inventory', path: '/form/submitted', icon: <ArrowUpward /> },
     ],
   },
 
@@ -55,22 +63,24 @@ const menuItems = [
     text: 'Configuration',
     icon: <DashboardIcon />,
     children: [
-      { text: 'Product Type', path: '/products',icon: <Analytics /> },
-      { text: 'Product Group', path: '/productGroup',icon: <Article /> },
-      { text: 'Product Category', path: '/dashboard/reports',icon: <Article /> },
+      { text: 'Product Type', path: '/products', icon: <Analytics /> },
+      { text: 'Product Group', path: '/productGroup', icon: <Article /> },
+      {
+        text: 'Product Category',
+        path: '/dashboard/reports',
+        icon: <Article />,
+      },
     ],
   },
-    {
+  {
     text: 'Dashboard',
     icon: <DashboardIcon />,
     children: [
-      { text: 'Analytics', path: '/dashboard/analytics',icon: <Analytics /> },
-      { text: 'Reports', path: '/dashboard/reports',icon: <Article /> },
+      { text: 'Analytics', path: '/dashboard/analytics', icon: <Analytics /> },
+      { text: 'Reports', path: '/dashboard/reports', icon: <Article /> },
     ],
   },
 ];
-
-
 
 export default function DrawerApp({
   open,
@@ -83,19 +93,18 @@ export default function DrawerApp({
 }) {
   const [openSubMenus, setOpenSubMenus] = useState<Record<string, boolean>>({});
   const navigate = useNavigate();
-  
+
   const handleNavigation = (path: string) => {
     navigate(path);
     if (isSmallScreen) onClose();
   };
 
   const toggleSubMenu = (label: string) => {
-  setOpenSubMenus((prev) => ({
-    ...prev,
-    [label]: !prev[label],
-  }));
-};
-
+    setOpenSubMenus((prev) => ({
+      ...prev,
+      [label]: !prev[label],
+    }));
+  };
 
   return (
     <Drawer
@@ -111,10 +120,11 @@ export default function DrawerApp({
           width: open ? 250 : 64,
           boxSizing: 'border-box',
           overflowX: 'hidden',
-          transition: theme => theme.transitions.create('width', {
-            easing: theme.transitions.easing.sharp,
-            duration: theme.transitions.duration.enteringScreen,
-          }),
+          transition: (theme) =>
+            theme.transitions.create('width', {
+              easing: theme.transitions.easing.sharp,
+              duration: theme.transitions.duration.enteringScreen,
+            }),
         },
       }}
     >
@@ -148,7 +158,11 @@ export default function DrawerApp({
                       <>
                         <ListItemText primary={text} />
                         {children &&
-                          (openSubMenus[text] ? <ExpandLess /> : <ExpandMore />)}
+                          (openSubMenus[text] ? (
+                            <ExpandLess />
+                          ) : (
+                            <ExpandMore />
+                          ))}
                       </>
                     )}
                   </ListItemButton>
@@ -178,9 +192,7 @@ export default function DrawerApp({
                           {child.icon}
                         </ListItemIcon>
 
-                        {open && (
-                          <ListItemText primary={child.text} />
-                        )}
+                        {open && <ListItemText primary={child.text} />}
 
                         {!open && !isSmallScreen && (
                           <Tooltip title={child.text} placement="right">
@@ -192,10 +204,8 @@ export default function DrawerApp({
                   </List>
                 </Collapse>
               )}
-
             </Box>
           ))}
-
         </List>
       </Box>
     </Drawer>

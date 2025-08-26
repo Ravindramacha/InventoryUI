@@ -55,7 +55,9 @@ function* fetchVendorsSaga(): Generator<any, void, any> {
   }
 }
 
-function* createVendorSaga(action: PayloadAction<any>): Generator<any, void, any> {
+function* createVendorSaga(
+  action: PayloadAction<any>
+): Generator<any, void, any> {
   try {
     const newVendor = yield call(VendorApiService.createVendor, action.payload);
     // Put success action here when vendor slice is properly set up
@@ -66,11 +68,13 @@ function* createVendorSaga(action: PayloadAction<any>): Generator<any, void, any
   }
 }
 
-function* updateVendorSaga(action: PayloadAction<{ id: number; vendorData: any }>): Generator<any, void, any> {
+function* updateVendorSaga(
+  action: PayloadAction<{ id: number; vendorData: any }>
+): Generator<any, void, any> {
   try {
     const updatedVendor = yield call(
-      VendorApiService.updateVendor, 
-      action.payload.id, 
+      VendorApiService.updateVendor,
+      action.payload.id,
       action.payload.vendorData
     );
     // Put success action here when vendor slice is properly set up
@@ -81,7 +85,9 @@ function* updateVendorSaga(action: PayloadAction<{ id: number; vendorData: any }
   }
 }
 
-function* deleteVendorSaga(action: PayloadAction<number>): Generator<any, void, any> {
+function* deleteVendorSaga(
+  action: PayloadAction<number>
+): Generator<any, void, any> {
   try {
     yield call(VendorApiService.deleteVendor, action.payload);
     // Put success action here when vendor slice is properly set up
@@ -92,7 +98,9 @@ function* deleteVendorSaga(action: PayloadAction<number>): Generator<any, void, 
   }
 }
 
-function* fetchVendorByIdSaga(action: PayloadAction<number>): Generator<any, void, any> {
+function* fetchVendorByIdSaga(
+  action: PayloadAction<number>
+): Generator<any, void, any> {
   try {
     const vendor = yield call(VendorApiService.fetchVendorById, action.payload);
     // Put success action here when vendor slice is properly set up

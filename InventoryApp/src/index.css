@@ -1,12 +1,12 @@
 /* index.css */
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   overflow-x: hidden;
   overflow-y: auto;
   box-sizing: border-box;
 }
-
 
 /* :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;

@@ -1,19 +1,14 @@
-import React, { useState, useEffect } from "react";
-import {
-  Stack,
-  IconButton,
-  TextField,
-  Autocomplete,
-} from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
-import AddIcon from "@mui/icons-material/Add";
-import ConfirmDialog from "../Vendor/ConfirmDialog";
-import { DatePicker } from "@mui/x-date-pickers";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { Dayjs } from "dayjs";
+import React, { useState, useEffect } from 'react';
+import { Stack, IconButton, TextField, Autocomplete } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
+import AddIcon from '@mui/icons-material/Add';
+import ConfirmDialog from '../Vendor/ConfirmDialog';
+import { DatePicker } from '@mui/x-date-pickers';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { Dayjs } from 'dayjs';
 
-type FieldType = "text" | "number" | "dropdown" | "date";
+type FieldType = 'text' | 'number' | 'dropdown' | 'date';
 
 export interface Attribute {
   id: number;
@@ -51,62 +46,63 @@ const DynamicField: React.FC<DynamicFieldProps> = ({
     onChange?.(updated);
   };
 
- const handleAddField = (index: number) => {
-  if (attributes.length < maxFields) {
-    const baseName = attributes[0].name.replace(/\s*\d+$/, "") || "Attribute";
-    const baseLabel = attributes[0].label.replace(/\s*\d+$/, "") || "Attribute";
+  const handleAddField = (index: number) => {
+    if (attributes.length < maxFields) {
+      const baseName = attributes[0].name.replace(/\s*\d+$/, '') || 'Attribute';
+      const baseLabel =
+        attributes[0].label.replace(/\s*\d+$/, '') || 'Attribute';
 
-    const newField: Attribute = {
-      id: Date.now(),
-      name: `${baseName} ${attributes.length + 1}`,
-      label: `${baseLabel} ${attributes.length + 1}`,
-      type: attributes[0].type,
-      value: attributes[0].type === "date" ? null : "",
-      options: attributes[0].options || [],
-    };
+      const newField: Attribute = {
+        id: Date.now(),
+        name: `${baseName} ${attributes.length + 1}`,
+        label: `${baseLabel} ${attributes.length + 1}`,
+        type: attributes[0].type,
+        value: attributes[0].type === 'date' ? null : '',
+        options: attributes[0].options || [],
+      };
 
-    const updated = [
-      ...attributes.slice(0, index + 1),
-      newField,
-      ...attributes.slice(index + 1),
-    ];
+      const updated = [
+        ...attributes.slice(0, index + 1),
+        newField,
+        ...attributes.slice(index + 1),
+      ];
 
-    // Reindex all fields after adding
-    const reindexed = updated.map((attr, idx) => ({
-      ...attr,
-      name: `${baseName} ${idx + 1}`,
-      label: `${baseLabel} ${idx + 1}`,
-    }));
+      // Reindex all fields after adding
+      const reindexed = updated.map((attr, idx) => ({
+        ...attr,
+        name: `${baseName} ${idx + 1}`,
+        label: `${baseLabel} ${idx + 1}`,
+      }));
 
-    updateParent(reindexed);
-  }
-};
-
+      updateParent(reindexed);
+    }
+  };
 
   const handleRequestDelete = (id: number) => {
     setConfirmDialog({ open: true, fieldId: id });
   };
 
-const handleConfirmDelete = () => {
-  if (confirmDialog.fieldId !== null) {
-    const baseName = attributes[0].name.replace(/\s*\d+$/, "") || "Attribute";
-    const baseLabel = attributes[0].label.replace(/\s*\d+$/, "") || "Attribute";
+  const handleConfirmDelete = () => {
+    if (confirmDialog.fieldId !== null) {
+      const baseName = attributes[0].name.replace(/\s*\d+$/, '') || 'Attribute';
+      const baseLabel =
+        attributes[0].label.replace(/\s*\d+$/, '') || 'Attribute';
 
-    const filtered = attributes.filter(
-      (attr) => attr.id !== confirmDialog.fieldId
-    );
+      const filtered = attributes.filter(
+        (attr) => attr.id !== confirmDialog.fieldId
+      );
 
-    const reindexed = filtered.map((attr, idx) => ({
-      ...attr,
-      name: `${baseName} ${idx + 1}`,
-      label: `${baseLabel} ${idx + 1}`,
-    }));
+      const reindexed = filtered.map((attr, idx) => ({
+        ...attr,
+        name: `${baseName} ${idx + 1}`,
+        label: `${baseLabel} ${idx + 1}`,
+      }));
 
-    updateParent(reindexed);
-  }
+      updateParent(reindexed);
+    }
 
-  setConfirmDialog({ open: false, fieldId: null });
-};
+    setConfirmDialog({ open: false, fieldId: null });
+  };
 
   const handleCancelDelete = () => {
     setConfirmDialog({ open: false, fieldId: null });
@@ -121,53 +117,57 @@ const handleConfirmDelete = () => {
 
   const renderFieldInput = (attr: Attribute) => {
     switch (attr.type) {
-      case "text":
+      case 'text':
         return (
           <TextField
             label={attr.label}
-            value={attr.value ?? ""}
+            value={attr.value ?? ''}
             onChange={(e) => handleFieldChange(attr.id, e.target.value)}
             size="small"
             fullWidth
           />
         );
-      case "number":
+      case 'number':
         return (
           <TextField
             label={attr.label}
             type="number"
-            value={attr.value !== null ? attr.value : ""}
+            value={attr.value !== null ? attr.value : ''}
             onChange={(e) => handleFieldChange(attr.id, e.target.value)}
             size="small"
             fullWidth
           />
         );
-      case "dropdown":
+      case 'dropdown':
         return (
           <Autocomplete
             options={attr.options || []}
-            value={attr.value ? String(attr.value) : ""}
+            value={attr.value ? String(attr.value) : ''}
             onChange={(_, newValue) =>
-              handleFieldChange(attr.id, newValue || "")
+              handleFieldChange(attr.id, newValue || '')
             }
             renderInput={(params) => (
-              <TextField {...params} label={attr.label} size="small" fullWidth />
+              <TextField
+                {...params}
+                label={attr.label}
+                size="small"
+                fullWidth
+              />
             )}
             fullWidth
             disableClearable
           />
         );
-    case "date":
+      case 'date':
         return (
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DatePicker
-                   label={attr.label}
-                   value={attr.value as Dayjs | null}
-                   onChange={(newValue) => handleFieldChange(attr.id, newValue)}
-                   slotProps={{ textField: { fullWidth: true, size: "small" } }}
-                   />
-            </LocalizationProvider>
-        
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DatePicker
+              label={attr.label}
+              value={attr.value as Dayjs | null}
+              onChange={(newValue) => handleFieldChange(attr.id, newValue)}
+              slotProps={{ textField: { fullWidth: true, size: 'small' } }}
+            />
+          </LocalizationProvider>
         );
       default:
         return null;
@@ -178,12 +178,7 @@ const handleConfirmDelete = () => {
     <>
       <Stack spacing={2}>
         {attributes.map((attr, index) => (
-          <Stack
-            direction="row"
-            spacing={1}
-            key={attr.id}
-            alignItems="center"
-          >
+          <Stack direction="row" spacing={1} key={attr.id} alignItems="center">
             {renderFieldInput(attr)}
 
             <IconButton

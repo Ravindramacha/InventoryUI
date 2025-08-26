@@ -1,17 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   Stack,
   TextField,
   IconButton,
   Autocomplete,
   Grid,
-} from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
-import DeleteIcon from "@mui/icons-material/Delete";
+} from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
+import DeleteIcon from '@mui/icons-material/Delete';
 
-import type { TaxInformationModel } from "../../Models/VendorModel";
-
-
+import type { TaxInformationModel } from '../../Models/VendorModel';
 
 interface TaxInformationProps {
   initialRows?: TaxInformationModel[];
@@ -20,16 +18,17 @@ interface TaxInformationProps {
 }
 
 const TaxInformation: React.FC<TaxInformationProps> = ({
-  
-  initialRows = [{ id: Date.now(),countryId: null, category: "", name: "", taxNumber: ""}],
+  initialRows = [
+    { id: Date.now(), countryId: null, category: '', name: '', taxNumber: '' },
+  ],
   maxRows = 5,
   onChange,
 }) => {
-const countryList = [
-  { id: 1, name: 'United States' },
-  { id: 2, name: 'Canada' },
-  { id: 3, name: 'India' },
-];
+  const countryList = [
+    { id: 1, name: 'United States' },
+    { id: 2, name: 'Canada' },
+    { id: 3, name: 'India' },
+  ];
   const [rows, setRows] = useState<TaxInformationModel[]>(initialRows);
 
   useEffect(() => {
@@ -47,7 +46,7 @@ const countryList = [
             ...row,
             [field]: value,
           }
-        : row 
+        : row
     );
     setRows(updated);
   };
@@ -57,9 +56,9 @@ const countryList = [
       const newRow: TaxInformationModel = {
         id: Date.now(),
         countryId: null,
-        category: "",
-        name: "",
-        taxNumber: "",
+        category: '',
+        name: '',
+        taxNumber: '',
       };
       const updated = [
         ...rows.slice(0, index + 1),
@@ -81,50 +80,64 @@ const countryList = [
       {rows.map((row, index) => (
         <React.Fragment key={row.id}>
           <Grid container spacing={1} alignItems="center">
-            <Grid size={{xs:12,sm:4}} >
+            <Grid size={{ xs: 12, sm: 4 }}>
               <Autocomplete
                 disablePortal
                 options={countryList}
                 getOptionLabel={(option) => option.name}
                 isOptionEqualToValue={(option, value) => option.id === value.id}
                 onChange={(_, newValue) =>
-                  handleChange(row.id, "countryId", String(newValue?.id || ''))
+                  handleChange(row.id, 'countryId', String(newValue?.id || ''))
                 }
                 size="small"
                 sx={{ width: '100%' }}
-                renderInput={(params) => <TextField {...params} label="Country" size="small" required />}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Country"
+                    size="small"
+                    required
+                  />
+                )}
               />
             </Grid>
-            <Grid size={{xs:12,sm:4}}>
+            <Grid size={{ xs: 12, sm: 4 }}>
               <TextField
                 size="small"
                 label="Category"
                 value={row.category}
-                onChange={(e) => handleChange(row.id, "category", e.target.value)}
+                onChange={(e) =>
+                  handleChange(row.id, 'category', e.target.value)
+                }
                 sx={{ width: '100%' }}
               />
             </Grid>
-            <Grid size={{xs:12,sm:4}}>
+            <Grid size={{ xs: 12, sm: 4 }}>
               <TextField
                 size="small"
                 label="Name"
                 value={row.name}
-                onChange={(e) => handleChange(row.id, "name", e.target.value)}
+                onChange={(e) => handleChange(row.id, 'name', e.target.value)}
                 sx={{ width: '100%' }}
               />
             </Grid>
           </Grid>
           <Grid container spacing={1} alignItems="center" sx={{ mt: 1 }}>
-            <Grid size={{xs:12,sm:4}}>
+            <Grid size={{ xs: 12, sm: 4 }}>
               <TextField
                 size="small"
                 label="Tax Number"
                 value={row.taxNumber}
-                onChange={(e) => handleChange(row.id, "taxNumber", e.target.value)}
+                onChange={(e) =>
+                  handleChange(row.id, 'taxNumber', e.target.value)
+                }
                 sx={{ width: '100%' }}
               />
             </Grid>
-            <Grid size={{xs:12,sm:8}} sx={{ display: 'flex', alignItems: 'center' }}>
+            <Grid
+              size={{ xs: 12, sm: 8 }}
+              sx={{ display: 'flex', alignItems: 'center' }}
+            >
               <IconButton
                 size="small"
                 color="primary"
@@ -134,7 +147,7 @@ const countryList = [
                   borderRadius: '8px',
                   border: '1px solid',
                   borderColor: 'primary.main',
-                  mr: 1
+                  mr: 1,
                 }}
               >
                 <AddIcon fontSize="small" />
@@ -147,7 +160,7 @@ const countryList = [
                 sx={{
                   borderRadius: '8px',
                   border: '1px solid',
-                  borderColor: 'error.main'
+                  borderColor: 'error.main',
                 }}
               >
                 <DeleteIcon fontSize="small" />
@@ -157,7 +170,6 @@ const countryList = [
         </React.Fragment>
       ))}
     </Stack>
-
   );
 };
 

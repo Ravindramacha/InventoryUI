@@ -14,38 +14,37 @@ import {
   TableSortLabel,
 } from '@mui/material';
 import { Add } from '@mui/icons-material';
-import { useGetAllProductMasterForm } from '../../api/ApiQueries';
-import type { ReadProductMasterForm } from '../../Models/MaterialModel';
+import { useGetAllVendorForm } from '../../api/ApiQueries';
 import ProductMasterView from '../Configuration/Product/ProductMasterView';
-import ProductDetails from '../Configuration/Product/ProductDetails';
-import ApplicationForm from '../common/ApplicationForm';
+import type { ReadVendorFormModel } from '../../Models/VendorModel';
+import VendorForm from '../common/VendorForm';
+import VendorDetails from './VendorDetails';
 
 type Mode = 'add' | 'edit' | 'view';
 
-interface CrudTableProps {
-  onEdit?: (data: ReadProductMasterForm) => void;
+interface VendorListProps {
+  onEdit?: (data: ReadVendorFormModel) => void;
 }
 
 type Order = 'asc' | 'desc';
 
-const CrudTable: React.FC<CrudTableProps> = ({ onEdit }) => {
-  const { data: productMasterForm = [] } = useGetAllProductMasterForm();
+const VendorList: React.FC<VendorListProps> = ({ onEdit }) => {
+  const { data: vendorForm = [] } = useGetAllVendorForm();
 
-  const [rows, setRows] = useState<ReadProductMasterForm[]>([]);
+  const [rows, setRows] = useState<ReadVendorFormModel[]>([]);
   const [order, setOrder] = useState<Order>('asc');
-  const [orderBy, setOrderBy] =
-    useState<keyof ReadProductMasterForm>('productId');
+  const [orderBy, setOrderBy] = useState<keyof ReadVendorFormModel>('vendorId');
 
   useEffect(() => {
-    if (Array.isArray(productMasterForm)) {
-      setRows(productMasterForm);
+    if (Array.isArray(vendorForm)) {
+      setRows(vendorForm);
     } else {
-      console.warn('Unexpected data:', productMasterForm);
+      console.warn('Unexpected data:', vendorForm);
       setRows([]); // fallback
     }
-  }, [productMasterForm]);
+  }, [vendorForm]);
 
-  const handleRequestSort = (property: keyof ReadProductMasterForm) => {
+  const handleRequestSort = (property: keyof ReadVendorFormModel) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
     setOrderBy(property);
@@ -89,7 +88,7 @@ const CrudTable: React.FC<CrudTableProps> = ({ onEdit }) => {
   const [search, setSearch] = useState('');
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [drawerMode, setDrawerMode] = useState<Mode>('add');
-  const [selectedRow, setSelectedRow] = useState<ReadProductMasterForm | null>(
+  const [selectedRow, setSelectedRow] = useState<ReadVendorFormModel | null>(
     null
   );
 
@@ -100,7 +99,7 @@ const CrudTable: React.FC<CrudTableProps> = ({ onEdit }) => {
 
   const handleOpenDrawer = (
     mode: Mode,
-    row: ReadProductMasterForm | null = null
+    row: ReadVendorFormModel | null = null
   ) => {
     setDrawerMode(mode);
     setSelectedRow(row);
@@ -123,23 +122,10 @@ const CrudTable: React.FC<CrudTableProps> = ({ onEdit }) => {
     ? rows.filter((row) => {
         const searchTerm = search.toLowerCase();
         return (
-          row.productId.toLowerCase().includes(searchTerm) ||
-          row.productType.productTypeDesc.toLowerCase().includes(searchTerm) ||
-          row.productType.productTypeCode.toLowerCase().includes(searchTerm) ||
-          row.productGroup.productGroupDesc
-            .toLowerCase()
-            .includes(searchTerm) ||
-          row.productGroup.productGroupCode
-            .toLowerCase()
-            .includes(searchTerm) ||
-          row.productCategory.productCategoryDesc
-            .toLowerCase()
-            .includes(searchTerm) ||
-          row.productCategory.productCategoryCode
-            .toLowerCase()
-            .includes(searchTerm) ||
-          (row.shortDescription || '').toLowerCase().includes(searchTerm) ||
-          (row.longDescription || '').toLowerCase().includes(searchTerm)
+          row.companyName1.toLowerCase().includes(searchTerm) ||
+          row.companyName2.toLowerCase().includes(searchTerm) ||
+          row.phoneNumber1.toLowerCase().includes(searchTerm) ||
+          row.email1.toLowerCase().includes(searchTerm)
         );
       })
     : [];
@@ -195,38 +181,38 @@ const CrudTable: React.FC<CrudTableProps> = ({ onEdit }) => {
                 <TableRow>
                   <TableCell sx={{ py: 1, fontWeight: 'bold' }}>
                     <TableSortLabel
-                      active={orderBy === 'productId'}
-                      direction={orderBy === 'productId' ? order : 'asc'}
-                      onClick={() => handleRequestSort('productId')}
+                      active={orderBy === 'companyName1'}
+                      direction={orderBy === 'companyName1' ? order : 'asc'}
+                      onClick={() => handleRequestSort('companyName1')}
                     >
-                      Product Id
+                      Company Name 1
                     </TableSortLabel>
                   </TableCell>
                   <TableCell sx={{ py: 1, fontWeight: 'bold' }}>
                     <TableSortLabel
-                      active={orderBy === 'productType'}
-                      direction={orderBy === 'productType' ? order : 'asc'}
-                      onClick={() => handleRequestSort('productType')}
+                      active={orderBy === 'companyName2'}
+                      direction={orderBy === 'companyName2' ? order : 'asc'}
+                      onClick={() => handleRequestSort('companyName2')}
                     >
-                      Product Type
+                      Company Name 2
                     </TableSortLabel>
                   </TableCell>
                   <TableCell sx={{ py: 1, fontWeight: 'bold' }}>
                     <TableSortLabel
-                      active={orderBy === 'productGroup'}
-                      direction={orderBy === 'productGroup' ? order : 'asc'}
-                      onClick={() => handleRequestSort('productGroup')}
+                      active={orderBy === 'phoneNumber1'}
+                      direction={orderBy === 'phoneNumber1' ? order : 'asc'}
+                      onClick={() => handleRequestSort('phoneNumber1')}
                     >
-                      Product Group
+                      Phone Number 1
                     </TableSortLabel>
                   </TableCell>
                   <TableCell sx={{ py: 1, fontWeight: 'bold' }}>
                     <TableSortLabel
-                      active={orderBy === 'productCategory'}
-                      direction={orderBy === 'productCategory' ? order : 'asc'}
-                      onClick={() => handleRequestSort('productCategory')}
+                      active={orderBy === 'email1'}
+                      direction={orderBy === 'email1' ? order : 'asc'}
+                      onClick={() => handleRequestSort('email1')}
                     >
-                      Product Category
+                      Email 1
                     </TableSortLabel>
                   </TableCell>
                 </TableRow>
@@ -234,7 +220,7 @@ const CrudTable: React.FC<CrudTableProps> = ({ onEdit }) => {
               <TableBody>
                 {paginatedRows.map((row) => (
                   <TableRow
-                    key={row.productMasterId}
+                    key={row.vendorId}
                     onClick={() => setSelectedRow(row)}
                     sx={{
                       '&:hover': {
@@ -243,16 +229,10 @@ const CrudTable: React.FC<CrudTableProps> = ({ onEdit }) => {
                       },
                     }}
                   >
-                    <TableCell sx={{ py: 1 }}>{row.productId}</TableCell>
-                    <TableCell sx={{ py: 1 }}>
-                      {row.productType.productTypeDesc}
-                    </TableCell>
-                    <TableCell sx={{ py: 1 }}>
-                      {row.productGroup.productGroupDesc}
-                    </TableCell>
-                    <TableCell sx={{ py: 1 }}>
-                      {row.productCategory.productCategoryDesc}
-                    </TableCell>
+                    <TableCell sx={{ py: 1 }}>{row.companyName1}</TableCell>
+                    <TableCell sx={{ py: 1 }}>{row.companyName2}</TableCell>
+                    <TableCell sx={{ py: 1 }}>{row.phoneNumber1}</TableCell>
+                    <TableCell sx={{ py: 1 }}>{row.email1}</TableCell>
                   </TableRow>
                 ))}
                 {paginatedRows.length === 0 && (
@@ -284,11 +264,11 @@ const CrudTable: React.FC<CrudTableProps> = ({ onEdit }) => {
 
       {selectedRow && !drawerOpen && (
         <Box>
-          <ProductDetails
-            product={selectedRow}
+          <VendorDetails
+            vendor={selectedRow}
             onBack={() => setSelectedRow(null)}
-            onEdit={(product) =>
-              onEdit ? onEdit(product) : handleOpenDrawer('edit', product)
+            onEdit={(vendor) =>
+              onEdit ? onEdit(vendor) : handleOpenDrawer('edit', vendor)
             }
           />
         </Box>
@@ -296,14 +276,20 @@ const CrudTable: React.FC<CrudTableProps> = ({ onEdit }) => {
 
       {drawerOpen && (
         <Box sx={{ backgroundColor: 'white', p: 2, borderRadius: 1 }}>
-          <ApplicationForm
+          <VendorForm
             onCancel={() => setDrawerOpen(false)}
             initialData={
               drawerMode === 'edit' && selectedRow ? selectedRow : null
             }
             mode={drawerMode === 'edit' ? 'edit' : 'add'}
-            productMasterId={selectedRow ? selectedRow.productMasterId : 0}
+            vendorId={selectedRow ? selectedRow.vendorId : 0}
           />
+          {/* <ApplicationForm
+            onCancel={() => setDrawerOpen(false)} 
+            initialData={drawerMode === "edit" && selectedRow ? selectedRow : null}
+            mode={drawerMode === "edit" ? "edit" : "add"}
+            productMasterId={selectedRow ? selectedRow.productMasterId : 0}
+          /> */}
         </Box>
       )}
 
@@ -336,4 +322,4 @@ const CrudTable: React.FC<CrudTableProps> = ({ onEdit }) => {
   );
 };
 
-export default CrudTable;
+export default VendorList;

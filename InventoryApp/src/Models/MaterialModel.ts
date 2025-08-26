@@ -3,7 +3,7 @@ export interface LanguageModel {
   languageId: number;
   languageCode: string;
   languageDesc: string;
-  createdOn: string;     // You can use Date type if you parse it
+  createdOn: string; // You can use Date type if you parse it
   createdBy: number;
   modifiedOn: string;
   modifiedBy: number;
@@ -13,19 +13,18 @@ export interface SalesStatusModel {
   salesStatusId: number;
   salesStatusCode: string;
   salesStatusDesc: string;
-  createdOn: string;     // You can use Date type if you parse it
+  createdOn: string; // You can use Date type if you parse it
   createdBy: number;
   modifiedOn: string;
   modifiedBy: number;
 }
 
-
 export interface UomModel {
-  uomId: number;
+  uomId?: number;
   uomCode: string;
   uomDesc: string;
   uomDimId: number; // Assuming this is the dimension ID
-  createdOn: string;     // You can use Date type if you parse it
+  createdOn: string; // You can use Date type if you parse it
   createdBy: number;
   modifiedOn: string;
   modifiedBy: number;
@@ -35,7 +34,7 @@ export interface UomDimensionModel {
   uomDimCode: string;
   uomDimDesc: string;
   uoms: UomModel[];
-  createdOn: string;     // You can use Date type if you parse it
+  createdOn: string; // You can use Date type if you parse it
   createdBy: number;
   modifiedOn: string;
   modifiedBy: number;
@@ -45,7 +44,7 @@ export interface ProductTypeModel {
   productTypeId: number;
   productTypeCode: string;
   productTypeDesc: string;
-  createdOn: string;     // You can use Date type if you parse it
+  createdOn: string; // You can use Date type if you parse it
   createdBy: number;
   modifiedOn: string;
   modifiedBy: number;
@@ -61,14 +60,14 @@ export interface PutProductType {
   productTypeId: number;
   productTypeCode: string;
   productTypeDesc: string;
-  TranscationById: number; // Assuming this is the user ID performing the transaction 
+  TranscationById: number; // Assuming this is the user ID performing the transaction
 }
 
 export interface ProductGroupModel {
   productGroupId: number;
   productGroupCode: string;
   productGroupDesc: string;
-  createdOn: string;     // You can use Date type if you parse it
+  createdOn: string; // You can use Date type if you parse it
   createdBy: number;
   modifiedOn: string;
   modifiedBy: number;
@@ -78,13 +77,14 @@ export interface ProductCategoryModel {
   productCategoryId: number;
   productCategoryCode: string;
   productCategoryDesc: string;
-  createdOn: string;     // You can use Date type if you parse it
+  createdOn: string; // You can use Date type if you parse it
   createdBy: number;
   modifiedOn: string;
   modifiedBy: number;
 }
 export interface UomData {
   id: number;
+  uomDataId?: number | undefined; // Optional for new entries
   uom: number | undefined | null;
   quantity: string;
   primaryQty: string;
@@ -93,10 +93,13 @@ export interface UomData {
   height?: number | undefined | null;
   lengthUom: string;
   netWeight?: number | undefined | null;
-  grossWeight?: number | undefined | null; 
+  grossWeight?: number | undefined | null;
   weightUom: string;
   volume?: number | undefined | null;
   volumeUom?: string;
+}
+export interface UomDataUpdate extends UomData {
+  uomDataId: number;
 }
 export interface PostProductMasterForm {
   productId: string;
@@ -108,12 +111,12 @@ export interface PostProductMasterForm {
   shortDescription: string;
   longDescription: string;
   attribute1: string;
-  attribute2: string;  
+  attribute2: string;
   attribute3: string;
   attribute4: string;
   attribute5: string;
   date1: Date | null;
-  date2: Date | null;   
+  date2: Date | null;
   date3: Date | null;
   date4: Date | null;
   date5: Date | null;
@@ -132,6 +135,13 @@ export interface PostProductMasterForm {
   manufacturerPartNumber: string;
   manufacturerId: number | undefined | null;
   notes: string;
+}
+export interface UomDataUpdate extends UomData {
+  uomDataId: number;
+}
+export interface PutProductMasterForm extends PostProductMasterForm {
+  productMasterId: number;
+  productMasterUomDto: UomDataUpdate[];
 }
 
 export interface ReadProductMasterForm {
@@ -145,12 +155,12 @@ export interface ReadProductMasterForm {
   shortDescription: string;
   longDescription: string;
   attribute1: string;
-  attribute2: string;  
+  attribute2: string;
   attribute3: string;
   attribute4: string;
   attribute5: string;
   date1: Date | null;
-  date2: Date | null;   
+  date2: Date | null;
   date3: Date | null;
   date4: Date | null;
   date5: Date | null;
@@ -169,7 +179,7 @@ export interface ReadProductMasterForm {
   manufacturerPartNumber: string;
   manufacturerId: number | undefined | null;
   notes: string;
-  productType : ProductTypeModel;
-  productGroup : ProductGroupModel;
-  productCategory : ProductCategoryModel;
+  productType: ProductTypeModel;
+  productGroup: ProductGroupModel;
+  productCategory: ProductCategoryModel;
 }

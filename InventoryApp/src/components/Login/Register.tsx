@@ -1,4 +1,4 @@
-import  { useState } from "react";
+import { useState } from 'react';
 import {
   Avatar,
   Button,
@@ -8,38 +8,37 @@ import {
   Box,
   Typography,
   Paper,
-} from "@mui/material";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+} from '@mui/material';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 // import { loginUser } from "../api/authApi";
 // import { useAuth } from "../context/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 
 export default function Register() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  // const { login } = useAuth();
+  const navigate = useNavigate();
 
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-   // const { login } = useAuth();
-    const navigate = useNavigate();
-  
-    const handleSubmit = async (e: React.FormEvent) => {
-      e.preventDefault();
-      try {
-        //const data = await loginUser({ client_id: email, secret: password  });
-        //login(data.token);
-        navigate("/home");
-      } catch (err) {
-        console.error("Login failed", err);
-        alert("Invalid credentials");
-      }
-    };
-  
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      //const data = await loginUser({ client_id: email, secret: password  });
+      //login(data.token);
+      navigate('/home');
+    } catch (err) {
+      console.error('Login failed', err);
+      alert('Invalid credentials');
+    }
+  };
+
   return (
     <Box
       sx={{
-        height: "100vh", // full viewport height
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
+        height: '100vh', // full viewport height
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
       }}
     >
       <Paper
@@ -48,17 +47,17 @@ export default function Register() {
           p: 4,
           borderRadius: 3,
           maxWidth: 400,
-          width: "100%",
+          width: '100%',
         }}
       >
         <Box
           sx={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
           }}
         >
-          <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
+          <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
@@ -103,7 +102,6 @@ export default function Register() {
             >
               Sign In
             </Button>
-            
           </Box>
         </Box>
       </Paper>

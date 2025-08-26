@@ -3,8 +3,8 @@ import {
   CardContent,
   Typography,
   Grid,
- // useMediaQuery,
- // useTheme,
+  // useMediaQuery,
+  // useTheme,
 } from '@mui/material';
 import { BarPlot } from '@mui/x-charts/BarChart';
 import { LineHighlightPlot, LinePlot } from '@mui/x-charts/LineChart';
@@ -43,8 +43,7 @@ const series: AllSeriesType[] = [
 ];
 
 export default function StockDashboard() {
-
-//  const theme = useTheme();
+  //  const theme = useTheme();
   //const isSmall = useMediaQuery(theme.breakpoints.down('sm'));
 
   return (
@@ -55,7 +54,7 @@ export default function StockDashboard() {
 
       <Grid container spacing={2}>
         {/* Chart Card */}
-        <Grid size={{xs:12, sm:12, md:6, lg:4}}>
+        <Grid size={{ xs: 12, sm: 12, md: 6, lg: 4 }}>
           <Card sx={{ height: '100%' }}>
             <CardContent>
               <Typography variant="h6" gutterBottom>
@@ -115,7 +114,7 @@ export default function StockDashboard() {
             </CardContent>
           </Card>
         </Grid>
-        <Grid size={{xs:12, sm:12, md:6, lg:4}}>
+        <Grid size={{ xs: 12, sm: 12, md: 6, lg: 4 }}>
           <Card sx={{ height: '100%' }}>
             <CardContent>
               <Typography variant="h6" gutterBottom>
@@ -175,7 +174,7 @@ export default function StockDashboard() {
             </CardContent>
           </Card>
         </Grid>
-        <Grid size={{xs:12, sm:12, md:6, lg:4}}>
+        <Grid size={{ xs: 12, sm: 12, md: 6, lg: 4 }}>
           <Card sx={{ height: '100%' }}>
             <CardContent>
               <Typography variant="h6" gutterBottom>
@@ -217,7 +216,7 @@ export default function StockDashboard() {
                 <ChartsXAxis
                   label="Date"
                   axisId="date"
-                  tickInterval={( index) => index % 30 === 0}
+                  tickInterval={(index) => index % 30 === 0}
                   tickLabelStyle={{ fontSize: 10 }}
                 />
                 <ChartsYAxis
@@ -235,7 +234,7 @@ export default function StockDashboard() {
             </CardContent>
           </Card>
         </Grid>
-        <Grid size={{xs:12, sm:12, md:6, lg:4}}>
+        <Grid size={{ xs: 12, sm: 12, md: 6, lg: 4 }}>
           <Card sx={{ height: '100%' }}>
             <CardContent>
               <Typography variant="h6" gutterBottom>

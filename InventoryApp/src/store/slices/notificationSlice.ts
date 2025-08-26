@@ -20,7 +20,13 @@ export interface NotificationState {
   maxItems: number;
   defaultDuration: number;
   showTimestamp: boolean;
-  position: 'top-left' | 'top-center' | 'top-right' | 'bottom-left' | 'bottom-center' | 'bottom-right';
+  position:
+    | 'top-left'
+    | 'top-center'
+    | 'top-right'
+    | 'bottom-left'
+    | 'bottom-center'
+    | 'bottom-right';
   enableSound: boolean;
   unreadCount: number;
 }
@@ -44,20 +50,20 @@ export const notificationSlice = createSlice({
     addNotification: {
       reducer: (state, action: PayloadAction<Notification>) => {
         const notification = action.payload;
-        
+
         // Add to beginning of array
         state.items.unshift(notification);
-        
+
         // Increment unread count if not read
         if (!notification.read) {
           state.unreadCount += 1;
         }
-        
+
         // Remove oldest notifications if exceeding max
         if (state.items.length > state.maxItems) {
           const removed = state.items.splice(state.maxItems);
           // Decrease unread count for removed unread notifications
-          removed.forEach(item => {
+          removed.forEach((item) => {
             if (!item.read) {
               state.unreadCount = Math.max(0, state.unreadCount - 1);
             }
@@ -73,11 +79,11 @@ export const notificationSlice = createSlice({
         },
       }),
     },
-    
+
     removeNotification: (state, action: PayloadAction<string>) => {
       const id = action.payload;
-      const index = state.items.findIndex(item => item.id === id);
-      
+      const index = state.items.findIndex((item) => item.id === id);
+
       if (index !== -1) {
         const notification = state.items[index];
         if (!notification.read) {
@@ -86,89 +92,95 @@ export const notificationSlice = createSlice({
         state.items.splice(index, 1);
       }
     },
-    
+
     markAsRead: (state, action: PayloadAction<string>) => {
       const id = action.payload;
-      const notification = state.items.find(item => item.id === id);
-      
+      const notification = state.items.find((item) => item.id === id);
+
       if (notification && !notification.read) {
         notification.read = true;
         state.unreadCount = Math.max(0, state.unreadCount - 1);
       }
     },
-    
+
     markAllAsRead: (state) => {
-      state.items.forEach(item => {
+      state.items.forEach((item) => {
         item.read = true;
       });
       state.unreadCount = 0;
     },
-    
+
     clearNotifications: (state) => {
       state.items = [];
       state.unreadCount = 0;
     },
-    
+
     clearReadNotifications: (state) => {
-      state.items = state.items.filter(item => !item.read);
+      state.items = state.items.filter((item) => !item.read);
     },
-    
-    updateNotification: (state, action: PayloadAction<{ id: string; updates: Partial<Notification> }>) => {
+
+    updateNotification: (
+      state,
+      action: PayloadAction<{ id: string; updates: Partial<Notification> }>
+    ) => {
       const { id, updates } = action.payload;
-      const notification = state.items.find(item => item.id === id);
-      
+      const notification = state.items.find((item) => item.id === id);
+
       if (notification) {
         Object.assign(notification, updates);
       }
     },
-    
+
     // Configuration
     setMaxItems: (state, action: PayloadAction<number>) => {
       state.maxItems = Math.max(1, action.payload);
-      
+
       // Remove excess items if new max is lower
       if (state.items.length > state.maxItems) {
         const removed = state.items.splice(state.maxItems);
-        removed.forEach(item => {
+        removed.forEach((item) => {
           if (!item.read) {
             state.unreadCount = Math.max(0, state.unreadCount - 1);
           }
         });
       }
     },
-    
+
     setDefaultDuration: (state, action: PayloadAction<number>) => {
       state.defaultDuration = Math.max(1000, action.payload);
     },
-    
+
     setShowTimestamp: (state, action: PayloadAction<boolean>) => {
       state.showTimestamp = action.payload;
     },
-    
-    setPosition: (state, action: PayloadAction<NotificationState['position']>) => {
+
+    setPosition: (
+      state,
+      action: PayloadAction<NotificationState['position']>
+    ) => {
       state.position = action.payload;
     },
-    
+
     setEnableSound: (state, action: PayloadAction<boolean>) => {
       state.enableSound = action.payload;
     },
-    
+
     // Bulk operations
     addMultipleNotifications: {
       reducer: (state, action: PayloadAction<Notification[]>) => {
         const notifications = action.payload;
-        
-        notifications.forEach(notification => {
+
+        notifications.forEach((notification) => {
           state.items.unshift(notification);
           if (!notification.read) {
             state.unreadCount += 1;
           }
         });
-        
+
         // Remove excess items
         if (state.items.length > state.maxItems) {
           const removed = state.items.splice(state.maxItems);
-          removed.forEach(item => {
+          removed.forEach((item) => {
             if (!item.read) {
               state.unreadCount = Math.max(0, state.unreadCount - 1);
             }
@@ -176,7 +188,7 @@ export const notificationSlice = createSlice({
         }
       },
       prepare: (notifications: Omit<Notification, 'id' | 'timestamp'>[]) => ({
-        payload: notifications.map(notification => ({
+        payload: notifications.map((notification) => ({
           ...notification,
           id: crypto.randomUUID(),
           timestamp: new Date(),
@@ -184,12 +196,12 @@ export const notificationSlice = createSlice({
         })),
       }),
     },
-    
+
     removeMultipleNotifications: (state, action: PayloadAction<string[]>) => {
       const ids = action.payload;
-      
-      ids.forEach(id => {
-        const index = state.items.findIndex(item => item.id === id);
+
+      ids.forEach((id) => {
+        const index = state.items.findIndex((item) => item.id === id);
         if (index !== -1) {
           const notification = state.items[index];
           if (!notification.read) {
@@ -226,17 +238,25 @@ export const {
 // ... other selectors commented out
 
 // Helper functions for creating common notification types
-export const createSuccessNotification = (message: string, options?: Partial<Notification>) => 
-  addNotification({ message, type: 'success', ...options });
+export const createSuccessNotification = (
+  message: string,
+  options?: Partial<Notification>
+) => addNotification({ message, type: 'success', ...options });
 
-export const createErrorNotification = (message: string, options?: Partial<Notification>) => 
-  addNotification({ message, type: 'error', persistent: true, ...options });
+export const createErrorNotification = (
+  message: string,
+  options?: Partial<Notification>
+) => addNotification({ message, type: 'error', persistent: true, ...options });
 
-export const createInfoNotification = (message: string, options?: Partial<Notification>) => 
-  addNotification({ message, type: 'info', ...options });
+export const createInfoNotification = (
+  message: string,
+  options?: Partial<Notification>
+) => addNotification({ message, type: 'info', ...options });
 
-export const createWarningNotification = (message: string, options?: Partial<Notification>) => 
-  addNotification({ message, type: 'warning', ...options });
+export const createWarningNotification = (
+  message: string,
+  options?: Partial<Notification>
+) => addNotification({ message, type: 'warning', ...options });
 
 // Default export
 export default notificationSlice.reducer;

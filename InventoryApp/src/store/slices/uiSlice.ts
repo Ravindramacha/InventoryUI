@@ -31,15 +31,21 @@ export interface UIState {
     density: 'comfortable' | 'compact' | 'spacious';
   };
   filters: Record<string, any>;
-  pagination: Record<string, {
-    page: number;
-    pageSize: number;
-    total: number;
-  }>;
-  sorting: Record<string, {
-    field: string;
-    direction: 'asc' | 'desc';
-  }>;
+  pagination: Record<
+    string,
+    {
+      page: number;
+      pageSize: number;
+      total: number;
+    }
+  >;
+  sorting: Record<
+    string,
+    {
+      field: string;
+      direction: 'asc' | 'desc';
+    }
+  >;
 }
 
 // Initial state
@@ -78,14 +84,20 @@ export const uiSlice = createSlice({
   name: 'ui',
   initialState,
   reducers: {
-    setLoading: (state, action: PayloadAction<{ key: string; loading: boolean }>) => {
+    setLoading: (
+      state,
+      action: PayloadAction<{ key: string; loading: boolean }>
+    ) => {
       const { key, loading } = action.payload;
       state.loading[key] = loading;
     },
     clearLoading: (state, action: PayloadAction<string>) => {
       delete state.loading[action.payload];
     },
-    setError: (state, action: PayloadAction<{ key: string; error: string | null }>) => {
+    setError: (
+      state,
+      action: PayloadAction<{ key: string; error: string | null }>
+    ) => {
       const { key, error } = action.payload;
       state.errors[key] = error;
     },
@@ -113,7 +125,10 @@ export const uiSlice = createSlice({
     updateModalData: (state, action: PayloadAction<any>) => {
       state.modal.data = action.payload;
     },
-    openDrawer: (state, action: PayloadAction<{ content: string; width?: number }>) => {
+    openDrawer: (
+      state,
+      action: PayloadAction<{ content: string; width?: number }>
+    ) => {
       const { content, width } = action.payload;
       state.drawer = {
         isOpen: true,
@@ -143,10 +158,16 @@ export const uiSlice = createSlice({
     setPrimaryColor: (state, action: PayloadAction<string>) => {
       state.theme.primaryColor = action.payload;
     },
-    setContainerWidth: (state, action: PayloadAction<'xs' | 'sm' | 'md' | 'lg' | 'xl' | false>) => {
+    setContainerWidth: (
+      state,
+      action: PayloadAction<'xs' | 'sm' | 'md' | 'lg' | 'xl' | false>
+    ) => {
       state.layout.containerWidth = action.payload;
     },
-    setDensity: (state, action: PayloadAction<'comfortable' | 'compact' | 'spacious'>) => {
+    setDensity: (
+      state,
+      action: PayloadAction<'comfortable' | 'compact' | 'spacious'>
+    ) => {
       state.layout.density = action.payload;
     },
     setFilter: (state, action: PayloadAction<{ key: string; filter: any }>) => {
@@ -159,17 +180,23 @@ export const uiSlice = createSlice({
     clearAllFilters: (state) => {
       state.filters = {};
     },
-    setPagination: (state, action: PayloadAction<{ 
-      key: string; 
-      pagination: { page: number; pageSize: number; total: number } 
-    }>) => {
+    setPagination: (
+      state,
+      action: PayloadAction<{
+        key: string;
+        pagination: { page: number; pageSize: number; total: number };
+      }>
+    ) => {
       const { key, pagination } = action.payload;
       state.pagination[key] = pagination;
     },
-    setSorting: (state, action: PayloadAction<{ 
-      key: string; 
-      sorting: { field: string; direction: 'asc' | 'desc' } 
-    }>) => {
+    setSorting: (
+      state,
+      action: PayloadAction<{
+        key: string;
+        sorting: { field: string; direction: 'asc' | 'desc' };
+      }>
+    ) => {
       const { key, sorting } = action.payload;
       state.sorting[key] = sorting;
     },

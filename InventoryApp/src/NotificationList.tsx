@@ -20,7 +20,11 @@ export default function NotificationList() {
           </div>
         ))}
       </List>
-      <Button onClick={clearNotifications} variant="contained" color="secondary">
+      <Button
+        onClick={clearNotifications}
+        variant="contained"
+        color="secondary"
+      >
         Clear All
       </Button>
     </div>

@@ -1,6 +1,14 @@
-import { call, put, takeEvery, takeLatest, all, fork, select } from 'redux-saga/effects';
+import {
+  call,
+  put,
+  takeEvery,
+  takeLatest,
+  all,
+  fork,
+  select,
+} from 'redux-saga/effects';
 import type { PayloadAction } from '@reduxjs/toolkit';
-import { 
+import {
   fetchLanguagesStart,
   fetchLanguagesSuccess,
   fetchLanguagesFailure,
@@ -41,16 +49,16 @@ import {
   setLoadingState,
   setErrorState,
 } from '../slices/inventorySlice';
-import type { 
-  LanguageModel, 
-  SalesStatusModel, 
+import type {
+  LanguageModel,
+  SalesStatusModel,
   UomDimensionModel,
   ProductTypeModel,
   ProductGroupModel,
   ProductCategoryModel,
   ReadProductMasterForm,
   PostProductType,
-  PostProductMasterForm
+  PostProductMasterForm,
 } from '../../Models/MaterialModel';
 import type { RootState } from '../index';
 
@@ -80,7 +88,9 @@ class InventoryApiService {
     return response.json();
   }
 
-  static async createProductType(productType: PostProductType): Promise<ProductTypeModel> {
+  static async createProductType(
+    productType: PostProductType
+  ): Promise<ProductTypeModel> {
     const response = await fetch('/api/product-types', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -90,7 +100,10 @@ class InventoryApiService {
     return response.json();
   }
 
-  static async updateProductType(id: number, productType: Partial<ProductTypeModel>): Promise<ProductTypeModel> {
+  static async updateProductType(
+    id: number,
+    productType: Partial<ProductTypeModel>
+  ): Promise<ProductTypeModel> {
     const response = await fetch(`/api/product-types/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
@@ -125,7 +138,9 @@ class InventoryApiService {
     return response.json();
   }
 
-  static async createProductMaster(productMaster: PostProductMasterForm): Promise<ReadProductMasterForm> {
+  static async createProductMaster(
+    productMaster: PostProductMasterForm
+  ): Promise<ReadProductMasterForm> {
     const response = await fetch('/api/product-master', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -135,7 +150,10 @@ class InventoryApiService {
     return response.json();
   }
 
-  static async updateProductMaster(id: number, productMaster: Partial<PostProductMasterForm>): Promise<ReadProductMasterForm> {
+  static async updateProductMaster(
+    id: number,
+    productMaster: Partial<PostProductMasterForm>
+  ): Promise<ReadProductMasterForm> {
     const response = await fetch(`/api/product-master/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
@@ -150,16 +168,20 @@ class InventoryApiService {
 function* fetchLanguagesSaga() {
   try {
     yield put(setLoadingState({ key: 'languages', loading: true }));
-    const languages: LanguageModel[] = yield call(InventoryApiService.fetchLanguages);
+    const languages: LanguageModel[] = yield call(
+      InventoryApiService.fetchLanguages
+    );
     yield put(fetchLanguagesSuccess(languages));
-    yield put(setComplexData({ 
-      key: 'languages', 
-      data: languages,
-      metadata: {
-        fetchedAt: new Date().toISOString(),
-        count: languages.length
-      }
-    }));
+    yield put(
+      setComplexData({
+        key: 'languages',
+        data: languages,
+        metadata: {
+          fetchedAt: new Date().toISOString(),
+          count: languages.length,
+        },
+      })
+    );
   } catch (error: any) {
     yield put(fetchLanguagesFailure(error.message));
     yield put(setErrorState({ key: 'languages', error: error.message }));
@@ -171,16 +193,20 @@ function* fetchLanguagesSaga() {
 function* fetchSalesStatusesSaga() {
   try {
     yield put(setLoadingState({ key: 'salesStatuses', loading: true }));
-    const salesStatuses: SalesStatusModel[] = yield call(InventoryApiService.fetchSalesStatuses);
+    const salesStatuses: SalesStatusModel[] = yield call(
+      InventoryApiService.fetchSalesStatuses
+    );
     yield put(fetchSalesStatusesSuccess(salesStatuses));
-    yield put(setComplexData({ 
-      key: 'salesStatuses', 
-      data: salesStatuses,
-      metadata: {
-        fetchedAt: new Date().toISOString(),
-        count: salesStatuses.length
-      }
-    }));
+    yield put(
+      setComplexData({
+        key: 'salesStatuses',
+        data: salesStatuses,
+        metadata: {
+          fetchedAt: new Date().toISOString(),
+          count: salesStatuses.length,
+        },
+      })
+    );
   } catch (error: any) {
     yield put(fetchSalesStatusesFailure(error.message));
     yield put(setErrorState({ key: 'salesStatuses', error: error.message }));
@@ -192,16 +218,20 @@ function* fetchSalesStatusesSaga() {
 function* fetchUomDimensionsSaga() {
   try {
     yield put(setLoadingState({ key: 'uomDimensions', loading: true }));
-    const uomDimensions: UomDimensionModel[] = yield call(InventoryApiService.fetchUomDimensions);
+    const uomDimensions: UomDimensionModel[] = yield call(
+      InventoryApiService.fetchUomDimensions
+    );
     yield put(fetchUomDimensionsSuccess(uomDimensions));
-    yield put(setComplexData({ 
-      key: 'uomDimensions', 
-      data: uomDimensions,
-      metadata: {
-        fetchedAt: new Date().toISOString(),
-        count: uomDimensions.length
-      }
-    }));
+    yield put(
+      setComplexData({
+        key: 'uomDimensions',
+        data: uomDimensions,
+        metadata: {
+          fetchedAt: new Date().toISOString(),
+          count: uomDimensions.length,
+        },
+      })
+    );
   } catch (error: any) {
     yield put(fetchUomDimensionsFailure(error.message));
     yield put(setErrorState({ key: 'uomDimensions', error: error.message }));
@@ -213,16 +243,20 @@ function* fetchUomDimensionsSaga() {
 function* fetchProductTypesSaga() {
   try {
     yield put(setLoadingState({ key: 'productTypes', loading: true }));
-    const productTypes: ProductTypeModel[] = yield call(InventoryApiService.fetchProductTypes);
+    const productTypes: ProductTypeModel[] = yield call(
+      InventoryApiService.fetchProductTypes
+    );
     yield put(fetchProductTypesSuccess(productTypes));
-    yield put(setComplexData({ 
-      key: 'productTypes', 
-      data: productTypes,
-      metadata: {
-        fetchedAt: new Date().toISOString(),
-        count: productTypes.length
-      }
-    }));
+    yield put(
+      setComplexData({
+        key: 'productTypes',
+        data: productTypes,
+        metadata: {
+          fetchedAt: new Date().toISOString(),
+          count: productTypes.length,
+        },
+      })
+    );
   } catch (error: any) {
     yield put(fetchProductTypesFailure(error.message));
     yield put(setErrorState({ key: 'productTypes', error: error.message }));
@@ -234,34 +268,43 @@ function* fetchProductTypesSaga() {
 function* createProductTypeSaga(action: PayloadAction<PostProductType>) {
   try {
     yield put(setLoadingState({ key: 'createProductType', loading: true }));
-    const newProductType: ProductTypeModel = yield call(InventoryApiService.createProductType, action.payload);
+    const newProductType: ProductTypeModel = yield call(
+      InventoryApiService.createProductType,
+      action.payload
+    );
     yield put(createProductTypeSuccess(newProductType));
-    
+
     // Refresh the product types list
     yield put(fetchProductTypesStart());
   } catch (error: any) {
     yield put(createProductTypeFailure(error.message));
-    yield put(setErrorState({ key: 'createProductType', error: error.message }));
+    yield put(
+      setErrorState({ key: 'createProductType', error: error.message })
+    );
   } finally {
     yield put(setLoadingState({ key: 'createProductType', loading: false }));
   }
 }
 
-function* updateProductTypeSaga(action: PayloadAction<{ id: number; productType: Partial<ProductTypeModel> }>) {
+function* updateProductTypeSaga(
+  action: PayloadAction<{ id: number; productType: Partial<ProductTypeModel> }>
+) {
   try {
     yield put(setLoadingState({ key: 'updateProductType', loading: true }));
     const updatedProductType: ProductTypeModel = yield call(
-      InventoryApiService.updateProductType, 
-      action.payload.id, 
+      InventoryApiService.updateProductType,
+      action.payload.id,
       action.payload.productType
     );
     yield put(updateProductTypeSuccess(updatedProductType));
-    
+
     // Refresh the product types list
     yield put(fetchProductTypesStart());
   } catch (error: any) {
     yield put(updateProductTypeFailure(error.message));
-    yield put(setErrorState({ key: 'updateProductType', error: error.message }));
+    yield put(
+      setErrorState({ key: 'updateProductType', error: error.message })
+    );
   } finally {
     yield put(setLoadingState({ key: 'updateProductType', loading: false }));
   }
@@ -272,12 +315,14 @@ function* deleteProductTypeSaga(action: PayloadAction<number>) {
     yield put(setLoadingState({ key: 'deleteProductType', loading: true }));
     yield call(InventoryApiService.deleteProductType, action.payload);
     yield put(deleteProductTypeSuccess(action.payload));
-    
+
     // Refresh the product types list
     yield put(fetchProductTypesStart());
   } catch (error: any) {
     yield put(deleteProductTypeFailure(error.message));
-    yield put(setErrorState({ key: 'deleteProductType', error: error.message }));
+    yield put(
+      setErrorState({ key: 'deleteProductType', error: error.message })
+    );
   } finally {
     yield put(setLoadingState({ key: 'deleteProductType', loading: false }));
   }
@@ -286,16 +331,20 @@ function* deleteProductTypeSaga(action: PayloadAction<number>) {
 function* fetchProductGroupsSaga() {
   try {
     yield put(setLoadingState({ key: 'productGroups', loading: true }));
-    const productGroups: ProductGroupModel[] = yield call(InventoryApiService.fetchProductGroups);
+    const productGroups: ProductGroupModel[] = yield call(
+      InventoryApiService.fetchProductGroups
+    );
     yield put(fetchProductGroupsSuccess(productGroups));
-    yield put(setComplexData({ 
-      key: 'productGroups', 
-      data: productGroups,
-      metadata: {
-        fetchedAt: new Date().toISOString(),
-        count: productGroups.length
-      }
-    }));
+    yield put(
+      setComplexData({
+        key: 'productGroups',
+        data: productGroups,
+        metadata: {
+          fetchedAt: new Date().toISOString(),
+          count: productGroups.length,
+        },
+      })
+    );
   } catch (error: any) {
     yield put(fetchProductGroupsFailure(error.message));
     yield put(setErrorState({ key: 'productGroups', error: error.message }));
@@ -307,19 +356,25 @@ function* fetchProductGroupsSaga() {
 function* fetchProductCategoriesSaga() {
   try {
     yield put(setLoadingState({ key: 'productCategories', loading: true }));
-    const productCategories: ProductCategoryModel[] = yield call(InventoryApiService.fetchProductCategories);
+    const productCategories: ProductCategoryModel[] = yield call(
+      InventoryApiService.fetchProductCategories
+    );
     yield put(fetchProductCategoriesSuccess(productCategories));
-    yield put(setComplexData({ 
-      key: 'productCategories', 
-      data: productCategories,
-      metadata: {
-        fetchedAt: new Date().toISOString(),
-        count: productCategories.length
-      }
-    }));
+    yield put(
+      setComplexData({
+        key: 'productCategories',
+        data: productCategories,
+        metadata: {
+          fetchedAt: new Date().toISOString(),
+          count: productCategories.length,
+        },
+      })
+    );
   } catch (error: any) {
     yield put(fetchProductCategoriesFailure(error.message));
-    yield put(setErrorState({ key: 'productCategories', error: error.message }));
+    yield put(
+      setErrorState({ key: 'productCategories', error: error.message })
+    );
   } finally {
     yield put(setLoadingState({ key: 'productCategories', loading: false }));
   }
@@ -328,16 +383,21 @@ function* fetchProductCategoriesSaga() {
 function* fetchProductMasterSaga(action: PayloadAction<number>) {
   try {
     yield put(setLoadingState({ key: 'productMaster', loading: true }));
-    const productMaster: ReadProductMasterForm = yield call(InventoryApiService.fetchProductMaster, action.payload);
+    const productMaster: ReadProductMasterForm = yield call(
+      InventoryApiService.fetchProductMaster,
+      action.payload
+    );
     yield put(fetchProductMasterSuccess(productMaster));
-    yield put(setComplexData({ 
-      key: `productMaster_${action.payload}`, 
-      data: productMaster,
-      metadata: {
-        fetchedAt: new Date().toISOString(),
-        id: action.payload
-      }
-    }));
+    yield put(
+      setComplexData({
+        key: `productMaster_${action.payload}`,
+        data: productMaster,
+        metadata: {
+          fetchedAt: new Date().toISOString(),
+          id: action.payload,
+        },
+      })
+    );
   } catch (error: any) {
     yield put(fetchProductMasterFailure(error.message));
     yield put(setErrorState({ key: 'productMaster', error: error.message }));
@@ -346,31 +406,45 @@ function* fetchProductMasterSaga(action: PayloadAction<number>) {
   }
 }
 
-function* createProductMasterSaga(action: PayloadAction<PostProductMasterForm>) {
+function* createProductMasterSaga(
+  action: PayloadAction<PostProductMasterForm>
+) {
   try {
     yield put(setLoadingState({ key: 'createProductMaster', loading: true }));
-    const newProductMaster: ReadProductMasterForm = yield call(InventoryApiService.createProductMaster, action.payload);
+    const newProductMaster: ReadProductMasterForm = yield call(
+      InventoryApiService.createProductMaster,
+      action.payload
+    );
     yield put(createProductMasterSuccess(newProductMaster));
   } catch (error: any) {
     yield put(createProductMasterFailure(error.message));
-    yield put(setErrorState({ key: 'createProductMaster', error: error.message }));
+    yield put(
+      setErrorState({ key: 'createProductMaster', error: error.message })
+    );
   } finally {
     yield put(setLoadingState({ key: 'createProductMaster', loading: false }));
   }
 }
 
-function* updateProductMasterSaga(action: PayloadAction<{ id: number; productMaster: Partial<PostProductMasterForm> }>) {
+function* updateProductMasterSaga(
+  action: PayloadAction<{
+    id: number;
+    productMaster: Partial<PostProductMasterForm>;
+  }>
+) {
   try {
     yield put(setLoadingState({ key: 'updateProductMaster', loading: true }));
     const updatedProductMaster: ReadProductMasterForm = yield call(
-      InventoryApiService.updateProductMaster, 
-      action.payload.id, 
+      InventoryApiService.updateProductMaster,
+      action.payload.id,
       action.payload.productMaster
     );
     yield put(updateProductMasterSuccess(updatedProductMaster));
   } catch (error: any) {
     yield put(updateProductMasterFailure(error.message));
-    yield put(setErrorState({ key: 'updateProductMaster', error: error.message }));
+    yield put(
+      setErrorState({ key: 'updateProductMaster', error: error.message })
+    );
   } finally {
     yield put(setLoadingState({ key: 'updateProductMaster', loading: false }));
   }
@@ -381,13 +455,14 @@ function* processComplexDataSaga() {
   try {
     const state: RootState = yield select();
     const { complexData } = state.inventory;
-    
+
     // Process and derive complex data relationships
     const processedData = {
       summary: {
         totalProductTypes: complexData.productTypes?.data?.length || 0,
         totalProductGroups: complexData.productGroups?.data?.length || 0,
-        totalProductCategories: complexData.productCategories?.data?.length || 0,
+        totalProductCategories:
+          complexData.productCategories?.data?.length || 0,
         lastUpdated: new Date().toISOString(),
       },
       relationships: {
@@ -395,19 +470,23 @@ function* processComplexDataSaga() {
       },
       statistics: {
         // Add statistical calculations
-      }
+      },
     };
-    
-    yield put(setComplexData({
-      key: 'processedSummary',
-      data: processedData,
-      metadata: {
-        processedAt: new Date().toISOString(),
-        version: '1.0'
-      }
-    }));
+
+    yield put(
+      setComplexData({
+        key: 'processedSummary',
+        data: processedData,
+        metadata: {
+          processedAt: new Date().toISOString(),
+          version: '1.0',
+        },
+      })
+    );
   } catch (error: any) {
-    yield put(setErrorState({ key: 'processComplexData', error: error.message }));
+    yield put(
+      setErrorState({ key: 'processComplexData', error: error.message })
+    );
   }
 }
 

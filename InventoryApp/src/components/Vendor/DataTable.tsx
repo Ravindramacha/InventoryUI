@@ -1,4 +1,4 @@
-import { useState, type FC, type ChangeEvent } from "react";
+import { useState, type FC, type ChangeEvent } from 'react';
 import {
   Box,
   Paper,
@@ -17,9 +17,9 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-  DialogActions
-} from "@mui/material";
-import { Close } from "@mui/icons-material";
+  DialogActions,
+} from '@mui/material';
+import { Close } from '@mui/icons-material';
 
 type Order = 'asc' | 'desc';
 
@@ -35,15 +35,15 @@ interface DataTableProps {
 }
 
 const columns = [
-  { id: "name", label: "Name" },
-  { id: "email", label: "Email" },
-  { id: "age", label: "Age" },
+  { id: 'name', label: 'Name' },
+  { id: 'email', label: 'Email' },
+  { id: 'age', label: 'Age' },
 ];
 
-type DrawerContent = { type: "view" | "edit"; data: Data } | null;
+type DrawerContent = { type: 'view' | 'edit'; data: Data } | null;
 
 const DataTable: FC<DataTableProps> = ({ rows }) => {
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState('');
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -88,14 +88,11 @@ const DataTable: FC<DataTableProps> = ({ rows }) => {
       if (orderCmp !== 0) return orderCmp;
       return a[1] - b[1];
     });
-    return stabilizedThis.map(el => el[0]);
+    return stabilizedThis.map((el) => el[0]);
   }
 
   const filteredRows = rowData.filter((row) =>
-    Object.values(row)
-      .join(" ")
-      .toLowerCase()
-      .includes(search.toLowerCase())
+    Object.values(row).join(' ').toLowerCase().includes(search.toLowerCase())
   );
 
   // Sorted and filtered rows
@@ -107,8 +104,7 @@ const DataTable: FC<DataTableProps> = ({ rows }) => {
     setOrderBy(property);
   };
 
-
-  const handleOpenDrawer = (type: "view" | "edit", data: Data) => {
+  const handleOpenDrawer = (type: 'view' | 'edit', data: Data) => {
     setDrawerContent({ type, data });
     setFormData(data);
     setDrawerOpen(true);
@@ -123,29 +119,32 @@ const DataTable: FC<DataTableProps> = ({ rows }) => {
     if (!formData) return;
     setFormData({
       ...formData,
-      [e.target.name]: e.target.type === 'number' ? Number(e.target.value) : e.target.value
+      [e.target.name]:
+        e.target.type === 'number' ? Number(e.target.value) : e.target.value,
     });
   };
 
   const handleSave = () => {
     if (!formData) return;
-    setRowData(prev => prev.map(row => 
-      row.id === formData.id ? formData : row
-    ));
+    setRowData((prev) =>
+      prev.map((row) => (row.id === formData.id ? formData : row))
+    );
     handleCloseDrawer();
   };
 
   return (
-      <Box sx={{ p: 2, bgcolor: "background.paper", borderRadius: 3, boxShadow: 4 }}>
-        <TextField
-          fullWidth
-          size="small"
-          variant="outlined"
-          placeholder="Search..."
-          value={search}
-          onChange={handleSearchChange}
-          sx={{ mb: 2, maxWidth: 360 }}
-        />
+    <Box
+      sx={{ p: 2, bgcolor: 'background.paper', borderRadius: 3, boxShadow: 4 }}
+    >
+      <TextField
+        fullWidth
+        size="small"
+        variant="outlined"
+        placeholder="Search..."
+        value={search}
+        onChange={handleSearchChange}
+        sx={{ mb: 2, maxWidth: 360 }}
+      />
       <TableContainer component={Paper}>
         <Table size="small">
           <TableHead>
@@ -179,15 +178,17 @@ const DataTable: FC<DataTableProps> = ({ rows }) => {
                   hover
                   onClick={(event) => {
                     // Prevent row click if clicking on action buttons
-                    if (!(event.target as HTMLElement).closest('.action-buttons')) {
-                      handleOpenDrawer("edit", row);
+                    if (
+                      !(event.target as HTMLElement).closest('.action-buttons')
+                    ) {
+                      handleOpenDrawer('edit', row);
                     }
                   }}
-                  sx={{ 
+                  sx={{
                     '&:hover': {
                       backgroundColor: '#f1f1fa',
-                      cursor: 'pointer'
-                    }
+                      cursor: 'pointer',
+                    },
                   }}
                 >
                   <TableCell sx={{ py: 1 }}>{row.name}</TableCell>
@@ -223,7 +224,11 @@ const DataTable: FC<DataTableProps> = ({ rows }) => {
               ))}
             {sortedRows.length === 0 && (
               <TableRow>
-                <TableCell colSpan={columns.length + 1} align="center" sx={{ py: 2 }}>
+                <TableCell
+                  colSpan={columns.length + 1}
+                  align="center"
+                  sx={{ py: 2 }}
+                >
                   No data found.
                 </TableCell>
               </TableRow>
@@ -240,7 +245,6 @@ const DataTable: FC<DataTableProps> = ({ rows }) => {
           rowsPerPageOptions={[5, 10, 25]}
           size="small"
         />
-        
       </TableContainer>
       <Dialog
         open={drawerOpen}
@@ -251,15 +255,19 @@ const DataTable: FC<DataTableProps> = ({ rows }) => {
           sx: {
             borderRadius: 2,
             p: 2,
-          }
+          },
         }}
       >
         {drawerContent && (
           <>
             <DialogTitle sx={{ p: 0, mb: 0 }}>
-              <Box display="flex" alignItems="center" justifyContent="space-between">
+              <Box
+                display="flex"
+                alignItems="center"
+                justifyContent="space-between"
+              >
                 <Typography variant="h6">
-                  {drawerContent.type === "view" ? "View Details" : "Edit Row"}
+                  {drawerContent.type === 'view' ? 'View Details' : 'Edit Row'}
                 </Typography>
                 <IconButton onClick={handleCloseDrawer} size="small">
                   <Close />
@@ -267,14 +275,20 @@ const DataTable: FC<DataTableProps> = ({ rows }) => {
               </Box>
             </DialogTitle>
             <DialogContent sx={{ p: 0 }}>
-              {drawerContent.type === "view" ? (
-                <Box sx={{ display: "grid", gap: 2 }}>
-                  <Typography><strong>Name:</strong> {drawerContent.data.name}</Typography>
-                  <Typography><strong>Email:</strong> {drawerContent.data.email}</Typography>
-                  <Typography><strong>Age:</strong> {drawerContent.data.age}</Typography>
+              {drawerContent.type === 'view' ? (
+                <Box sx={{ display: 'grid', gap: 2 }}>
+                  <Typography>
+                    <strong>Name:</strong> {drawerContent.data.name}
+                  </Typography>
+                  <Typography>
+                    <strong>Email:</strong> {drawerContent.data.email}
+                  </Typography>
+                  <Typography>
+                    <strong>Age:</strong> {drawerContent.data.age}
+                  </Typography>
                 </Box>
               ) : (
-                <Box component="form" sx={{ display: "grid", gap: 2 }}>
+                <Box component="form" sx={{ display: 'grid', gap: 2 }}>
                   <span></span>
                   <TextField
                     label="Name"
@@ -305,12 +319,16 @@ const DataTable: FC<DataTableProps> = ({ rows }) => {
               )}
             </DialogContent>
             <DialogActions sx={{ p: 0, mt: 2 }}>
-              <Button onClick={handleCloseDrawer} variant="outlined" size="small">
+              <Button
+                onClick={handleCloseDrawer}
+                variant="outlined"
+                size="small"
+              >
                 Cancel
               </Button>
-              {drawerContent.type === "edit" && (
-                <Button 
-                  variant="contained" 
+              {drawerContent.type === 'edit' && (
+                <Button
+                  variant="contained"
                   color="primary"
                   onClick={handleSave}
                   size="small"
