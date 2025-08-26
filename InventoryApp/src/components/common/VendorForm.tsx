@@ -11,43 +11,24 @@ import {
   Alert,
 } from '@mui/material';
 import { Snackbar, CircularProgress, Backdrop } from '@mui/material';
-import { countryList, stateList, type BankModel, type TaxInformationModel, type VendorModel } from '../../Models/VendorModel';
+import { countryList, stateList, type BankDetailDto, type BankModel, type ReadVendorFormModel, type TaxInformationDto, type TaxInformationModel, type VendorModel } from '../../Models/VendorModel';
 import TaxInformation from '../Vendor/TaxInformation';
 import BankData from '../Vendor/BankData';
-import { useLanguages, usePostVendorForm, useSalesStatus } from '../../api/ApiQueries';
+import { useLanguages, usePostVendorForm, usePutVendorForm, useSalesStatus } from '../../api/ApiQueries';
 
+interface VendorFormPageProps {
+  onCancel: () => void;
+  initialData?: ReadVendorFormModel | null;
+  mode?: 'add' | 'edit';
+  vendorId?: number;
+}
 
-const VendorForm = () => {
- 
-  const [formData, setFormData] = useState<VendorModel>({
-    companyName1: '',
-    companyName2: '',
-    dba: '',
-    keyword: '',
-    houseNumber: '',
-    streetName: '',
-    buildingName: '',
-    landmark: '',
-    countryId: null,
-    stateId: null,
-    zipCode: '',
-    digiPin: '',
-    mapsUrl: '',
-    languageId: null,
-    phoneNumber1: '',
-    phoneNumber2: '',
-    phoneNumber3: '',
-    fax: '',
-    email1: '',
-    email2: '',
-    email3: '',
-    comments: '',
-    salesStatusId: null,
-    taxInformations: [],
-    bankDetails: [],
-    paymentId: null,
-  });
-
+const VendorForm: React.FC<VendorFormPageProps> = ({ 
+  onCancel, 
+  initialData = null,
+  mode = 'add',
+  vendorId = 0
+}) => {
   const initialTaxInformationRows = [
     {
       id: Date.now(),
@@ -71,9 +52,41 @@ const VendorForm = () => {
 
     }
   ];
-  const [taxInformationRows, setTaxInformationRows] = useState<TaxInformationModel[]>(initialTaxInformationRows);
+  const initialVendorData : ReadVendorFormModel = initialData || {
+    vendorId: 0,
+    companyName1: '',
+    companyName2: '',
+    dba: '',
+    keyWord: '',
+    houseNumber: '',
+    streetName: '',
+    buildingName: '',
+    landmark: '',
+    countryId: null,
+    stateId: null,
+    zipCode: '',
+    digiPin: '',
+    mapsUrl: '',
+    languageId: null,
+    phoneNumber1: '',
+    phoneNumber2: '',
+    phoneNumber3: '',
+    fax: '',
+    email1: '',
+    email2: '',
+    email3: '',
+    comments: '',
+    salesStatusId: null,
+    taxInformationDto: initialTaxInformationRows,
+    bankDetailDto: initialBankRows,
+    paymentId: null,
+  }
+  const [formData, setFormData] = useState<ReadVendorFormModel>(initialData || initialVendorData);
 
-  const [bankRows, setBankRows] = useState<BankModel[]>(initialBankRows);
+
+  const [taxInformationRows, setTaxInformationRows] = useState<TaxInformationDto[]>(initialData?.taxInformationDto && initialData.taxInformationDto.length > 0 ? initialData.taxInformationDto : initialTaxInformationRows);
+
+  const [bankRows, setBankRows] = useState<BankDetailDto[]>(initialData?.bankDetailDto && initialData.bankDetailDto.length > 0 ? initialData.bankDetailDto : initialBankRows);
 
 
   const [loading, setLoading] = useState(false);
@@ -88,13 +101,15 @@ const VendorForm = () => {
   const filteredStates = stateList.filter(
     (state) => state.countryId === formData.countryId
   );
+   const {mutate: updateMutate}= usePutVendorForm();
   const { mutate } = usePostVendorForm();
   const resetForm = () => {
     setFormData({
+      vendorId: 0,
       companyName1: '',
       companyName2: '',
       dba: '',
-      keyword: '',
+      keyWord: '',
       houseNumber: '',
       streetName: '',
       buildingName: '',
@@ -114,10 +129,9 @@ const VendorForm = () => {
       email3: '',
       comments: '',
       salesStatusId: null,
-      taxInformations: [],
-      bankDetails: [],
+      taxInformationDto: [],
+      bankDetailDto: [],
       paymentId: null,
-
     });
 
   };
@@ -130,10 +144,36 @@ const VendorForm = () => {
 
     const finalFormData = {
       ...formData,
-      taxInformations: taxInformationRows,
-      bankDetails: bankRows,
+      taxInformationDto: taxInformationRows,
+      bankDetailDto: bankRows,
     };
-
+if(mode === "edit" && vendorId){
+      setLoading(true);
+    setBackdropOpen(true); // show backdrop
+    // --- Edit Mode ---
+    updateMutate({id: vendorId, data: finalFormData}, {
+      onSuccess: () => {
+       // queryClient.invalidateQueries({ queryKey: ["readProductMasterForm"] });
+        setSnackbarMessage('Product Master Form updated successfully!');
+        setSnackbarSeverity('success');
+        setSnackbarOpen(true);
+        resetForm();
+        onCancel();
+      },
+      onError: (error) => {
+        setSnackbarMessage(`Failed to update: ${error.message}`);
+        setSnackbarSeverity('error');
+        setSnackbarOpen(true);
+      },
+      onSettled: () => {
+        setTimeout(() => {
+          setLoading(false);
+          setBackdropOpen(false); // hide after 2s
+        }, 5000);
+      },
+    });
+  } 
+  else {
     mutate(finalFormData, {
       onSuccess: () => {
         setSnackbarMessage('Vendor submitted successfully!');
@@ -154,6 +194,7 @@ const VendorForm = () => {
       },
     });
   };
+}
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setFormData((prev) => ({
@@ -163,10 +204,25 @@ const VendorForm = () => {
   };
 
   return (
-    <>
-      <Typography variant="h5" gutterBottom fontWeight="bold">
-        Vendor
-      </Typography>
+
+       <Box sx={{ maxWidth: '100%', width: '100%' }}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+          <Typography variant="h5">
+            {mode === 'add' ? 'Add Vendor' : 'Edit Vendor'}
+          </Typography>
+          <Button
+            variant="outlined"
+            color="primary"
+            onClick={onCancel}
+            size="small"
+            sx={{ 
+              borderRadius: '8px',
+              minWidth: '100px'
+            }}
+          >
+            Back
+          </Button>
+        </Box>
       <form onSubmit={handleSubmit}>
         <Grid container spacing={2}>
           <Grid size={{ xs: 12 }}>
@@ -215,7 +271,7 @@ const VendorForm = () => {
               size="small"
               label="Keyword"
               name="keyword"
-              value={formData.keyword}
+              value={formData.keyWord}
               onChange={handleChange}
               required
             />
@@ -525,7 +581,7 @@ const VendorForm = () => {
                 minWidth: '100px'
               }}
             >
-              {loading ? <CircularProgress size={20} color="inherit" /> : 'Submit'}
+               {loading ? <CircularProgress size={20} color="inherit" /> : mode === 'add' ? 'Submit' : 'Update'}
             </Button>
             <Button
               variant="outlined"
@@ -561,7 +617,8 @@ const VendorForm = () => {
             {snackbarMessage}
           </Alert>
         </Snackbar>
-      </form></>
+      </form>
+      </Box>
   );
 };
 

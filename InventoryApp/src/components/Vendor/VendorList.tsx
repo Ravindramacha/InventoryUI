@@ -263,7 +263,12 @@ const filteredRows = Array.isArray(rows)
       
       {drawerOpen && (
         <Box sx={{ backgroundColor: 'white', p: 2, borderRadius: 1 }}>
-          <VendorForm />
+          <VendorForm 
+           onCancel={() => setDrawerOpen(false)}
+            initialData={drawerMode === "edit" && selectedRow ? selectedRow : null}
+            mode={drawerMode === "edit" ? "edit" : "add"}
+            vendorId={selectedRow ? selectedRow.vendorId : 0} 
+          />
           {/* <ApplicationForm
             onCancel={() => setDrawerOpen(false)} 
             initialData={drawerMode === "edit" && selectedRow ? selectedRow : null}

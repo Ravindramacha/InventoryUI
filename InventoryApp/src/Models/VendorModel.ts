@@ -29,6 +29,7 @@ export interface VendorModel {
 
 export interface TaxInformationModel {
     id: number;
+    taxInformationId?: number | undefined;
     countryId: number | undefined | null;
     category:string;
     name: string;
@@ -37,6 +38,7 @@ export interface TaxInformationModel {
 
 export interface BankModel {
   id: number;
+  bankId?: number | undefined;
   bankName: string;
   accountNumber: string;
   routingNumber: string;
@@ -76,10 +78,10 @@ export interface ReadVendorFormModel {
 }
 
 export interface TaxInformationDto extends TaxInformationModel {
-  taxInformationId: number;
+  taxInformationId?: number | undefined;
 }
 export interface BankDetailDto extends BankModel {
-  bankId: number; 
+  bankId?: number | undefined; 
 }
 export const countryList = [
     { id: 1, name: 'United States' },

@@ -206,10 +206,28 @@ export function usePutProductMasterForm() {
     },
   });
 }
+export function usePutVendorForm() {
+  return useMutation({
+    mutationFn: async ({ id, data }: { id: number; data: ReadVendorFormModel }) => {
+      const response = await axios.put(
+        `/api/VendorForms/UpdateVendorForm/${id}`, 
+        data,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type": "application/json",
+            "Cache-Control": "no-cache",
+          },
+        }
+      );
+      return response.data;
+    },
+  });
+}
 
 export function usePostVendorForm() {
   return useMutation({
-    mutationFn: async (newVendorForm: VendorModel) => {
+    mutationFn: async (newVendorForm: ReadVendorFormModel) => {
       const response = await axios.post("/api/VendorForms/AddVendorForm", newVendorForm, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,

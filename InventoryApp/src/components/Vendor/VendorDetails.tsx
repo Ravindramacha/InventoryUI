@@ -116,7 +116,6 @@ const VendorDetails: React.FC<VendorDetailsProps> = ({ vendor, onBack, onEdit })
           <Tab label="Overview" />
           <Tab label="Tax Information" />
           <Tab label="Bank Details" />
-          <Tab label="View Details" />
         </Tabs>
 
         <Box sx={{ flex: 1, overflowY: 'auto', px: 3 }}>
@@ -377,10 +376,6 @@ const VendorDetails: React.FC<VendorDetailsProps> = ({ vendor, onBack, onEdit })
             </Table>
             
           </TableContainer>
-          </TabPanel>
-          
-          <TabPanel value={activeTab} index={3}>
-           
           </TabPanel>
         </Box>
       </Box>
