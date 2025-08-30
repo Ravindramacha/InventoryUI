@@ -20,11 +20,12 @@ import {
   stateList,
   type ReadVendorFormModel,
 } from '../../Models/VendorModel';
+import { useGetAllVendorFormById } from '../../api/ApiQueries';
 
 interface VendorDetailsProps {
-  vendor: ReadVendorFormModel;
   onBack: () => void;
-  onEdit: (product: ReadVendorFormModel) => void;
+  onEdit: (vendor: ReadVendorFormModel | null ) => void;
+  vendorId?: number;
 }
 
 interface TabPanelProps {
@@ -50,12 +51,14 @@ function TabPanel(props: TabPanelProps) {
 }
 
 const VendorDetails: React.FC<VendorDetailsProps> = ({
-  vendor,
   onBack,
   onEdit,
+  vendorId,
 }) => {
   const [activeTab, setActiveTab] = useState(0);
-  console.log('vendor', vendor);
+  const { data: vendor = null } = useGetAllVendorFormById(
+      vendorId
+    );
   const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
     setActiveTab(newValue);
   };
@@ -127,45 +130,45 @@ const VendorDetails: React.FC<VendorDetailsProps> = ({
               Name
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              {renderDetailRow('Company Name 1', vendor.companyName1)}
-              {renderDetailRow('Company Name 2', vendor.companyName2)}
-              {renderDetailRow('DBA (Doing Business As)', vendor.dba)}
-              {renderDetailRow('Keyword', vendor.keyWord)}
+              {renderDetailRow('Company Name 1', vendor?.companyName1)}
+              {renderDetailRow('Company Name 2', vendor?.companyName2)}
+              {renderDetailRow('DBA (Doing Business As)', vendor?.dba)}
+              {renderDetailRow('Keyword', vendor?.keyWord)}
             </Typography>
             <Box sx={{ my: 2 }} />
             <Typography variant="body2" color="textPrimary" fontWeight="bold">
               Address
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              {renderDetailRow('House Number', vendor.houseNumber)}
-              {renderDetailRow('Street Name', vendor.streetName)}
-              {renderDetailRow('Building Name', vendor.buildingName)}
-              {renderDetailRow('Landmark', vendor.landmark)}
+              {renderDetailRow('House Number', vendor?.houseNumber)}
+              {renderDetailRow('Street Name', vendor?.streetName)}
+              {renderDetailRow('Building Name', vendor?.buildingName)}
+              {renderDetailRow('Landmark', vendor?.landmark)}
               {renderDetailRow(
                 'Country',
-                countryList.find((c) => c.id === vendor.countryId)?.name || '-'
+                countryList.find((c) => c.id === vendor?.countryId)?.name || '-'
               )}
               {renderDetailRow(
                 'State',
-                stateList.find((c) => c.id === vendor.stateId)?.name || '-'
+                stateList.find((c) => c.id === vendor?.stateId)?.name || '-'
               )}
-              {renderDetailRow('Zip Code', vendor.zipCode)}
-              {renderDetailRow('Digi Pin', vendor.digiPin)}
-              {renderDetailRow('Maps URL', vendor.mapsUrl)}
+              {renderDetailRow('Zip Code', vendor?.zipCode)}
+              {renderDetailRow('Digi Pin', vendor?.digiPin)}
+              {renderDetailRow('Maps URL', vendor?.mapsUrl)}
             </Typography>
             <Box sx={{ my: 2 }} />
             <Typography variant="body2" color="textPrimary" fontWeight="bold">
               Communication
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              {renderDetailRow('Language', vendor.languageId)}
-              {renderDetailRow('Phone Number 1', vendor.phoneNumber1)}
-              {renderDetailRow('Phone Number 2', vendor.phoneNumber2)}
-              {renderDetailRow('Phone Number 3', vendor.phoneNumber3)}
-              {renderDetailRow('Fax', vendor.fax)}
-              {renderDetailRow('Email 1', vendor.email1)}
-              {renderDetailRow('Email 2', vendor.email2)}
-              {renderDetailRow('Email 3', vendor.email3)}
+              {renderDetailRow('Language', vendor?.languageId)}
+              {renderDetailRow('Phone Number 1', vendor?.phoneNumber1)}
+              {renderDetailRow('Phone Number 2', vendor?.phoneNumber2)}
+              {renderDetailRow('Phone Number 3', vendor?.phoneNumber3)}
+              {renderDetailRow('Fax', vendor?.fax)}
+              {renderDetailRow('Email 1', vendor?.email1)}
+              {renderDetailRow('Email 2', vendor?.email2)}
+              {renderDetailRow('Email 3', vendor?.email3)}
             </Typography>
             <Box sx={{ my: 3 }} />
             <Typography variant="body2" color="textPrimary" fontWeight="bold">
@@ -190,7 +193,7 @@ const VendorDetails: React.FC<VendorDetailsProps> = ({
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {(vendor.taxInformationDto ?? []).map((row) => (
+                  {(vendor?.taxInformationDto ?? []).map((row) => (
                     <TableRow
                       key={row.taxInformationId}
                       sx={{
@@ -207,8 +210,8 @@ const VendorDetails: React.FC<VendorDetailsProps> = ({
                     </TableRow>
                   ))}
 
-                  {(!vendor.taxInformationDto ||
-                    vendor.taxInformationDto.length === 0) && (
+                  {(!vendor?.taxInformationDto ||
+                    vendor?.taxInformationDto.length === 0) && (
                     <TableRow>
                       <TableCell colSpan={5} align="center" sx={{ py: 2 }}>
                         No data found.
@@ -244,7 +247,7 @@ const VendorDetails: React.FC<VendorDetailsProps> = ({
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {(vendor.bankDetailDto ?? []).map((row) => (
+                  {(vendor?.bankDetailDto ?? []).map((row) => (
                     <TableRow
                       key={row.bankId}
                       sx={{
@@ -262,8 +265,8 @@ const VendorDetails: React.FC<VendorDetailsProps> = ({
                     </TableRow>
                   ))}
 
-                  {(!vendor.bankDetailDto ||
-                    vendor.bankDetailDto.length === 0) && (
+                  {(!vendor?.bankDetailDto ||
+                    vendor?.bankDetailDto.length === 0) && (
                     <TableRow>
                       <TableCell colSpan={5} align="center" sx={{ py: 2 }}>
                         No data found.
@@ -274,9 +277,9 @@ const VendorDetails: React.FC<VendorDetailsProps> = ({
               </Table>
             </TableContainer>
             <Typography variant="body2" color="text.secondary">
-              {renderDetailRow('Comments', vendor.comments)}
-              {renderDetailRow('Status', vendor.salesStatusId)}
-              {renderDetailRow('Payment Terms', vendor.paymentId)}
+              {renderDetailRow('Comments', vendor?.comments)}
+              {renderDetailRow('Status', vendor?.salesStatusId)}
+              {renderDetailRow('Payment Terms', vendor?.paymentId)}
             </Typography>
           </TabPanel>
 
@@ -300,7 +303,7 @@ const VendorDetails: React.FC<VendorDetailsProps> = ({
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {(vendor.taxInformationDto ?? []).map((row) => (
+                  {(vendor?.taxInformationDto ?? []).map((row) => (
                     <TableRow
                       key={row.taxInformationId}
                       sx={{
@@ -317,8 +320,8 @@ const VendorDetails: React.FC<VendorDetailsProps> = ({
                     </TableRow>
                   ))}
 
-                  {(!vendor.taxInformationDto ||
-                    vendor.taxInformationDto.length === 0) && (
+                  {(!vendor?.taxInformationDto ||
+                    vendor?.taxInformationDto.length === 0) && (
                     <TableRow>
                       <TableCell colSpan={5} align="center" sx={{ py: 2 }}>
                         No data found.
@@ -353,7 +356,7 @@ const VendorDetails: React.FC<VendorDetailsProps> = ({
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {(vendor.bankDetailDto ?? []).map((row) => (
+                  {(vendor?.bankDetailDto ?? []).map((row) => (
                     <TableRow
                       key={row.bankId}
                       sx={{
@@ -371,8 +374,8 @@ const VendorDetails: React.FC<VendorDetailsProps> = ({
                     </TableRow>
                   ))}
 
-                  {(!vendor.bankDetailDto ||
-                    vendor.bankDetailDto.length === 0) && (
+                  {(!vendor?.bankDetailDto ||
+                    vendor?.bankDetailDto.length === 0) && (
                     <TableRow>
                       <TableCell colSpan={5} align="center" sx={{ py: 2 }}>
                         No data found.
@@ -402,7 +405,7 @@ const VendorDetails: React.FC<VendorDetailsProps> = ({
                   Company Name 1
                 </Typography>
                 <Typography variant="body2" color="textPrimary">
-                  {vendor.companyName1}
+                  {vendor?.companyName1}
                 </Typography>
               </Grid>
               <Grid size={{ xs: 12, sm: 12, md: 6, lg: 2 }}>
@@ -410,7 +413,7 @@ const VendorDetails: React.FC<VendorDetailsProps> = ({
                   Company Name 2
                 </Typography>
                 <Typography variant="body2" color="textPrimary">
-                  {vendor.companyName2}
+                  {vendor?.companyName2}
                 </Typography>
               </Grid>
               <Grid size={{ xs: 12, sm: 12, md: 6, lg: 2 }}>
@@ -418,7 +421,7 @@ const VendorDetails: React.FC<VendorDetailsProps> = ({
                   DBA (Doing Business As)
                 </Typography>
                 <Typography variant="body2" color="textPrimary">
-                  {vendor.dba}
+                  {vendor?.dba}
                 </Typography>
               </Grid>
               <Grid size={{ xs: 12, sm: 12, md: 6, lg: 2 }}>
@@ -426,7 +429,7 @@ const VendorDetails: React.FC<VendorDetailsProps> = ({
                   Keyword
                 </Typography>
                 <Typography variant="body2" color="textPrimary">
-                  {vendor.keyWord}
+                  {vendor?.keyWord}
                 </Typography>
               </Grid>
               <Grid size={{ xs: 12 }}>
@@ -445,7 +448,7 @@ const VendorDetails: React.FC<VendorDetailsProps> = ({
                   House Number
                 </Typography>
                 <Typography variant="body2" color="textPrimary">
-                  {vendor.houseNumber}
+                  {vendor?.houseNumber}
                 </Typography>
               </Grid>
               <Grid size={{ xs: 12, sm: 12, md: 6, lg: 2 }}>
@@ -453,7 +456,7 @@ const VendorDetails: React.FC<VendorDetailsProps> = ({
                   Street Name
                 </Typography>
                 <Typography variant="body2" color="textPrimary">
-                  {vendor.streetName}
+                  {vendor?.streetName}
                 </Typography>
               </Grid>
               <Grid size={{ xs: 12, sm: 12, md: 6, lg: 2 }}>
@@ -461,7 +464,7 @@ const VendorDetails: React.FC<VendorDetailsProps> = ({
                   Building Name
                 </Typography>
                 <Typography variant="body2" color="textPrimary">
-                  {vendor.buildingName}
+                  {vendor?.buildingName}
                 </Typography>
               </Grid>
               <Grid size={{ xs: 12, sm: 12, md: 6, lg: 2 }}>
@@ -469,7 +472,7 @@ const VendorDetails: React.FC<VendorDetailsProps> = ({
                   Landmark
                 </Typography>
                 <Typography variant="body2" color="textPrimary">
-                  {vendor.landmark}
+                  {vendor?.landmark}
                 </Typography>
               </Grid>
               <Grid size={{ xs: 12, sm: 12, md: 6, lg: 2 }}></Grid>
@@ -479,7 +482,7 @@ const VendorDetails: React.FC<VendorDetailsProps> = ({
                   Country
                 </Typography>
                 <Typography variant="body2" color="textPrimary">
-                  {countryList.find((c) => c.id === vendor.countryId)?.name ||
+                  {countryList.find((c) => c.id === vendor?.countryId)?.name ||
                     '-'}
                 </Typography>
               </Grid>
@@ -489,7 +492,7 @@ const VendorDetails: React.FC<VendorDetailsProps> = ({
                   State
                 </Typography>
                 <Typography variant="body2" color="textPrimary">
-                  {stateList.find((c) => c.id === vendor.stateId)?.name || '-'}
+                  {stateList.find((c) => c.id === vendor?.stateId)?.name || '-'}
                 </Typography>
               </Grid>
               <Grid size={{ xs: 12, sm: 12, md: 6, lg: 2 }}>
@@ -497,7 +500,7 @@ const VendorDetails: React.FC<VendorDetailsProps> = ({
                   Zip Code
                 </Typography>
                 <Typography variant="body2" color="textPrimary">
-                  {vendor.zipCode}
+                  {vendor?.zipCode}
                 </Typography>
               </Grid>
               <Grid size={{ xs: 12, sm: 12, md: 6, lg: 2 }}>
@@ -505,7 +508,7 @@ const VendorDetails: React.FC<VendorDetailsProps> = ({
                   Digi Pin
                 </Typography>
                 <Typography variant="body2" color="textPrimary">
-                  {vendor.digiPin}
+                  {vendor?.digiPin}
                 </Typography>
               </Grid>
               <Grid size={{ xs: 12, sm: 12, md: 6, lg: 2 }}>
@@ -513,7 +516,7 @@ const VendorDetails: React.FC<VendorDetailsProps> = ({
                   Maps URL
                 </Typography>
                 <Typography variant="body2" color="textPrimary">
-                  {vendor.mapsUrl}
+                  {vendor?.mapsUrl}
                 </Typography>
               </Grid>
               <Grid size={{ xs: 12 }}>
@@ -532,7 +535,7 @@ const VendorDetails: React.FC<VendorDetailsProps> = ({
                   Language
                 </Typography>
                 <Typography variant="body2" color="textPrimary">
-                  {vendor.languageId}
+                  {vendor?.languageId}
                 </Typography>
               </Grid>
               <Grid size={{ xs: 12, sm: 12, md: 6, lg: 2 }}>
@@ -540,7 +543,7 @@ const VendorDetails: React.FC<VendorDetailsProps> = ({
                   Phone Number 1
                 </Typography>
                 <Typography variant="body2" color="textPrimary">
-                  {vendor.phoneNumber1}
+                  {vendor?.phoneNumber1}
                 </Typography>
               </Grid>
               <Grid size={{ xs: 12, sm: 12, md: 6, lg: 2 }}>
@@ -548,7 +551,7 @@ const VendorDetails: React.FC<VendorDetailsProps> = ({
                   Phone Number 2
                 </Typography>
                 <Typography variant="body2" color="textPrimary">
-                  {vendor.phoneNumber2}
+                  {vendor?.phoneNumber2}
                 </Typography>
               </Grid>
 
@@ -557,7 +560,7 @@ const VendorDetails: React.FC<VendorDetailsProps> = ({
                   Phone Number 3
                 </Typography>
                 <Typography variant="body2" color="textPrimary">
-                  {vendor.phoneNumber3}
+                  {vendor?.phoneNumber3}
                 </Typography>
               </Grid>
               <Grid size={{ xs: 12, sm: 12, md: 6, lg: 2 }}></Grid>
@@ -567,7 +570,7 @@ const VendorDetails: React.FC<VendorDetailsProps> = ({
                   Fax
                 </Typography>
                 <Typography variant="body2" color="textPrimary">
-                  {vendor.fax}
+                  {vendor?.fax}
                 </Typography>
               </Grid>
 
@@ -576,7 +579,7 @@ const VendorDetails: React.FC<VendorDetailsProps> = ({
                   Email 1
                 </Typography>
                 <Typography variant="body2" color="textPrimary">
-                  {vendor.email1}
+                  {vendor?.email1}
                 </Typography>
               </Grid>
               <Grid size={{ xs: 12, sm: 12, md: 6, lg: 2 }}>
@@ -584,7 +587,7 @@ const VendorDetails: React.FC<VendorDetailsProps> = ({
                   Email 2
                 </Typography>
                 <Typography variant="body2" color="textPrimary">
-                  {vendor.email2}
+                  {vendor?.email2}
                 </Typography>
               </Grid>
               <Grid size={{ xs: 12, sm: 12, md: 6, lg: 2 }}>
@@ -592,7 +595,7 @@ const VendorDetails: React.FC<VendorDetailsProps> = ({
                   Email 3
                 </Typography>
                 <Typography variant="body2" color="textPrimary">
-                  {vendor.email3}
+                  {vendor?.email3}
                 </Typography>
               </Grid>
               <Grid size={{ xs: 12 }}>
@@ -625,7 +628,7 @@ const VendorDetails: React.FC<VendorDetailsProps> = ({
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {(vendor.taxInformationDto ?? []).map((row) => (
+                    {(vendor?.taxInformationDto ?? []).map((row) => (
                       <TableRow
                         key={row.taxInformationId}
                         sx={{
@@ -645,8 +648,8 @@ const VendorDetails: React.FC<VendorDetailsProps> = ({
                       </TableRow>
                     ))}
 
-                    {(!vendor.taxInformationDto ||
-                      vendor.taxInformationDto.length === 0) && (
+                    {(!vendor?.taxInformationDto ||
+                      vendor?.taxInformationDto.length === 0) && (
                       <TableRow>
                         <TableCell colSpan={5} align="center" sx={{ py: 2 }}>
                           No data found.
@@ -689,7 +692,7 @@ const VendorDetails: React.FC<VendorDetailsProps> = ({
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {(vendor.bankDetailDto ?? []).map((row) => (
+                    {(vendor?.bankDetailDto ?? []).map((row) => (
                       <TableRow
                         key={row.bankId}
                         sx={{
@@ -711,8 +714,8 @@ const VendorDetails: React.FC<VendorDetailsProps> = ({
                       </TableRow>
                     ))}
 
-                    {(!vendor.bankDetailDto ||
-                      vendor.bankDetailDto.length === 0) && (
+                    {(!vendor?.bankDetailDto ||
+                      vendor?.bankDetailDto.length === 0) && (
                       <TableRow>
                         <TableCell colSpan={5} align="center" sx={{ py: 2 }}>
                           No data found.
@@ -727,7 +730,7 @@ const VendorDetails: React.FC<VendorDetailsProps> = ({
                   Comments
                 </Typography>
                 <Typography variant="body2" color="textPrimary">
-                  {vendor.comments}
+                  {vendor?.comments}
                 </Typography>
               </Grid>
               <Grid size={{ xs: 12, sm: 12, md: 6, lg: 2 }}>
@@ -735,7 +738,7 @@ const VendorDetails: React.FC<VendorDetailsProps> = ({
                   Status
                 </Typography>
                 <Typography variant="body2" color="textPrimary">
-                  {vendor.stateId}
+                  {vendor?.stateId}
                 </Typography>
               </Grid>
               <Grid size={{ xs: 12, sm: 12, md: 6, lg: 2 }}>
@@ -743,7 +746,7 @@ const VendorDetails: React.FC<VendorDetailsProps> = ({
                   Payment Terms
                 </Typography>
                 <Typography variant="body2" color="textPrimary">
-                  {vendor.paymentId}
+                  {vendor?.paymentId}
                 </Typography>
               </Grid>
             </Grid>

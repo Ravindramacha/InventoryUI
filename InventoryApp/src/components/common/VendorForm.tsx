@@ -25,6 +25,7 @@ import {
   usePutVendorForm,
   useSalesStatus,
 } from '../../api/ApiQueries';
+import { useQueryClient } from '@tanstack/react-query';
 
 interface VendorFormPageProps {
   onCancel: () => void;
@@ -39,6 +40,7 @@ const VendorForm: React.FC<VendorFormPageProps> = ({
   mode = 'add',
   vendorId = 0,
 }) => {
+   const queryClient = useQueryClient();
   const initialTaxInformationRows = [
     {
       id: Date.now(),
@@ -173,8 +175,8 @@ const VendorForm: React.FC<VendorFormPageProps> = ({
         { id: vendorId, data: finalFormData },
         {
           onSuccess: () => {
-            // queryClient.invalidateQueries({ queryKey: ["readProductMasterForm"] });
-            setSnackbarMessage('Product Master Form updated successfully!');
+            queryClient.invalidateQueries({ queryKey: ["GetVendorFormById", vendorId] });
+            setSnackbarMessage('Vendor Form updated successfully!');
             setSnackbarSeverity('success');
             setSnackbarOpen(true);
             resetForm();
@@ -199,6 +201,8 @@ const VendorForm: React.FC<VendorFormPageProps> = ({
           setSnackbarMessage('Vendor submitted successfully!');
           setSnackbarSeverity('success');
           setSnackbarOpen(true);
+          onCancel();
+          queryClient.invalidateQueries({ queryKey: ['readVendorForm'] });
           resetForm();
         },
         onError: (error) => {
@@ -296,7 +300,7 @@ const VendorForm: React.FC<VendorFormPageProps> = ({
               fullWidth
               size="small"
               label="Keyword"
-              name="keyword"
+              name="keyWord"
               value={formData.keyWord}
               onChange={handleChange}
               required
