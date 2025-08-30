@@ -165,7 +165,7 @@ class InventoryApiService {
 }
 
 // Saga workers
-function* fetchLanguagesSaga() {
+export function* fetchLanguagesSaga() {
   try {
     yield put(setLoadingState({ key: 'languages', loading: true }));
     const languages: LanguageModel[] = yield call(
@@ -240,7 +240,7 @@ function* fetchUomDimensionsSaga() {
   }
 }
 
-function* fetchProductTypesSaga() {
+export function* fetchProductTypesSaga() {
   try {
     yield put(setLoadingState({ key: 'productTypes', loading: true }));
     const productTypes: ProductTypeModel[] = yield call(
