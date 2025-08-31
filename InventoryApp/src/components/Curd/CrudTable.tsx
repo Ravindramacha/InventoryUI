@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Button,
@@ -30,20 +30,11 @@ type Order = 'asc' | 'desc';
 
 const CrudTable: React.FC<CrudTableProps> = ({ onEdit }) => {
   const { data: productMasterForm = [] } = useGetAllProductMasterForm();
-
-  const [rows, setRows] = useState<ReadProductMasterForm[]>([]);
+  
+  // Directly use productMasterForm data rather than copying to rows state
   const [order, setOrder] = useState<Order>('asc');
   const [orderBy, setOrderBy] =
     useState<keyof ReadProductMasterForm>('productId');
-
-  useEffect(() => {
-    if (Array.isArray(productMasterForm)) {
-      setRows(productMasterForm);
-    } else {
-      console.warn('Unexpected data:', productMasterForm);
-      setRows([]); // fallback
-    }
-  }, [productMasterForm]);
 
   const handleRequestSort = (property: keyof ReadProductMasterForm) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -119,8 +110,8 @@ const CrudTable: React.FC<CrudTableProps> = ({ onEdit }) => {
   };
 
   // First filter - Global search across all relevant fields
-  const filteredRows = Array.isArray(rows)
-    ? rows.filter((row) => {
+  const filteredRows = Array.isArray(productMasterForm)
+    ? productMasterForm.filter((row) => {
         const searchTerm = search.toLowerCase();
         return (
           row.productId.toLowerCase().includes(searchTerm) ||

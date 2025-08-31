@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Button,
@@ -23,7 +23,7 @@ import VendorDetails from './VendorDetails';
 type Mode = 'add' | 'edit' | 'view';
 
 interface VendorListProps {
-  onEdit?: (data: ReadVendorFormModel) => void;
+  onEdit?: (data: ReadVendorFormModel | null) => void;
 }
 
 type Order = 'asc' | 'desc';
@@ -31,18 +31,9 @@ type Order = 'asc' | 'desc';
 const VendorList: React.FC<VendorListProps> = ({ onEdit }) => {
   const { data: vendorForm = [] } = useGetAllVendorForm();
 
-  const [rows, setRows] = useState<ReadVendorFormModel[]>([]);
+  // Directly use vendorForm data rather than copying to rows state
   const [order, setOrder] = useState<Order>('asc');
   const [orderBy, setOrderBy] = useState<keyof ReadVendorFormModel>('vendorId');
-
-  useEffect(() => {
-    if (Array.isArray(vendorForm)) {
-      setRows(vendorForm);
-    } else {
-      console.warn('Unexpected data:', vendorForm);
-      setRows([]); // fallback
-    }
-  }, [vendorForm]);
 
   const handleRequestSort = (property: keyof ReadVendorFormModel) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -118,8 +109,8 @@ const VendorList: React.FC<VendorListProps> = ({ onEdit }) => {
   };
 
   // First filter - Global search across all relevant fields
-  const filteredRows = Array.isArray(rows)
-    ? rows.filter((row) => {
+  const filteredRows = Array.isArray(vendorForm)
+    ? vendorForm.filter((row) => {
         const searchTerm = search.toLowerCase();
         return (
           row.companyName1.toLowerCase().includes(searchTerm) ||
@@ -267,7 +258,7 @@ const VendorList: React.FC<VendorListProps> = ({ onEdit }) => {
           <VendorDetails
             onBack={() => setSelectedRow(null)}
             onEdit={(vendor) =>
-              onEdit ? onEdit(vendor) : handleOpenDrawer('edit', vendor)
+              onEdit ? onEdit(vendor) : handleOpenDrawer('edit', vendor as ReadVendorFormModel)
             }
             vendorId={selectedRow.vendorId}
           />

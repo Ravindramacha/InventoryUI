@@ -33,12 +33,8 @@ const menuItems = [
     text: 'Master Data',
     icon: <Inventory2Icon />,
     children: [
+      { text: 'Product Categories', path: '/products', icon: <CategoryIcon /> },
       { text: 'Material / Product', path: '/form', icon: <PreviewIcon /> },
-      {
-        text: 'Customer',
-        path: '/products/categories',
-        icon: <CategoryIcon />,
-      },
       { text: 'Supplier / Vendor', path: '/vendor', icon: <AddIcon /> },
     ],
   },

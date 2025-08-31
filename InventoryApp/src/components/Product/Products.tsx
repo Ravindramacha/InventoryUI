@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useNotification } from '../../context/NotificationContext';
 import {
   Button,
@@ -7,17 +7,6 @@ import {
   DialogContent,
   DialogTitle,
   TextField,
-  Typography,
-  Box,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  TablePagination,
-  TableSortLabel,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import type {
@@ -29,27 +18,36 @@ import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import type { AlertColor } from '@mui/material/Alert';
 import { useQueryClient } from '@tanstack/react-query';
+import CustomDataGrid, { type ColumnDef } from '../common/Grid';
 
 export default function Products() {
   const queryClient = useQueryClient();
   const { data: productTypes = [] } = useProductTypes();
-  const [products, setProducts] = useState<ProductTypeModel[]>([]);
+  // Remove the separate products state and use productTypes directly
   const { mutate } = usePostProductType();
-  useEffect(() => {
-    setProducts(productTypes);
-  }, [productTypes]);
 
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
-  const [snackbarSeverity, setSnackbarSeverity] =
-    useState<AlertColor>('success');
+  const [snackbarSeverity, setSnackbarSeverity] = useState<AlertColor>('success');
   const [open, setOpen] = useState(false);
-  const [editingProduct, setEditingProduct] = useState<ProductTypeModel | null>(
-    null
-  );
+  const [editingProduct, setEditingProduct] = useState<ProductTypeModel | null>(null);
   const { addNotification } = useNotification();
-  const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [page, setPage] = useState(0);
+  
+  // Grid column definitions
+  const columns: ColumnDef<ProductTypeModel>[] = [
+    {
+      field: 'productTypeCode',
+      headerName: 'Product Type Code',
+      sortable: true,
+      width: '40%',
+    },
+    {
+      field: 'productTypeDesc',
+      headerName: 'Product Type Description',
+      sortable: true,
+      width: '60%',
+    },
+  ];
 
   const [formValues, setFormValues] = useState({
     productTypeCode: '',
@@ -80,13 +78,29 @@ export default function Products() {
     if (!productTypeCode || !productTypeDesc) return;
 
     if (editingProduct) {
-      setProducts((prev) =>
-        prev.map((p) =>
-          p.productTypeId === editingProduct.productTypeId
-            ? { ...p, productTypeCode, productTypeDesc }
-            : p
-        )
-      );
+      // Instead of updating local state, we'll call the API to update the server
+      // and let the query invalidation refresh the data
+      const updateProduct: PostProductType = {
+        productTypeCode: productTypeCode,
+        productTypeDesc: productTypeDesc,
+        TranscationById: 1,
+      };
+      mutate(updateProduct, {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: ['productTypes'] });
+          setSnackbarMessage('Product type updated successfully');
+          setSnackbarSeverity('success');
+          setSnackbarOpen(true);
+          handleClose();
+          addNotification('Product type updated successfully', 'success');
+        },
+        onError: (error) => {
+          addNotification(
+            `Error updating product type: ${error.message}`,
+            'error'
+          );
+        },
+      });
     } else {
       const newProduct: PostProductType = {
         productTypeCode: productTypeCode,
@@ -119,71 +133,7 @@ export default function Products() {
   // const [productTypeCodeFilter, setproductTypeCodeFilter] = useState('');
   // const [productTypeDescFilter, setproductTypeDescFilter] = useState('');
 
-  const [globalSearch, setGlobalSearch] = useState('');
-  const [orderBy, setOrderBy] =
-    useState<keyof ProductTypeModel>('productTypeCode');
-  const [order, setOrder] = useState<'asc' | 'desc'>('asc');
-
-  const handleRequestSort = (property: keyof ProductTypeModel) => {
-    const isAsc = orderBy === property && order === 'asc';
-    setOrder(isAsc ? 'desc' : 'asc');
-    setOrderBy(property);
-  };
-
-  function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
-    if (b[orderBy] < a[orderBy]) return -1;
-    if (b[orderBy] > a[orderBy]) return 1;
-    return 0;
-  }
-
-  function getComparator<T>(
-    order: 'asc' | 'desc',
-    orderBy: keyof T
-  ): (a: T, b: T) => number {
-    return order === 'desc'
-      ? (a, b) => descendingComparator(a, b, orderBy)
-      : (a, b) => -descendingComparator(a, b, orderBy);
-  }
-
-  // const handleFilterInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   const value = e.target.value;
-  //   if (filterType === 'productTypeCode') setproductTypeCodeFilter(value);
-  //   if (filterType === 'productTypeDesc') setproductTypeDescFilter(value);
-  // };
-
-  // const handleFilterPopoverClose = () => {
-  //   setAnchorEl(null);
-  //   setFilterType(null);
-  // };
-
-  // Apply column filters and sorting
-  const filteredProducts = products
-    .filter((productType) => {
-      const searchText = globalSearch.toLowerCase();
-      const productTypeCodeMatch = productType.productTypeCode
-        .toLowerCase()
-        .includes(searchText);
-      const productTypeDescMatch = productType.productTypeDesc
-        .toLowerCase()
-        .includes(searchText);
-      return productTypeCodeMatch || productTypeDescMatch;
-    })
-    .sort(getComparator(order, orderBy));
-
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-  const handleChangePage = (_: unknown, newPage: number) => {
-    setPage(newPage);
-  };
-  // Pagination logic for table rows
-  const paginatedProducts = filteredProducts.slice(
-    page * rowsPerPage,
-    page * rowsPerPage + rowsPerPage
-  );
+  // All pagination, sorting, and filtering is now handled by the Grid component
 
   return (
     <>
@@ -202,113 +152,23 @@ export default function Products() {
         </MuiAlert>
       </Snackbar>
 
-      <Box p={2}>
-        <Typography variant="h5" gutterBottom>
-          Product Type
-        </Typography>
-        <Box
-          display="flex"
-          justifyContent="space-between"
-          alignItems="center"
-          mb={2}
-        >
-          <TextField
-            label="Search"
-            variant="outlined"
-            size="small"
-            value={globalSearch}
-            onChange={(e) => {
-              setGlobalSearch(e.target.value);
-              setPage(0); // reset to first page on search
-            }}
-            sx={{ width: 250 }}
-          />
-          <Button
-            variant="contained"
-            onClick={() => handleOpen()}
-            size="small"
-            sx={{
-              borderRadius: '8px',
-              minWidth: '100px',
-            }}
-            startIcon={<AddIcon />}
-          >
-            Add
-          </Button>
-        </Box>
-      </Box>
-
-      <TableContainer component={Paper}>
-        <Table stickyHeader size="small">
-          <TableHead>
-            <TableRow>
-              <TableCell sx={{ py: 1.5, fontWeight: 600 }}>
-                <TableSortLabel
-                  active={orderBy === 'productTypeCode'}
-                  direction={orderBy === 'productTypeCode' ? order : 'asc'}
-                  onClick={() => handleRequestSort('productTypeCode')}
-                >
-                  Product Type Code
-                </TableSortLabel>
-              </TableCell>
-              <TableCell sx={{ py: 1.5, fontWeight: 600 }}>
-                <TableSortLabel
-                  active={orderBy === 'productTypeDesc'}
-                  direction={orderBy === 'productTypeDesc' ? order : 'asc'}
-                  onClick={() => handleRequestSort('productTypeDesc')}
-                >
-                  Product Type Description
-                </TableSortLabel>
-              </TableCell>
-              {/* <TableCell sx={{ py: 1.5, fontWeight: 600 }}>Actions</TableCell> */}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {paginatedProducts.map((productType) => (
-              <TableRow
-                key={productType.productTypeId}
-                onClick={(event) => {
-                  // Prevent row click if clicking on action buttons
-                  if (
-                    !(event.target as HTMLElement).closest('.action-buttons')
-                  ) {
-                    handleOpen(productType);
-                  }
-                }}
-                sx={{
-                  '&:hover': {
-                    backgroundColor: '#f1f1fa',
-                    cursor: 'pointer',
-                  },
-                }}
-              >
-                <TableCell sx={{ py: 1 }}>
-                  {productType.productTypeCode}
-                </TableCell>
-                <TableCell sx={{ py: 1 }}>
-                  {productType.productTypeDesc}
-                </TableCell>
-                {/* <TableCell sx={{ py: 1 }} className="action-buttons">
-                      <IconButton size="small" onClick={() => handleOpen(productType)}>
-                        <EditIcon fontSize="small" />
-                      </IconButton>
-                      <IconButton size="small">
-                        <DeleteIcon fontSize="small" />
-                      </IconButton>
-                    </TableCell> */}
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-        <TablePagination
-          component="div"
-          count={filteredProducts.length}
-          page={page}
-          onPageChange={handleChangePage}
-          rowsPerPage={rowsPerPage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
-      </TableContainer>
+      {/* Using our reusable Grid component */}
+      <CustomDataGrid<ProductTypeModel>
+        title="Product Type"
+        columns={columns}
+        rows={productTypes}
+        getRowId={(row) => row.productTypeId}
+        onRowClick={(row) => handleOpen(row)}
+        initialSortField="productTypeCode"
+        initialSortDirection="asc"
+        searchFields={['productTypeCode', 'productTypeDesc']}
+        actionButton={{
+          text: 'Add',
+          onClick: () => handleOpen(),
+          icon: <AddIcon />
+        }}
+        size="small"
+      />
       {/* Filter popover */}
       {/* <Popover
           open={Boolean(anchorEl)}
