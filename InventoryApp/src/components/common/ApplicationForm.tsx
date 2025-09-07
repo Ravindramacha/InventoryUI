@@ -480,7 +480,7 @@ const ApplicationForm: React.FC<ApplicationFormPageProps> = ({
                 ) ?? null
               }
               getOptionLabel={(option) =>
-                `${option.productTypeDesc} (${option.productTypeCode})` || ''
+                `${option.productTypeDesc} (${option.productTypeCode})`
               }
               isOptionEqualToValue={(option, value) =>
                 option.productTypeId === value.productTypeId
@@ -513,7 +513,7 @@ const ApplicationForm: React.FC<ApplicationFormPageProps> = ({
                 ) || null
               }
               getOptionLabel={(option) =>
-                `${option.productGroupDesc} (${option.productGroupCode})` || ''
+                `${option.productGroupDesc} (${option.productGroupCode})`
               }
               isOptionEqualToValue={(option, value) =>
                 option.productGroupId === value.productGroupId
@@ -546,8 +546,7 @@ const ApplicationForm: React.FC<ApplicationFormPageProps> = ({
                 ) || null
               }
               getOptionLabel={(option) =>
-                `${option.productCategoryDesc} (${option.productCategoryCode})` ||
-                ''
+                `${option.productCategoryDesc} (${option.productCategoryCode})`
               }
               isOptionEqualToValue={(option, value) =>
                 option.productCategoryId === value.productCategoryId
@@ -579,7 +578,7 @@ const ApplicationForm: React.FC<ApplicationFormPageProps> = ({
                 null
               }
               getOptionLabel={(option) =>
-                `${option.languageDesc} (${option.languageCode})` || ''
+                `${option.languageDesc} (${option.languageCode})`
               }
               isOptionEqualToValue={(option, value) =>
                 option.languageId === value.languageId
@@ -612,7 +611,7 @@ const ApplicationForm: React.FC<ApplicationFormPageProps> = ({
                 ) || null
               }
               getOptionLabel={(option) =>
-                `${option.salesStatusDesc} (${option.salesStatusCode})` || ''
+                `${option.salesStatusDesc} (${option.salesStatusCode})`
               }
               isOptionEqualToValue={(option, value) =>
                 option.salesStatusId === value.salesStatusId
@@ -645,7 +644,7 @@ const ApplicationForm: React.FC<ApplicationFormPageProps> = ({
                 ) || null
               }
               getOptionLabel={(option) =>
-                `${option.uomDimDesc} (${option.uomDimCode})` || ''
+                `${option.uomDimDesc} (${option.uomDimCode})`
               }
               isOptionEqualToValue={(option, value) =>
                 option.uomDimId === value.uomDimId
@@ -746,7 +745,7 @@ const ApplicationForm: React.FC<ApplicationFormPageProps> = ({
                   ) || null
                 }
                 getOptionLabel={(option) =>
-                  `${option.salesStatusDesc} (${option.salesStatusCode})` || ''
+                  `${option.salesStatusDesc} (${option.salesStatusCode})`
                 }
                 isOptionEqualToValue={(option, value) =>
                   option.salesStatusId === value.salesStatusId

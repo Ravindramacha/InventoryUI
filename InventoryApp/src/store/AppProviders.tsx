@@ -121,6 +121,7 @@ export const AppProviders: React.FC<AppProvidersProps> = ({ children }) => {
 };
 
 // Utility hook for accessing all app context
+// eslint-disable-next-line react-refresh/only-export-components
 export const useAppContext = () => {
   // Note: This is a simplified version, expand as needed
   return {

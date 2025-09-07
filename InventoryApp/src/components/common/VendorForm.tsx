@@ -453,7 +453,7 @@ const VendorForm: React.FC<VendorFormPageProps> = ({
                 null
               }
               getOptionLabel={(option) =>
-                `${option.languageDesc} (${option.languageCode})` || ''
+                `${option.languageDesc} (${option.languageCode})`
               }
               isOptionEqualToValue={(option, value) =>
                 option.languageId === value.languageId
@@ -605,7 +605,7 @@ const VendorForm: React.FC<VendorFormPageProps> = ({
                 ) || null
               }
               getOptionLabel={(option) =>
-                `${option.salesStatusDesc} (${option.salesStatusCode})` || ''
+                `${option.salesStatusDesc} (${option.salesStatusCode})`
               }
               isOptionEqualToValue={(option, value) =>
                 option.salesStatusId === value.salesStatusId
