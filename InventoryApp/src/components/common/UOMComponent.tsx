@@ -104,7 +104,7 @@ const UOMComponent: React.FC<UOMComponentProps> = ({
                   uomOptions.find((option) => option.uomId === row.uom) ?? null
                 }
                 getOptionLabel={(option) =>
-                  `${option.uomDesc} (${option.uomCode})` || ''
+                  `${option.uomDesc} (${option.uomCode})`
                 }
                 isOptionEqualToValue={(option, value) =>
                   option.uomId === value.uomId
