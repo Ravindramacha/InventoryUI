@@ -13,17 +13,21 @@ import CrudTable from './components/Curd/CrudTable';
 import Product from './components/Configuration/Product/Product';
 import Home from './components/Home';
 import VendorList from './components/Vendor/VendorList';
+import VendorFormV2 from './components/VendorFormV2/VendorFormV2';
+import ChatUI from './components/ChatUI/ChatUI';
 
 const AppContent: React.FC = () => (
   <Routes>
-    <Route path="/" element={<SignIn />} />
+    <Route path="/login" element={<SignIn />} />
     <Route element={<MainLayout />}>
       <Route path="/home" element={<Home />} />
+      <Route path="/chat" element={<ChatUI />} />
       <Route path="/profile" element={<Profile />} />
       <Route path="/profile/update" element={<ProfileUpdate />} />
       <Route path="/notifications" element={<NotificationList />} />
       {/* <Route path="/form" element={<ApplicationFormPage onCancel={() => window.history.back()} />} /> */}
       <Route path="/form" element={<CrudTable />} />
+      <Route path="/vendorform" element={<VendorFormV2 />} />
       <Route path="/dashboard/analytics" element={<Dashboard />} />
       <Route path="/vendor" element={<VendorList />} />
       <Route path="/products" element={<Products />} />

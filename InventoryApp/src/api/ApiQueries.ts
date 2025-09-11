@@ -334,3 +334,21 @@ export function useGetAllVendorForm(
     enabled, // 👈 only fetch if enabled === true
   });
 }
+export function useGetAllVendorFormById(Id?: number | null) {
+  return useQuery<ReadVendorFormModel, Error>({
+    queryKey: ['GetVendorFormById', Id],
+    queryFn: async () => {
+      if (!Id) return [];
+      const response = await axios.get(
+        `/api/VendorForms/GetVendorFormById/${Id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        }
+      );
+      return response.data;
+    },
+    enabled: !!Id,
+  });
+}

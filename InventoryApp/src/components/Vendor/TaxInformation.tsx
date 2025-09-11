@@ -19,7 +19,7 @@ interface TaxInformationProps {
 
 const TaxInformation: React.FC<TaxInformationProps> = ({
   initialRows = [
-    { id: Date.now(), countryId: null, category: '', name: '', taxNumber: '' },
+    { id: 1, countryId: null, category: '', name: '', taxNumber: '' },
   ],
   maxRows = 5,
   onChange,
@@ -29,37 +29,39 @@ const TaxInformation: React.FC<TaxInformationProps> = ({
     { id: 2, name: 'Canada' },
     { id: 3, name: 'India' },
   ];
+
   const [rows, setRows] = useState<TaxInformationModel[]>(initialRows);
+  console.log(rows);
+  const [nextId, setNextId] = useState(
+    initialRows.length > 0 ? Math.max(...initialRows.map(r => r.id)) + 1 : 1
+  );
 
   useEffect(() => {
     onChange?.(rows);
   }, [rows, onChange]);
 
-  const handleChange = (
-    id: number,
-    field: keyof TaxInformationModel,
-    value: string
-  ) => {
-    const updated = rows.map((row) =>
-      row.id === id
-        ? {
-            ...row,
-            [field]: value,
-          }
-        : row
-    );
-    setRows(updated);
-  };
+const handleChange = <K extends keyof TaxInformationModel>(
+  id: number,
+  field: K,
+  value: TaxInformationModel[K]
+) => {
+  const updated = rows.map((row) =>
+    row.id === id ? { ...row, [field]: value } : row
+  );
+  setRows(updated);
+};
 
   const handleAddRow = (index: number) => {
     if (rows.length < maxRows) {
       const newRow: TaxInformationModel = {
-        id: Date.now(),
+        id: nextId, // ✅ number ID
         countryId: null,
         category: '',
         name: '',
         taxNumber: '',
       };
+      setNextId((prev) => prev + 1);
+
       const updated = [
         ...rows.slice(0, index + 1),
         newRow,
@@ -78,16 +80,17 @@ const TaxInformation: React.FC<TaxInformationProps> = ({
   return (
     <Stack spacing={2}>
       {rows.map((row, index) => (
-        <React.Fragment key={row.id}>
+        <React.Fragment key={row.id}> {/* ✅ stable numeric key */}
           <Grid container spacing={1} alignItems="center">
-            <Grid size={{ xs: 12, sm: 4 }}>
+            <Grid  size={{ xs: 12, sm: 4}}>
               <Autocomplete
                 disablePortal
                 options={countryList}
+                value={countryList.find((p) => p.id === row.countryId) ?? null}
                 getOptionLabel={(option) => option.name}
                 isOptionEqualToValue={(option, value) => option.id === value.id}
                 onChange={(_, newValue) =>
-                  handleChange(row.id, 'countryId', String(newValue?.id || ''))
+                    handleChange(row.id, 'countryId', newValue ? newValue.id : null)
                 }
                 size="small"
                 sx={{ width: '100%' }}
@@ -101,10 +104,11 @@ const TaxInformation: React.FC<TaxInformationProps> = ({
                 )}
               />
             </Grid>
-            <Grid size={{ xs: 12, sm: 4 }}>
+            <Grid size={{ xs: 12, sm: 4}}>
               <TextField
                 size="small"
                 label="Category"
+                name="category"
                 value={row.category}
                 onChange={(e) =>
                   handleChange(row.id, 'category', e.target.value)
@@ -112,7 +116,7 @@ const TaxInformation: React.FC<TaxInformationProps> = ({
                 sx={{ width: '100%' }}
               />
             </Grid>
-            <Grid size={{ xs: 12, sm: 4 }}>
+            <Grid size={{ xs: 12, sm: 4}}>
               <TextField
                 size="small"
                 label="Name"
@@ -123,7 +127,7 @@ const TaxInformation: React.FC<TaxInformationProps> = ({
             </Grid>
           </Grid>
           <Grid container spacing={1} alignItems="center" sx={{ mt: 1 }}>
-            <Grid size={{ xs: 12, sm: 4 }}>
+            <Grid size={{ xs: 12, sm: 4}}>
               <TextField
                 size="small"
                 label="Tax Number"
@@ -135,8 +139,7 @@ const TaxInformation: React.FC<TaxInformationProps> = ({
               />
             </Grid>
             <Grid
-              size={{ xs: 12, sm: 8 }}
-              sx={{ display: 'flex', alignItems: 'center' }}
+             size={{ xs: 12, sm: 4}}
             >
               <IconButton
                 size="small"

@@ -37,7 +37,7 @@ const MenuBar: React.FC<MenuBarProps> = ({ onMenuClick }) => {
   const handleLogout = () => {
     logout();
     setAnchorEl(null);
-    navigate('/');
+    navigate('/login');
   };
 
   const handleProfile = () => {

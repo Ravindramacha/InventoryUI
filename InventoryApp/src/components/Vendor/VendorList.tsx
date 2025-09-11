@@ -265,11 +265,11 @@ const VendorList: React.FC<VendorListProps> = ({ onEdit }) => {
       {selectedRow && !drawerOpen && (
         <Box>
           <VendorDetails
-            vendor={selectedRow}
             onBack={() => setSelectedRow(null)}
             onEdit={(vendor) =>
               onEdit ? onEdit(vendor) : handleOpenDrawer('edit', vendor)
             }
+            vendorId={selectedRow.vendorId}
           />
         </Box>
       )}
