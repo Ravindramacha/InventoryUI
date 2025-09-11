@@ -40,10 +40,10 @@ export interface BankModel {
   id: number;
   bankId?: number | undefined;
   bankName: string;
-  accountNumber: string;
-  routingNumber: string;
-  accountName: string;
-  phoneNumber: string;
+  accountNumber?: string | null;
+  routingNumber?: string | null;
+  accountName?: string | null;
+  phoneNumber?: string | null;
   primary: boolean;
 }
 

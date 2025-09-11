@@ -28,7 +28,7 @@ import AddIcon from '@mui/icons-material/Add';
 
 const menuItems = [
   { text: 'Home', icon: <HomeIcon />, path: '/home' },
-
+  { text: 'Chat', icon: <HomeIcon />, path: '/chat' },
   {
     text: 'Master Data',
     icon: <Inventory2Icon />,
@@ -36,7 +36,7 @@ const menuItems = [
       { text: 'Material / Product', path: '/form', icon: <PreviewIcon /> },
       {
         text: 'Customer',
-        path: '/products/categories',
+        path: '/vendorform',
         icon: <CategoryIcon />,
       },
       { text: 'Supplier / Vendor', path: '/vendor', icon: <AddIcon /> },
