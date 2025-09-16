@@ -58,49 +58,48 @@ const VendorFormV2: React.FC<VendorFormPageProps> = ({
     { id: Date.now(), countryId: null, category: "", name: "", taxNumber: "" },
   ];
 
-  const initialBankRows: BankDetailDto[] = [
+  const initialBankRows = [
     {
       id: Date.now(),
       bankName: "",
       accountNumber: "",
+      primary: false,
       routingNumber: "",
       accountName: "",
       phoneNumber: "",
-      primary: false,
-    },
+    }
   ];
-
-  const defaultValues: VendorFormType = {
-    ...(initialData ?? {
-      vendorId: 0,
-      companyName1: "",
-      companyName2: "",
-      dba: "",
-      keyWord: "",
-      houseNumber: "",
-      streetName: "",
-      buildingName: "",
-      landmark: "",
-      countryId: null,
-      stateId: null,
-      zipCode: "",
-      digiPin: "",
-      mapsUrl: "",
-      languageId: null,
-      phoneNumber1: "",
-      phoneNumber2: "",
-      phoneNumber3: "",
-      fax: "",
-      email1: "",
-      email2: "",
-      email3: "",
-      comments: "",
-      salesStatusId: null,
-      paymentId: null,
-      taxInformationDto: initialTaxInformationRows,
-      bankDetailDto: initialBankRows,
-    }),
-  };
+ 
+  // Fix the defaultValues issue by using a type assertion
+  const defaultValues = (initialData ? initialData : {
+    vendorId: 0,
+    companyName1: "",
+    companyName2: "",
+    dba: "",
+    keyWord: "",
+    houseNumber: "",
+    streetName: "",
+    buildingName: "",
+    landmark: "",
+    countryId: null,
+    stateId: null,
+    zipCode: "",
+    digiPin: "",
+    mapsUrl: "",
+    languageId: null,
+    phoneNumber1: "",
+    phoneNumber2: "",
+    phoneNumber3: "",
+    fax: "",
+    email1: "",
+    email2: "",
+    email3: "",
+    comments: "",
+    salesStatusId: null,
+    paymentId: null,
+    taxInformationDto: initialTaxInformationRows,
+    bankDetailDto: initialBankRows
+  }) as VendorFormType;
 
   const methods = useForm<VendorFormType>({
     resolver: zodResolver(VendorFormSchema) as any,
@@ -235,13 +234,13 @@ const VendorFormV2: React.FC<VendorFormPageProps> = ({
         <form onSubmit={handleSubmit(onSubmit)}>
           <Grid container spacing={2}>
             {/* ---------------- NAME ---------------- */}
-            <Grid  size={{ xs: 12}} >
+            <Grid size={{ xs: 12 }}>
               <Typography variant="body1" gutterBottom>
                 Name
               </Typography>
             </Grid>
 
-            <Grid size={{ xs: 12, sm: 12, md: 6, lg: 4 }} >
+            <Grid size={{ xs: 12, sm: 12, md: 6, lg: 4 }}>
               <Controller
                 name="companyName1"
                 control={control}
