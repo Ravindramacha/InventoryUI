@@ -3,6 +3,7 @@ import { Routes, Route } from 'react-router-dom';
 import { AppWrapper } from './store/AppProviders';
 import SignIn from './components/Login/SignIn';
 import Products from './components/Product/Products';
+import AddProductType from './components/Product/AddProductType';
 //import ApplicationFormPage from "./components/common/ApplicationForm";
 import MainLayout from './MainLayout';
 import Dashboard from './components/Dashboard';
@@ -31,6 +32,7 @@ const AppContent: React.FC = () => (
       <Route path="/dashboard/analytics" element={<Dashboard />} />
       <Route path="/vendor" element={<VendorList />} />
       <Route path="/products" element={<Products />} />
+      <Route path="/products/add" element={<AddProductType />} />
       <Route path="/productGroup" element={<Product />} />
     </Route>
   </Routes>

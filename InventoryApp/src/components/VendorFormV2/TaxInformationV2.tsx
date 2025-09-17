@@ -1,10 +1,33 @@
 // src/components/Vendor/TaxInformationV2.tsx
 import React from "react";
 import { useFormContext, Controller, useFieldArray } from "react-hook-form";
-import { Grid, TextField, Autocomplete, IconButton, Stack } from "@mui/material";
+import { TextField, Autocomplete, IconButton, Stack } from "@mui/material";
+import Grid from "@mui/material/Grid";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import type { VendorFormType } from "./VendorFormSchema";
+
+// Helper function to validate and filter numeric input
+const handleNumericInput = (
+  e: React.ChangeEvent<HTMLInputElement>, 
+  allowedChars: RegExp, 
+  fieldName: string,
+  index: number,
+  setError: any
+) => {
+  const value = e.target.value;
+  
+  if (value && !allowedChars.test(value)) {
+    // Set a manual error for immediate feedback
+    setError(`taxInformationDto.${index}.${fieldName}`, {
+      type: "manual",
+      message: "Invalid characters detected"
+    });
+    
+    // Remove the last character that was invalid
+    e.target.value = value.slice(0, -1);
+  }
+};
 
 // If you already export countryList from Models/VendorModel you can import it instead.
 // For demo/compatibility I'll put a small list here — swap with your countryList import if present.
@@ -19,7 +42,7 @@ interface Props {
 }
 
 const TaxInformationV2: React.FC<Props> = ({ maxRows = 5 }) => {
-  const { control, formState } = useFormContext<VendorFormType>();
+  const { control, formState, setError } = useFormContext<VendorFormType>();
   const { errors } = formState;
   const { fields, append, remove } = useFieldArray({
     control,
@@ -105,6 +128,30 @@ const TaxInformationV2: React.FC<Props> = ({ maxRows = 5 }) => {
                   fullWidth
                   error={!!errors?.taxInformationDto?.[index]?.taxNumber}
                   helperText={errors?.taxInformationDto?.[index]?.taxNumber?.message as any}
+                  inputProps={{ 
+                    pattern: "[0-9a-zA-Z\\-]*",
+                    title: "Tax Number must contain only alphanumeric characters and hyphens"
+                  }}
+                  onChange={(e) => {
+                    field.onChange(e);
+                    handleNumericInput(
+                      e as React.ChangeEvent<HTMLInputElement>, 
+                      /^[0-9a-zA-Z\-]*$/,
+                      "taxNumber",
+                      index,
+                      setError
+                    );
+                  }}
+                  onBlur={() => {
+                    // Validate on blur for better UX
+                    const value = field.value;
+                    if (value && !/^[0-9a-zA-Z\-]*$/.test(value)) {
+                      setError(`taxInformationDto.${index}.taxNumber`, {
+                        type: "manual",
+                        message: "Tax Number must contain only alphanumeric characters and hyphens"
+                      });
+                    }
+                  }}
                 />
               )}
             />

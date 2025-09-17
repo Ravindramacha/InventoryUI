@@ -3,7 +3,6 @@ import {
   TextField,
   Button,
   Typography,
-  Grid,
   Box,
   Autocomplete,
   Alert,
@@ -11,10 +10,10 @@ import {
   CircularProgress,
   Backdrop,
 } from "@mui/material";
+import Grid from "@mui/material/Grid";
 import {
   countryList,
   stateList,
-  type BankDetailDto,
   type TaxInformationDto,
 } from "../../Models/VendorModel";
 //import TaxInformation from "../Vendor/TaxInformation";
@@ -53,6 +52,28 @@ const VendorFormV2: React.FC<VendorFormPageProps> = ({
   vendorId = 0,
 }) => {
   const queryClient = useQueryClient();
+  
+  // Helper function to validate and filter numeric input
+  const handleNumericInput = (
+    e: React.ChangeEvent<HTMLInputElement>, 
+    allowedChars: RegExp, 
+    fieldName: string,
+    setError: any
+  ) => {
+    const value = e.target.value;
+    
+    if (value && !allowedChars.test(value)) {
+      // Instead of modifying the input directly, let React-Hook-Form handle it
+      // Set a manual error for immediate feedback
+      setError(fieldName, {
+        type: "manual",
+        message: "Invalid characters detected"
+      });
+      
+      // Remove the last character that was invalid
+      e.target.value = value.slice(0, -1);
+    }
+  };
 
   const initialTaxInformationRows: TaxInformationDto[] = [
     { id: Date.now(), countryId: null, category: "", name: "", taxNumber: "" },
@@ -107,7 +128,7 @@ const VendorFormV2: React.FC<VendorFormPageProps> = ({
     mode: "onTouched",
   });
 
-  const { control, handleSubmit, reset, watch, setValue, formState } = methods;
+  const { control, handleSubmit, reset, watch, formState, setError } = methods;
   const { errors, isSubmitting } = formState;
 
   const selectedCountryId = watch("countryId");
@@ -124,7 +145,79 @@ const VendorFormV2: React.FC<VendorFormPageProps> = ({
   const { mutate: updateMutate } = usePutVendorForm();
   const { mutate } = usePostVendorForm();
 
+  // Helper function to validate all numeric fields
+  const validateNumericFields = (data: VendorFormType) => {
+    let hasError = false;
+
+    // Validate zip code
+    if (data.zipCode && !/^[0-9-\s]+$/.test(data.zipCode)) {
+      setError("zipCode", {
+        type: "manual",
+        message: "Zip Code must contain only digits, hyphens, and spaces"
+      });
+      hasError = true;
+    }
+
+    // Validate digi pin
+    if (data.digiPin && !/^[0-9]*$/.test(data.digiPin)) {
+      setError("digiPin", {
+        type: "manual",
+        message: "Digi Pin must contain only digits"
+      });
+      hasError = true;
+    }
+
+    // Validate phone numbers
+    if (data.phoneNumber1 && !/^[0-9+\-()\s]+$/.test(data.phoneNumber1)) {
+      setError("phoneNumber1", {
+        type: "manual",
+        message: "Phone Number must contain only digits and symbols like +, -, (, )"
+      });
+      hasError = true;
+    }
+
+    // Validate bank account details
+    data.bankDetailDto.forEach((bank, index) => {
+      if (bank.accountNumber && !/^[0-9]+$/.test(bank.accountNumber)) {
+        setError(`bankDetailDto.${index}.accountNumber`, {
+          type: "manual",
+          message: "Account Number must contain only digits"
+        });
+        hasError = true;
+      }
+      
+      if (bank.routingNumber && !/^[0-9]*$/.test(bank.routingNumber)) {
+        setError(`bankDetailDto.${index}.routingNumber`, {
+          type: "manual",
+          message: "Routing Number must contain only digits"
+        });
+        hasError = true;
+      }
+    });
+
+    // Validate tax information
+    data.taxInformationDto.forEach((tax, index) => {
+      if (tax.taxNumber && !/^[0-9a-zA-Z\-]*$/.test(tax.taxNumber)) {
+        setError(`taxInformationDto.${index}.taxNumber`, {
+          type: "manual",
+          message: "Tax Number must contain only alphanumeric characters and hyphens"
+        });
+        hasError = true;
+      }
+    });
+
+    return !hasError; // Return true if all validations pass
+  };
+
   const onSubmit = (data: VendorFormType) => {
+    // Run additional validations before submitting
+    if (!validateNumericFields(data)) {
+      setSnackbarMessage("Please correct validation errors before submitting");
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
+      return;
+    }
+    
     setBackdropOpen(true);
     // Ensure all string fields are not null/undefined
     const submitData = {
@@ -234,7 +327,7 @@ const VendorFormV2: React.FC<VendorFormPageProps> = ({
         <form onSubmit={handleSubmit(onSubmit)}>
           <Grid container spacing={2}>
             {/* ---------------- NAME ---------------- */}
-            <Grid size={{ xs: 12 }}>
+            <Grid size={{ xs:12}}>
               <Typography variant="body1" gutterBottom>
                 Name
               </Typography>
@@ -326,6 +419,10 @@ const VendorFormV2: React.FC<VendorFormPageProps> = ({
                     label="House Number"
                     error={!!errors.houseNumber}
                     helperText={errors.houseNumber?.message}
+                    inputProps={{ 
+                      pattern: "[0-9a-zA-Z\\-/\s]+",
+                      title: "House Number can contain only alphanumeric characters, hyphens, and slashes"
+                    }}
                   />
                 )}
               />
@@ -447,6 +544,29 @@ const VendorFormV2: React.FC<VendorFormPageProps> = ({
                     label="Zip Code"
                     error={!!errors.zipCode}
                     helperText={errors.zipCode?.message}
+                    inputProps={{ 
+                      pattern: "[0-9-\\s]+",
+                      title: "Zip Code must contain only digits, hyphens, and spaces"
+                    }}
+                    onChange={(e) => {
+                      field.onChange(e);
+                      handleNumericInput(
+                        e as React.ChangeEvent<HTMLInputElement>, 
+                        /^[0-9\-\s]*$/, 
+                        "zipCode",
+                        setError
+                      );
+                    }}
+                    onBlur={() => {
+                      // Validate on blur as well for better UX
+                      const value = field.value;
+                      if (value && !/^[0-9\-\s]+$/.test(value)) {
+                        setError("zipCode", {
+                          type: "manual",
+                          message: "Zip Code must contain only digits, hyphens, and spaces"
+                        });
+                      }
+                    }}
                   />
                 )}
               />
@@ -463,6 +583,29 @@ const VendorFormV2: React.FC<VendorFormPageProps> = ({
                     label="Digi Pin"
                     error={!!errors.digiPin}
                     helperText={errors.digiPin?.message}
+                    inputProps={{ 
+                      pattern: "[0-9]*",
+                      title: "Digi Pin must contain only digits"
+                    }}
+                    onChange={(e) => {
+                      field.onChange(e);
+                      handleNumericInput(
+                        e as React.ChangeEvent<HTMLInputElement>, 
+                        /^[0-9]*$/,
+                        "digiPin",
+                        setError
+                      );
+                    }}
+                    onBlur={() => {
+                      // Validate on blur for better UX
+                      const value = field.value;
+                      if (value && !/^[0-9]*$/.test(value)) {
+                        setError("digiPin", {
+                          type: "manual",
+                          message: "Digi Pin must contain only digits"
+                        });
+                      }
+                    }}
                   />
                 )}
               />
@@ -532,6 +675,29 @@ const VendorFormV2: React.FC<VendorFormPageProps> = ({
                     label="Phone Number 1"
                     error={!!errors.phoneNumber1}
                     helperText={errors.phoneNumber1?.message}
+                    inputProps={{ 
+                      pattern: "[0-9+\\-()\s]+",
+                      title: "Phone Number must contain only digits and symbols like +, -, (, )"
+                    }}
+                    onChange={(e) => {
+                      field.onChange(e);
+                      handleNumericInput(
+                        e as React.ChangeEvent<HTMLInputElement>, 
+                        /^[0-9+\-()\s]*$/,
+                        "phoneNumber1",
+                        setError
+                      );
+                    }}
+                    onBlur={() => {
+                      // Validate on blur for better UX
+                      const value = field.value;
+                      if (value && !/^[0-9+\-()\s]+$/.test(value)) {
+                        setError("phoneNumber1", {
+                          type: "manual",
+                          message: "Phone Number must contain only digits and symbols like +, -, (, )"
+                        });
+                      }
+                    }}
                   />
                 )}
               />
@@ -548,6 +714,19 @@ const VendorFormV2: React.FC<VendorFormPageProps> = ({
                     label="Phone Number 2"
                     error={!!errors.phoneNumber2}
                     helperText={errors.phoneNumber2?.message}
+                    inputProps={{ 
+                      pattern: "[0-9+\\-()\s]*",
+                      title: "Phone Number must contain only digits and symbols like +, -, (, )"
+                    }}
+                    onChange={(e) => {
+                      field.onChange(e);
+                      handleNumericInput(
+                        e as React.ChangeEvent<HTMLInputElement>, 
+                        /^[0-9+\-()\s]*$/,
+                        "phoneNumber2",
+                        setError
+                      );
+                    }}
                   />
                 )}
               />
@@ -564,6 +743,19 @@ const VendorFormV2: React.FC<VendorFormPageProps> = ({
                     label="Phone Number 3"
                     error={!!errors.phoneNumber3}
                     helperText={errors.phoneNumber3?.message}
+                    inputProps={{ 
+                      pattern: "[0-9+\\-()\s]*",
+                      title: "Phone Number must contain only digits and symbols like +, -, (, )"
+                    }}
+                    onChange={(e) => {
+                      field.onChange(e);
+                      handleNumericInput(
+                        e as React.ChangeEvent<HTMLInputElement>, 
+                        /^[0-9+\-()\s]*$/, 
+                        "phoneNumber3",
+                        setError
+                      );
+                    }}
                   />
                 )}
               />
@@ -580,6 +772,19 @@ const VendorFormV2: React.FC<VendorFormPageProps> = ({
                     label="Fax"
                     error={!!errors.fax}
                     helperText={errors.fax?.message}
+                    inputProps={{ 
+                      pattern: "[0-9+\\-()\s]*",
+                      title: "Fax number must contain only digits and symbols like +, -, (, )"
+                    }}
+                    onChange={(e) => {
+                      field.onChange(e);
+                      handleNumericInput(
+                        e as React.ChangeEvent<HTMLInputElement>, 
+                        /^[0-9+\-()\s]*$/, 
+                        "fax",
+                        setError
+                      );
+                    }}
                   />
                 )}
               />

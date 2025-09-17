@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useNotification } from '../../context/NotificationContext';
 import {
   Button,
@@ -31,6 +32,7 @@ import type { AlertColor } from '@mui/material/Alert';
 import { useQueryClient } from '@tanstack/react-query';
 
 export default function Products() {
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { data: productTypes = [] } = useProductTypes();
   // Remove the duplicate state and useEffect that causes the infinite loop
@@ -222,7 +224,7 @@ export default function Products() {
           />
           <Button
             variant="contained"
-            onClick={() => handleOpen()}
+            onClick={() => navigate('/products/add')}
             size="small"
             sx={{
               borderRadius: '8px',
@@ -338,6 +340,7 @@ export default function Products() {
         </Popover> */}
       {/* Rows per page dropdown */}
 
+      {/* Dialog for editing existing products */}
       <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
         <DialogTitle sx={{ p: 1, mb: 0 }}>
           {editingProduct ? 'Edit' : 'Add'} Product
