@@ -17,7 +17,8 @@ import { Add } from '@mui/icons-material';
 import { useGetAllVendorForm } from '../../api/ApiQueries';
 import ProductMasterView from '../Configuration/Product/ProductMasterView';
 import type { ReadVendorFormModel } from '../../Models/VendorModel';
-import VendorForm from '../common/VendorForm';
+import VendorFormV2 from '../VendorFormV2/VendorFormV2';
+import type { VendorFormType } from '../VendorFormV2/VendorFormSchema';
 import VendorDetails from './VendorDetails';
 
 type Mode = 'add' | 'edit' | 'view';
@@ -27,6 +28,34 @@ interface VendorListProps {
 }
 
 type Order = 'asc' | 'desc';
+
+// Convert ReadVendorFormModel to VendorFormType
+const convertToVendorFormType = (data: ReadVendorFormModel | null): VendorFormType | null => {
+  if (!data) return null;
+  
+  // Create a new object with the correct structure for VendorFormV2
+  const result: VendorFormType = {
+    // Include all fields from the original data
+    ...data,
+    
+    // Convert the paymentId to string
+    paymentId: data.paymentId !== null && data.paymentId !== undefined
+      ? String(data.paymentId)
+      : null,
+    
+    // Ensure these properties are not undefined
+    countryId: data.countryId ?? null,
+    stateId: data.stateId ?? null,
+    languageId: data.languageId ?? null,
+    salesStatusId: data.salesStatusId ?? null,
+    
+    // Make sure bank and tax data is properly handled
+    taxInformationDto: data.taxInformationDto || [],
+    bankDetailDto: data.bankDetailDto || [],
+  } as VendorFormType;
+  
+  return result;
+};
 
 const VendorList: React.FC<VendorListProps> = ({ onEdit }) => {
   const { data: vendorForm = [] } = useGetAllVendorForm();
@@ -262,10 +291,10 @@ const VendorList: React.FC<VendorListProps> = ({ onEdit }) => {
 
       {drawerOpen && (
         <Box sx={{ backgroundColor: 'white', p: 2, borderRadius: 1 }}>
-          <VendorForm
+          <VendorFormV2
             onCancel={() => setDrawerOpen(false)}
             initialData={
-              drawerMode === 'edit' && selectedRow ? selectedRow : null
+              drawerMode === 'edit' && selectedRow ? convertToVendorFormType(selectedRow) : null
             }
             mode={drawerMode === 'edit' ? 'edit' : 'add'}
             vendorId={selectedRow ? selectedRow.vendorId : 0}

@@ -91,8 +91,26 @@ const VendorFormV2: React.FC<VendorFormPageProps> = ({
     }
   ];
  
+  // Process initialData to ensure all fields have the correct types
+  const processedInitialData = initialData ? {
+    ...initialData,
+    // Ensure paymentId is a string
+    paymentId: initialData.paymentId !== null && initialData.paymentId !== undefined
+      ? String(initialData.paymentId)
+      : null,
+      
+    // Ensure other nullable fields are properly handled
+    countryId: initialData.countryId ?? null,
+    stateId: initialData.stateId ?? null,
+    languageId: initialData.languageId ?? null,
+    salesStatusId: initialData.salesStatusId ?? null,
+  } : null;
+  
+  // Log processed initial data to ensure payment ID is correct
+  console.log("Processed initialData:", processedInitialData);
+  
   // Fix the defaultValues issue by using a type assertion
-  const defaultValues = (initialData ? initialData : {
+  const defaultValues = (processedInitialData ? processedInitialData : {
     vendorId: 0,
     companyName1: "",
     companyName2: "",
@@ -921,20 +939,24 @@ const VendorFormV2: React.FC<VendorFormPageProps> = ({
               <Controller
                 name="paymentId"
                 control={control}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    fullWidth
-                    size="small"
-                    type="text"
-                    label="Payment Terms"
-                    error={!!errors.paymentId}
-                    helperText={errors.paymentId?.message}
-                    onChange={(e) => {
-                      field.onChange(e.target.value); // Keep as string value
-                    }}
-                  />
-                )}
+                render={({ field }) => {
+               
+                  return (
+                    <TextField
+                      {...field}
+                      fullWidth
+                      size="small"
+                      type="text"
+                      label="Payment Terms"
+                      error={!!errors.paymentId}
+                      helperText={errors.paymentId?.message}
+                      value={field.value !== null && field.value !== undefined ? field.value : ''} // Ensure value is never null or undefined
+                      onChange={(e) => {
+                        field.onChange(e.target.value); // Keep as string value
+                      }}
+                    />
+                  );
+                }}
               />
             </Grid>
 
