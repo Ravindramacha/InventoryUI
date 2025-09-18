@@ -156,6 +156,7 @@ const VendorFormV2: React.FC<VendorFormPageProps> = ({
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error">("success");
   const [backdropOpen, setBackdropOpen] = useState(false);
+  const [isSubmittingForm, setIsSubmittingForm] = useState(false);
 
   const { data: salesStatuses = [] } = useSalesStatus();
   const { data: languages = [] } = useLanguages();
@@ -238,7 +239,9 @@ const VendorFormV2: React.FC<VendorFormPageProps> = ({
       return;
     }
     
+    // Show both the backdrop and set submission state to true
     setBackdropOpen(true);
+    setIsSubmittingForm(true);
     // Ensure all string fields are not null/undefined
     const submitData = {
       ...data,
@@ -286,17 +289,25 @@ const VendorFormV2: React.FC<VendorFormPageProps> = ({
         {
           onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["GetVendorFormById", vendorId] });
+            queryClient.invalidateQueries({ queryKey: ["readVendorForm"] }); // Also invalidate vendor list
             setSnackbarMessage("Vendor Form updated successfully!");
             setSnackbarSeverity("success");
             setSnackbarOpen(true);
-            if (onCancel) onCancel();
+            
+            // Short delay to show success message before redirecting
+            setTimeout(() => {
+              if (onCancel) onCancel();
+            }, 1000);
           },
           onError: (error: any) => {
             setSnackbarMessage(`Failed to update: ${error?.message ?? "Unknown error"}`);
             setSnackbarSeverity("error");
             setSnackbarOpen(true);
           },
-          onSettled: () => setBackdropOpen(false),
+          onSettled: () => {
+            setBackdropOpen(false);
+            setIsSubmittingForm(false);
+          },
         }
       );
     } else {
@@ -307,14 +318,21 @@ const VendorFormV2: React.FC<VendorFormPageProps> = ({
           setSnackbarSeverity("success");
           setSnackbarOpen(true);
           reset(defaultValues);
-          if (onCancel) onCancel();
+          
+          // Short delay to show success message before redirecting
+          setTimeout(() => {
+            if (onCancel) onCancel();
+          }, 1000);
         },
         onError: (error: any) => {
           setSnackbarMessage(`Failed to submit: ${error?.message ?? "Unknown error"}`);
           setSnackbarSeverity("error");
           setSnackbarOpen(true);
         },
-        onSettled: () => setBackdropOpen(false),
+        onSettled: () => {
+          setBackdropOpen(false);
+          setIsSubmittingForm(false);
+        },
       });
     }
   };
@@ -336,6 +354,7 @@ const VendorFormV2: React.FC<VendorFormPageProps> = ({
           variant="outlined"
           color="primary"
           onClick={onCancel}
+          disabled={isSubmittingForm}
           size="small"
           sx={{ borderRadius: "8px", minWidth: "100px" }}
         >
@@ -966,11 +985,11 @@ const VendorFormV2: React.FC<VendorFormPageProps> = ({
                 variant="contained"
                 color="primary"
                 type="submit"
-                disabled={isSubmitting}
+                disabled={isSubmitting || isSubmittingForm}
                 size="small"
                 sx={{ borderRadius: "8px", minWidth: "100px" }}
               >
-                {isSubmitting ? (
+                {isSubmitting || isSubmittingForm ? (
                   <CircularProgress size={20} color="inherit" />
                 ) : mode === "add" ? (
                   "Submit"
@@ -982,7 +1001,7 @@ const VendorFormV2: React.FC<VendorFormPageProps> = ({
                 variant="outlined"
                 color="secondary"
                 onClick={() => reset(defaultValues)}
-                disabled={isSubmitting}
+                disabled={isSubmitting || isSubmittingForm}
                 size="small"
                 sx={{ ml: 2, borderRadius: "8px", minWidth: "100px" }}
               >
@@ -991,12 +1010,17 @@ const VendorFormV2: React.FC<VendorFormPageProps> = ({
             </Grid>
           </Grid>
 
-          {/* Backdrop Loader */}
+          {/* Backdrop Loader for field validations and minor operations */}
           <Backdrop
             open={backdropOpen}
             sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
           >
-            <CircularProgress color="inherit" />
+            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+              <CircularProgress color="inherit" size={50} />
+              <Typography variant="h6" color="white">
+                {isSubmittingForm ? 'Saving vendor data...' : 'Processing...'}
+              </Typography>
+            </Box>
           </Backdrop>
 
           {/* Snackbar */}

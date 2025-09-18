@@ -12,6 +12,8 @@ import {
   TextField,
   TablePagination,
   TableSortLabel,
+  Skeleton,
+  CircularProgress,
 } from '@mui/material';
 import { Add } from '@mui/icons-material';
 import { useGetAllVendorForm } from '../../api/ApiQueries';
@@ -58,7 +60,7 @@ const convertToVendorFormType = (data: ReadVendorFormModel | null): VendorFormTy
 };
 
 const VendorList: React.FC<VendorListProps> = ({ onEdit }) => {
-  const { data: vendorForm = [] } = useGetAllVendorForm();
+  const { data: vendorForm = [], isLoading } = useGetAllVendorForm();
 
   const [rows, setRows] = useState<ReadVendorFormModel[]>([]);
   const [order, setOrder] = useState<Order>('asc');
@@ -154,6 +156,28 @@ const VendorList: React.FC<VendorListProps> = ({ onEdit }) => {
     page * rowsPerPage + rowsPerPage
   );
 
+  // Skeleton rows for loading state
+  const renderSkeletonRows = () => {
+    return Array(rowsPerPage)
+      .fill(0)
+      .map((_, index) => (
+        <TableRow key={`skeleton-${index}`}>
+          <TableCell sx={{ py: 1 }}>
+            <Skeleton variant="text" width="80%" height={24} animation="wave" />
+          </TableCell>
+          <TableCell sx={{ py: 1 }}>
+            <Skeleton variant="text" width="70%" height={24} animation="wave" />
+          </TableCell>
+          <TableCell sx={{ py: 1 }}>
+            <Skeleton variant="text" width="60%" height={24} animation="wave" />
+          </TableCell>
+          <TableCell sx={{ py: 1 }}>
+            <Skeleton variant="text" width="90%" height={24} animation="wave" />
+          </TableCell>
+        </TableRow>
+      ));
+  };
+
   return (
     <Box>
       {!drawerOpen && !selectedRow && (
@@ -166,18 +190,22 @@ const VendorList: React.FC<VendorListProps> = ({ onEdit }) => {
               mt: 0,
             }}
           >
-            <TextField
-              label="Search"
-              placeholder="search"
-              variant="outlined"
-              size="small"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              sx={{ width: 250 }}
-            />
+            {isLoading ? (
+              <Skeleton variant="rectangular" width={250} height={40} animation="wave" />
+            ) : (
+              <TextField
+                label="Search"
+                placeholder="search"
+                variant="outlined"
+                size="small"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                sx={{ width: 250 }}
+              />
+            )}
             <Button
               variant="contained"
-              startIcon={<Add />}
+              startIcon={isLoading ? <CircularProgress size={16} color="inherit" /> : <Add />}
               size="small"
               sx={{
                 borderRadius: '10px',
@@ -185,8 +213,9 @@ const VendorList: React.FC<VendorListProps> = ({ onEdit }) => {
                 textTransform: 'none',
               }}
               onClick={() => handleOpenDrawer('add')}
+              disabled={isLoading}
             >
-              Add New
+              {isLoading ? 'Loading...' : 'Add New'}
             </Button>
           </Box>
 
@@ -195,83 +224,110 @@ const VendorList: React.FC<VendorListProps> = ({ onEdit }) => {
               <TableHead>
                 <TableRow>
                   <TableCell sx={{ py: 1, fontWeight: 'bold' }}>
-                    <TableSortLabel
-                      active={orderBy === 'companyName1'}
-                      direction={orderBy === 'companyName1' ? order : 'asc'}
-                      onClick={() => handleRequestSort('companyName1')}
-                    >
-                      Company Name 1
-                    </TableSortLabel>
+                    {isLoading ? (
+                      <Skeleton variant="text" width="70%" height={24} animation="wave" />
+                    ) : (
+                      <TableSortLabel
+                        active={orderBy === 'companyName1'}
+                        direction={orderBy === 'companyName1' ? order : 'asc'}
+                        onClick={() => handleRequestSort('companyName1')}
+                        disabled={isLoading}
+                      >
+                        Company Name 1
+                      </TableSortLabel>
+                    )}
                   </TableCell>
                   <TableCell sx={{ py: 1, fontWeight: 'bold' }}>
-                    <TableSortLabel
-                      active={orderBy === 'companyName2'}
-                      direction={orderBy === 'companyName2' ? order : 'asc'}
-                      onClick={() => handleRequestSort('companyName2')}
-                    >
-                      Company Name 2
-                    </TableSortLabel>
+                    {isLoading ? (
+                      <Skeleton variant="text" width="70%" height={24} animation="wave" />
+                    ) : (
+                      <TableSortLabel
+                        active={orderBy === 'companyName2'}
+                        direction={orderBy === 'companyName2' ? order : 'asc'}
+                        onClick={() => handleRequestSort('companyName2')}
+                        disabled={isLoading}
+                      >
+                        Company Name 2
+                      </TableSortLabel>
+                    )}
                   </TableCell>
                   <TableCell sx={{ py: 1, fontWeight: 'bold' }}>
-                    <TableSortLabel
-                      active={orderBy === 'phoneNumber1'}
-                      direction={orderBy === 'phoneNumber1' ? order : 'asc'}
-                      onClick={() => handleRequestSort('phoneNumber1')}
-                    >
-                      Phone Number 1
-                    </TableSortLabel>
+                    {isLoading ? (
+                      <Skeleton variant="text" width="70%" height={24} animation="wave" />
+                    ) : (
+                      <TableSortLabel
+                        active={orderBy === 'phoneNumber1'}
+                        direction={orderBy === 'phoneNumber1' ? order : 'asc'}
+                        onClick={() => handleRequestSort('phoneNumber1')}
+                        disabled={isLoading}
+                      >
+                        Phone Number 1
+                      </TableSortLabel>
+                    )}
                   </TableCell>
                   <TableCell sx={{ py: 1, fontWeight: 'bold' }}>
-                    <TableSortLabel
-                      active={orderBy === 'email1'}
-                      direction={orderBy === 'email1' ? order : 'asc'}
-                      onClick={() => handleRequestSort('email1')}
-                    >
-                      Email 1
-                    </TableSortLabel>
+                    {isLoading ? (
+                      <Skeleton variant="text" width="70%" height={24} animation="wave" />
+                    ) : (
+                      <TableSortLabel
+                        active={orderBy === 'email1'}
+                        direction={orderBy === 'email1' ? order : 'asc'}
+                        onClick={() => handleRequestSort('email1')}
+                        disabled={isLoading}
+                      >
+                        Email 1
+                      </TableSortLabel>
+                    )}
                   </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {paginatedRows.map((row) => (
-                  <TableRow
-                    key={row.vendorId}
-                    onClick={() => setSelectedRow(row)}
-                    sx={{
-                      '&:hover': {
-                        backgroundColor: '#f1f1fa',
-                        cursor: 'pointer',
-                      },
-                    }}
-                  >
-                    <TableCell sx={{ py: 1 }}>{row.companyName1}</TableCell>
-                    <TableCell sx={{ py: 1 }}>{row.companyName2}</TableCell>
-                    <TableCell sx={{ py: 1 }}>{row.phoneNumber1}</TableCell>
-                    <TableCell sx={{ py: 1 }}>{row.email1}</TableCell>
-                  </TableRow>
-                ))}
-                {paginatedRows.length === 0 && (
-                  <TableRow>
-                    <TableCell
-                      colSpan={5}
-                      align="center"
-                      sx={{
-                        py: 2,
-                      }}
-                    >
-                      No data found.
-                    </TableCell>
-                  </TableRow>
+                {isLoading ? (
+                  renderSkeletonRows()
+                ) : (
+                  <>
+                    {paginatedRows.map((row) => (
+                      <TableRow
+                        key={row.vendorId}
+                        onClick={() => setSelectedRow(row)}
+                        sx={{
+                          '&:hover': {
+                            backgroundColor: '#f1f1fa',
+                            cursor: 'pointer',
+                          },
+                        }}
+                      >
+                        <TableCell sx={{ py: 1 }}>{row.companyName1}</TableCell>
+                        <TableCell sx={{ py: 1 }}>{row.companyName2}</TableCell>
+                        <TableCell sx={{ py: 1 }}>{row.phoneNumber1}</TableCell>
+                        <TableCell sx={{ py: 1 }}>{row.email1}</TableCell>
+                      </TableRow>
+                    ))}
+                    {!isLoading && paginatedRows.length === 0 && (
+                      <TableRow>
+                        <TableCell
+                          colSpan={5}
+                          align="center"
+                          sx={{
+                            py: 2,
+                          }}
+                        >
+                          No data found.
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </>
                 )}
               </TableBody>
             </Table>
             <TablePagination
               component="div"
-              count={filteredRows.length}
+              count={isLoading ? 0 : filteredRows.length}
               page={page}
               onPageChange={handleChangePage}
               rowsPerPage={rowsPerPage}
               onRowsPerPageChange={handleChangeRowsPerPage}
+              disabled={isLoading}
             />
           </TableContainer>
         </>

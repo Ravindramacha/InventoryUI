@@ -12,6 +12,8 @@ import {
   TextField,
   TablePagination,
   TableSortLabel,
+  Skeleton,
+  CircularProgress,
 } from '@mui/material';
 import { Add } from '@mui/icons-material';
 import { useGetAllProductMasterForm } from '../../api/ApiQueries';
@@ -29,7 +31,7 @@ interface CrudTableProps {
 type Order = 'asc' | 'desc';
 
 const CrudTable: React.FC<CrudTableProps> = ({ onEdit }) => {
-  const { data: productMasterForm = [] } = useGetAllProductMasterForm();
+  const { data: productMasterForm = [], isLoading } = useGetAllProductMasterForm();
 
   const [rows, setRows] = useState<ReadProductMasterForm[]>([]);
   const [order, setOrder] = useState<Order>('asc');
@@ -152,6 +154,28 @@ const CrudTable: React.FC<CrudTableProps> = ({ onEdit }) => {
     page * rowsPerPage,
     page * rowsPerPage + rowsPerPage
   );
+  
+  // Skeleton rows for loading state
+  const renderSkeletonRows = () => {
+    return Array(rowsPerPage)
+      .fill(0)
+      .map((_, index) => (
+        <TableRow key={`skeleton-${index}`}>
+          <TableCell sx={{ py: 1 }}>
+            <Skeleton variant="text" width="70%" height={24} animation="wave" />
+          </TableCell>
+          <TableCell sx={{ py: 1 }}>
+            <Skeleton variant="text" width="80%" height={24} animation="wave" />
+          </TableCell>
+          <TableCell sx={{ py: 1 }}>
+            <Skeleton variant="text" width="75%" height={24} animation="wave" />
+          </TableCell>
+          <TableCell sx={{ py: 1 }}>
+            <Skeleton variant="text" width="85%" height={24} animation="wave" />
+          </TableCell>
+        </TableRow>
+      ));
+  };
 
   return (
     <Box>
@@ -173,10 +197,16 @@ const CrudTable: React.FC<CrudTableProps> = ({ onEdit }) => {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               sx={{ width: 250 }}
+              disabled={isLoading}
+              InputProps={{
+                endAdornment: isLoading && (
+                  <CircularProgress color="inherit" size={20} />
+                ),
+              }}
             />
             <Button
               variant="contained"
-              startIcon={<Add />}
+              startIcon={isLoading ? <CircularProgress size={20} color="inherit" /> : <Add />}
               size="small"
               sx={{
                 borderRadius: '10px',
@@ -184,6 +214,7 @@ const CrudTable: React.FC<CrudTableProps> = ({ onEdit }) => {
                 textTransform: 'none',
               }}
               onClick={() => handleOpenDrawer('add')}
+              disabled={isLoading}
             >
               Add New
             </Button>
@@ -194,68 +225,92 @@ const CrudTable: React.FC<CrudTableProps> = ({ onEdit }) => {
               <TableHead>
                 <TableRow>
                   <TableCell sx={{ py: 1, fontWeight: 'bold' }}>
-                    <TableSortLabel
-                      active={orderBy === 'productId'}
-                      direction={orderBy === 'productId' ? order : 'asc'}
-                      onClick={() => handleRequestSort('productId')}
-                    >
-                      Product Id
-                    </TableSortLabel>
+                    {isLoading ? (
+                      <Skeleton variant="text" width="70%" height={24} animation="wave" />
+                    ) : (
+                      <TableSortLabel
+                        active={orderBy === 'productId'}
+                        direction={orderBy === 'productId' ? order : 'asc'}
+                        onClick={() => handleRequestSort('productId')}
+                        disabled={isLoading}
+                      >
+                        Product Id
+                      </TableSortLabel>
+                    )}
                   </TableCell>
                   <TableCell sx={{ py: 1, fontWeight: 'bold' }}>
-                    <TableSortLabel
-                      active={orderBy === 'productType'}
-                      direction={orderBy === 'productType' ? order : 'asc'}
-                      onClick={() => handleRequestSort('productType')}
-                    >
-                      Product Type
-                    </TableSortLabel>
+                    {isLoading ? (
+                      <Skeleton variant="text" width="70%" height={24} animation="wave" />
+                    ) : (
+                      <TableSortLabel
+                        active={orderBy === 'productType'}
+                        direction={orderBy === 'productType' ? order : 'asc'}
+                        onClick={() => handleRequestSort('productType')}
+                        disabled={isLoading}
+                      >
+                        Product Type
+                      </TableSortLabel>
+                    )}
                   </TableCell>
                   <TableCell sx={{ py: 1, fontWeight: 'bold' }}>
-                    <TableSortLabel
-                      active={orderBy === 'productGroup'}
-                      direction={orderBy === 'productGroup' ? order : 'asc'}
-                      onClick={() => handleRequestSort('productGroup')}
-                    >
-                      Product Group
-                    </TableSortLabel>
+                    {isLoading ? (
+                      <Skeleton variant="text" width="70%" height={24} animation="wave" />
+                    ) : (
+                      <TableSortLabel
+                        active={orderBy === 'productGroup'}
+                        direction={orderBy === 'productGroup' ? order : 'asc'}
+                        onClick={() => handleRequestSort('productGroup')}
+                        disabled={isLoading}
+                      >
+                        Product Group
+                      </TableSortLabel>
+                    )}
                   </TableCell>
                   <TableCell sx={{ py: 1, fontWeight: 'bold' }}>
-                    <TableSortLabel
-                      active={orderBy === 'productCategory'}
-                      direction={orderBy === 'productCategory' ? order : 'asc'}
-                      onClick={() => handleRequestSort('productCategory')}
-                    >
-                      Product Category
-                    </TableSortLabel>
+                    {isLoading ? (
+                      <Skeleton variant="text" width="70%" height={24} animation="wave" />
+                    ) : (
+                      <TableSortLabel
+                        active={orderBy === 'productCategory'}
+                        direction={orderBy === 'productCategory' ? order : 'asc'}
+                        onClick={() => handleRequestSort('productCategory')}
+                        disabled={isLoading}
+                      >
+                        Product Category
+                      </TableSortLabel>
+                    )}
                   </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {paginatedRows.map((row) => (
-                  <TableRow
-                    key={row.productMasterId}
-                    onClick={() => setSelectedRow(row)}
-                    sx={{
-                      '&:hover': {
-                        backgroundColor: '#f1f1fa',
-                        cursor: 'pointer',
-                      },
-                    }}
-                  >
-                    <TableCell sx={{ py: 1 }}>{row.productId}</TableCell>
-                    <TableCell sx={{ py: 1 }}>
-                      {row.productType.productTypeDesc}
-                    </TableCell>
-                    <TableCell sx={{ py: 1 }}>
-                      {row.productGroup.productGroupDesc}
-                    </TableCell>
-                    <TableCell sx={{ py: 1 }}>
-                      {row.productCategory.productCategoryDesc}
-                    </TableCell>
-                  </TableRow>
-                ))}
-                {paginatedRows.length === 0 && (
+                {isLoading ? (
+                  renderSkeletonRows()
+                ) : (
+                  paginatedRows.map((row) => (
+                    <TableRow
+                      key={row.productMasterId}
+                      onClick={() => setSelectedRow(row)}
+                      sx={{
+                        '&:hover': {
+                          backgroundColor: '#f1f1fa',
+                          cursor: 'pointer',
+                        },
+                      }}
+                    >
+                      <TableCell sx={{ py: 1 }}>{row.productId}</TableCell>
+                      <TableCell sx={{ py: 1 }}>
+                        {row.productType.productTypeDesc}
+                      </TableCell>
+                      <TableCell sx={{ py: 1 }}>
+                        {row.productGroup.productGroupDesc}
+                      </TableCell>
+                      <TableCell sx={{ py: 1 }}>
+                        {row.productCategory.productCategoryDesc}
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+                {!isLoading && paginatedRows.length === 0 && (
                   <TableRow>
                     <TableCell
                       colSpan={5}
@@ -272,11 +327,12 @@ const CrudTable: React.FC<CrudTableProps> = ({ onEdit }) => {
             </Table>
             <TablePagination
               component="div"
-              count={filteredRows.length}
+              count={isLoading ? 0 : filteredRows.length}
               page={page}
               onPageChange={handleChangePage}
               rowsPerPage={rowsPerPage}
               onRowsPerPageChange={handleChangeRowsPerPage}
+              disabled={isLoading}
             />
           </TableContainer>
         </>

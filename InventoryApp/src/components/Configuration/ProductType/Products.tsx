@@ -19,6 +19,8 @@ import {
   Paper,
   TablePagination,
   TableSortLabel,
+  Skeleton,
+  CircularProgress,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import type {
@@ -34,7 +36,7 @@ import { useQueryClient } from '@tanstack/react-query';
 export default function Products() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { data: productTypes = [] } = useProductTypes();
+  const { data: productTypes = [], isLoading } = useProductTypes();
   // Remove the duplicate state and useEffect that causes the infinite loop
   // Just use productTypes directly instead of copying to another state
   const { mutate } = usePostProductType();
@@ -183,6 +185,22 @@ export default function Products() {
     page * rowsPerPage,
     page * rowsPerPage + rowsPerPage
   );
+  
+  // Skeleton rows for loading state
+  const renderSkeletonRows = () => {
+    return Array(rowsPerPage)
+      .fill(0)
+      .map((_, index) => (
+        <TableRow key={`skeleton-${index}`}>
+          <TableCell sx={{ py: 1 }}>
+            <Skeleton variant="text" width="70%" height={24} animation="wave" />
+          </TableCell>
+          <TableCell sx={{ py: 1 }}>
+            <Skeleton variant="text" width="90%" height={24} animation="wave" />
+          </TableCell>
+        </TableRow>
+      ));
+  };
 
   return (
     <>
@@ -221,6 +239,12 @@ export default function Products() {
               setPage(0); // reset to first page on search
             }}
             sx={{ width: 250 }}
+            disabled={isLoading}
+            InputProps={{
+              endAdornment: isLoading && (
+                <CircularProgress color="inherit" size={20} />
+              ),
+            }}
           />
           <Button
             variant="contained"
@@ -230,7 +254,8 @@ export default function Products() {
               borderRadius: '8px',
               minWidth: '100px',
             }}
-            startIcon={<AddIcon />}
+            startIcon={isLoading ? <CircularProgress size={20} color="inherit" /> : <AddIcon />}
+            disabled={isLoading}
           >
             Add
           </Button>
@@ -242,70 +267,92 @@ export default function Products() {
           <TableHead>
             <TableRow>
               <TableCell sx={{ py: 1.5, fontWeight: 600 }}>
-                <TableSortLabel
-                  active={orderBy === 'productTypeCode'}
-                  direction={orderBy === 'productTypeCode' ? order : 'asc'}
-                  onClick={() => handleRequestSort('productTypeCode')}
-                >
-                  Product Type Code
-                </TableSortLabel>
+                {isLoading ? (
+                  <Skeleton variant="text" width="70%" height={24} animation="wave" />
+                ) : (
+                  <TableSortLabel
+                    active={orderBy === 'productTypeCode'}
+                    direction={orderBy === 'productTypeCode' ? order : 'asc'}
+                    onClick={() => handleRequestSort('productTypeCode')}
+                    disabled={isLoading}
+                  >
+                    Product Type Code
+                  </TableSortLabel>
+                )}
               </TableCell>
               <TableCell sx={{ py: 1.5, fontWeight: 600 }}>
-                <TableSortLabel
-                  active={orderBy === 'productTypeDesc'}
-                  direction={orderBy === 'productTypeDesc' ? order : 'asc'}
-                  onClick={() => handleRequestSort('productTypeDesc')}
-                >
-                  Product Type Description
-                </TableSortLabel>
+                {isLoading ? (
+                  <Skeleton variant="text" width="70%" height={24} animation="wave" />
+                ) : (
+                  <TableSortLabel
+                    active={orderBy === 'productTypeDesc'}
+                    direction={orderBy === 'productTypeDesc' ? order : 'asc'}
+                    onClick={() => handleRequestSort('productTypeDesc')}
+                    disabled={isLoading}
+                  >
+                    Product Type Description
+                  </TableSortLabel>
+                )}
               </TableCell>
               {/* <TableCell sx={{ py: 1.5, fontWeight: 600 }}>Actions</TableCell> */}
             </TableRow>
           </TableHead>
           <TableBody>
-            {paginatedProducts.map((productType: ProductTypeModel) => (
-              <TableRow
-                key={productType.productTypeId}
-                onClick={(event) => {
-                  // Prevent row click if clicking on action buttons
-                  if (
-                    !(event.target as HTMLElement).closest('.action-buttons')
-                  ) {
-                    handleOpen(productType);
-                  }
-                }}
-                sx={{
-                  '&:hover': {
-                    backgroundColor: '#f1f1fa',
-                    cursor: 'pointer',
-                  },
-                }}
-              >
-                <TableCell sx={{ py: 1 }}>
-                  {productType.productTypeCode}
+            {isLoading ? (
+              renderSkeletonRows()
+            ) : (
+              paginatedProducts.map((productType: ProductTypeModel) => (
+                <TableRow
+                  key={productType.productTypeId}
+                  onClick={(event) => {
+                    // Prevent row click if clicking on action buttons
+                    if (
+                      !(event.target as HTMLElement).closest('.action-buttons')
+                    ) {
+                      handleOpen(productType);
+                    }
+                  }}
+                  sx={{
+                    '&:hover': {
+                      backgroundColor: '#f1f1fa',
+                      cursor: 'pointer',
+                    },
+                  }}
+                >
+                  <TableCell sx={{ py: 1 }}>
+                    {productType.productTypeCode}
+                  </TableCell>
+                  <TableCell sx={{ py: 1 }}>
+                    {productType.productTypeDesc}
+                  </TableCell>
+                  {/* <TableCell sx={{ py: 1 }} className="action-buttons">
+                        <IconButton size="small" onClick={() => handleOpen(productType)}>
+                          <EditIcon fontSize="small" />
+                        </IconButton>
+                        <IconButton size="small">
+                          <DeleteIcon fontSize="small" />
+                        </IconButton>
+                      </TableCell> */}
+                </TableRow>
+              ))
+            )}
+            {!isLoading && paginatedProducts.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={2} align="center" sx={{ py: 2 }}>
+                  No data found.
                 </TableCell>
-                <TableCell sx={{ py: 1 }}>
-                  {productType.productTypeDesc}
-                </TableCell>
-                {/* <TableCell sx={{ py: 1 }} className="action-buttons">
-                      <IconButton size="small" onClick={() => handleOpen(productType)}>
-                        <EditIcon fontSize="small" />
-                      </IconButton>
-                      <IconButton size="small">
-                        <DeleteIcon fontSize="small" />
-                      </IconButton>
-                    </TableCell> */}
               </TableRow>
-            ))}
+            )}
           </TableBody>
         </Table>
         <TablePagination
           component="div"
-          count={filteredProducts.length}
+          count={isLoading ? 0 : filteredProducts.length}
           page={page}
           onPageChange={handleChangePage}
           rowsPerPage={rowsPerPage}
           onRowsPerPageChange={handleChangeRowsPerPage}
+          disabled={isLoading}
         />
       </TableContainer>
       {/* Filter popover */}

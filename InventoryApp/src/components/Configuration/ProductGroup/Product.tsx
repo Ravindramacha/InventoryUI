@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box, 
   Button,
@@ -14,7 +14,9 @@ import {
   TablePagination,
   TableSortLabel,
   Snackbar,
-  Alert
+  Alert,
+  Skeleton,
+  CircularProgress
 } from '@mui/material';
 import { Add } from '@mui/icons-material';
 import type { AlertColor } from '@mui/material/Alert';
@@ -42,9 +44,10 @@ type Order = 'asc' | 'desc';
 
 export default function Product() {
   // State variables
-  const [products, setProducts] = useState<Product[]>(initialProducts);
+  const [products, setProducts] = useState<Product[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [order, setOrder] = useState<Order>('asc');
   const [orderBy, setOrderBy] = useState<keyof Product>('name');
   const [page, setPage] = useState(0);
@@ -53,6 +56,27 @@ export default function Product() {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState<AlertColor>('success');
+  
+  // Simulate API call to fetch products
+  React.useEffect(() => {
+    const fetchProducts = async () => {
+      setIsLoading(true);
+      try {
+        // Simulate API delay
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        setProducts(initialProducts);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+        setSnackbarMessage('Failed to load products');
+        setSnackbarSeverity('error');
+        setSnackbarOpen(true);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    fetchProducts();
+  }, []);
   
   // Form submission handler
   const handleSubmit = (data: ProductFormData) => {
@@ -146,6 +170,31 @@ export default function Product() {
     page * rowsPerPage + rowsPerPage
   );
   
+  // Skeleton rows for loading state
+  const renderSkeletonRows = () => {
+    return Array(rowsPerPage)
+      .fill(0)
+      .map((_, index) => (
+        <TableRow key={`skeleton-${index}`}>
+          <TableCell sx={{ py: 1 }}>
+            <Skeleton variant="text" width="70%" height={24} animation="wave" />
+          </TableCell>
+          <TableCell sx={{ py: 1 }}>
+            <Skeleton variant="text" width="90%" height={24} animation="wave" />
+          </TableCell>
+          <TableCell sx={{ py: 1 }}>
+            <Skeleton variant="text" width="50%" height={24} animation="wave" />
+          </TableCell>
+          <TableCell sx={{ py: 1 }}>
+            <Skeleton variant="text" width="40%" height={24} animation="wave" />
+          </TableCell>
+          <TableCell sx={{ py: 1 }}>
+            <Skeleton variant="text" width="30%" height={24} animation="wave" />
+          </TableCell>
+        </TableRow>
+      ));
+  };
+  
   // UI rendering
   return (
     <Box>
@@ -188,16 +237,23 @@ export default function Product() {
                   setPage(0); // reset to first page on search
                 }}
                 sx={{ width: 250 }}
+                disabled={isLoading}
+                InputProps={{
+                  endAdornment: isLoading && (
+                    <CircularProgress color="inherit" size={20} />
+                  ),
+                }}
               />
               <Button
                 variant="contained"
-                startIcon={<Add />}
+                startIcon={isLoading ? <CircularProgress size={20} color="inherit" /> : <Add />}
                 size="small"
                 sx={{
                   borderRadius: '8px',
                   minWidth: '100px',
                 }}
                 onClick={() => setShowForm(true)}
+                disabled={isLoading}
               >
                 Add New
               </Button>
@@ -208,73 +264,102 @@ export default function Product() {
                 <TableHead>
                   <TableRow>
                     <TableCell sx={{ py: 1.5, fontWeight: 600 }}>
-                      <TableSortLabel
-                        active={orderBy === 'name'}
-                        direction={orderBy === 'name' ? order : 'asc'}
-                        onClick={() => handleRequestSort('name')}
-                      >
-                        Name
-                      </TableSortLabel>
+                      {isLoading ? (
+                        <Skeleton variant="text" width="70%" height={24} animation="wave" />
+                      ) : (
+                        <TableSortLabel
+                          active={orderBy === 'name'}
+                          direction={orderBy === 'name' ? order : 'asc'}
+                          onClick={() => handleRequestSort('name')}
+                          disabled={isLoading}
+                        >
+                          Name
+                        </TableSortLabel>
+                      )}
                     </TableCell>
                     <TableCell sx={{ py: 1.5, fontWeight: 600 }}>
-                      <TableSortLabel
-                        active={orderBy === 'description'}
-                        direction={orderBy === 'description' ? order : 'asc'}
-                        onClick={() => handleRequestSort('description')}
-                      >
-                        Description
-                      </TableSortLabel>
+                      {isLoading ? (
+                        <Skeleton variant="text" width="70%" height={24} animation="wave" />
+                      ) : (
+                        <TableSortLabel
+                          active={orderBy === 'description'}
+                          direction={orderBy === 'description' ? order : 'asc'}
+                          onClick={() => handleRequestSort('description')}
+                          disabled={isLoading}
+                        >
+                          Description
+                        </TableSortLabel>
+                      )}
                     </TableCell>
                     <TableCell sx={{ py: 1.5, fontWeight: 600 }}>
-                      <TableSortLabel
-                        active={orderBy === 'category'}
-                        direction={orderBy === 'category' ? order : 'asc'}
-                        onClick={() => handleRequestSort('category')}
-                      >
-                        Category
-                      </TableSortLabel>
+                      {isLoading ? (
+                        <Skeleton variant="text" width="70%" height={24} animation="wave" />
+                      ) : (
+                        <TableSortLabel
+                          active={orderBy === 'category'}
+                          direction={orderBy === 'category' ? order : 'asc'}
+                          onClick={() => handleRequestSort('category')}
+                          disabled={isLoading}
+                        >
+                          Category
+                        </TableSortLabel>
+                      )}
                     </TableCell>
                     <TableCell sx={{ py: 1.5, fontWeight: 600 }}>
-                      <TableSortLabel
-                        active={orderBy === 'group'}
-                        direction={orderBy === 'group' ? order : 'asc'}
-                        onClick={() => handleRequestSort('group')}
-                      >
-                        Group
-                      </TableSortLabel>
+                      {isLoading ? (
+                        <Skeleton variant="text" width="70%" height={24} animation="wave" />
+                      ) : (
+                        <TableSortLabel
+                          active={orderBy === 'group'}
+                          direction={orderBy === 'group' ? order : 'asc'}
+                          onClick={() => handleRequestSort('group')}
+                          disabled={isLoading}
+                        >
+                          Group
+                        </TableSortLabel>
+                      )}
                     </TableCell>
                     <TableCell sx={{ py: 1.5, fontWeight: 600 }}>
-                      <TableSortLabel
-                        active={orderBy === 'price'}
-                        direction={orderBy === 'price' ? order : 'asc'}
-                        onClick={() => handleRequestSort('price')}
-                      >
-                        Price
-                      </TableSortLabel>
+                      {isLoading ? (
+                        <Skeleton variant="text" width="70%" height={24} animation="wave" />
+                      ) : (
+                        <TableSortLabel
+                          active={orderBy === 'price'}
+                          direction={orderBy === 'price' ? order : 'asc'}
+                          onClick={() => handleRequestSort('price')}
+                          disabled={isLoading}
+                        >
+                          Price
+                        </TableSortLabel>
+                      )}
                     </TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {paginatedProducts.map((product) => (
-                    <TableRow
-                      key={product.id}
-                      sx={{
-                        '&:hover': {
-                          backgroundColor: '#f1f1fa',
-                          cursor: 'pointer',
-                        },
-                      }}
-                    >
-                      <TableCell sx={{ py: 1 }}>{product.name}</TableCell>
-                      <TableCell sx={{ py: 1 }}>{product.description}</TableCell>
-                      <TableCell sx={{ py: 1 }}>{product.category || '-'}</TableCell>
-                      <TableCell sx={{ py: 1 }}>{product.group || '-'}</TableCell>
-                      <TableCell sx={{ py: 1 }}>
-                        {product.price ? `$${product.price.toFixed(2)}` : '-'}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                  {paginatedProducts.length === 0 && (
+                  {isLoading ? (
+                    renderSkeletonRows()
+                  ) : (
+                    paginatedProducts.map((product) => (
+                      <TableRow
+                        key={product.id}
+                        sx={{
+                          '&:hover': {
+                            backgroundColor: '#f1f1fa',
+                            cursor: 'pointer',
+                          },
+                        }}
+                      >
+                        <TableCell sx={{ py: 1 }}>{product.name}</TableCell>
+                        <TableCell sx={{ py: 1 }}>{product.description}</TableCell>
+                        <TableCell sx={{ py: 1 }}>{product.category || '-'}</TableCell>
+                        <TableCell sx={{ py: 1 }}>{product.group || '-'}</TableCell>
+                        <TableCell sx={{ py: 1 }}>
+                          {product.price ? `$${product.price.toFixed(2)}` : '-'}
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                  {!isLoading && paginatedProducts.length === 0 && (
                     <TableRow>
                       <TableCell
                         colSpan={5}
@@ -289,12 +374,13 @@ export default function Product() {
               </Table>
               <TablePagination
                 component="div"
-                count={filteredProducts.length}
+                count={isLoading ? 0 : filteredProducts.length}
                 page={page}
                 onPageChange={handleChangePage}
                 rowsPerPage={rowsPerPage}
                 onRowsPerPageChange={handleChangeRowsPerPage}
                 rowsPerPageOptions={[5, 10, 25]}
+                disabled={isLoading}
               />
             </TableContainer>
           </Box>
