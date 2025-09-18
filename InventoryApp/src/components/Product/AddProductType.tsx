@@ -9,13 +9,12 @@ import {
   Paper,
   Snackbar,
   Alert,
-  Backdrop,
-  Autocomplete
+  Backdrop
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import { usePostProductType } from '../../api/ApiQueries';
-import { mockCategories } from '../../Models/CategoryModel';
+import type { PostProductType } from '../../Models/MaterialModel';
 import { 
   useForm, 
   FormProvider, 
@@ -47,10 +46,7 @@ const handleNumericInput = (
 
 const initialFormData: ProductTypeFormData = {
   productCode: '',
-  productName: '',
-  productDescription: '',
-  productCategory: '',
-  productType: ''
+  productDescription: ''
 };
 
 const AddProductType: React.FC = () => {
@@ -100,12 +96,10 @@ const AddProductType: React.FC = () => {
     setBackdropOpen(true);
     
     // Prepare the object for API call
-    const submitData = {
+    const submitData: PostProductType = {
       productTypeCode: data.productCode,
-      productTypeDesc: data.productName,
-      productDescription: data.productDescription || '',
-      productCategory: data.productCategory,
-      productType: data.productType,
+      productTypeDesc: data.productDescription || '', // Use productDescription for the desc field
+      productDescription: data.productDescription || '', // Include this as well to match the interface
       TranscationById: 1 // Assuming a static user ID for now
     };
 
@@ -161,7 +155,7 @@ const AddProductType: React.FC = () => {
               </Grid>
               
               {/* Product Code */}
-              <Grid size={{ xs: 12, sm: 12, md: 6, lg:4 }} >
+              <Grid size={{ xs: 12, sm: 12, md: 6 }} >
                 <Controller
                   name="productCode"
                   control={control}
@@ -200,89 +194,8 @@ const AddProductType: React.FC = () => {
                 />
               </Grid>
               
-              {/* Product Name */}
-              <Grid size={{ xs: 12, sm: 12, md: 6, lg: 4 }}>
-                <Controller
-                  name="productName"
-                  control={control}
-                  render={({ field }) => (
-                    <TextField
-                      {...field}
-                      label="Product Name *"
-                      fullWidth
-                      size="small"
-                      error={!!errors.productName}
-                      helperText={errors.productName?.message}
-                      inputProps={{ 
-                        maxLength: 100
-                      }}
-                      onChange={(e) => {
-                        field.onChange(e);
-                      }}
-                    />
-                  )}
-                />
-              </Grid>
-              
-              {/* Product Category */}
-              <Grid size={{ xs: 12, sm: 12, md: 6, lg:4 }}>
-                <Controller
-                  name="productCategory"
-                  control={control}
-                  render={({ field }) => (
-                    <Autocomplete
-                      options={mockCategories}
-                      getOptionLabel={(option) => 
-                        typeof option === 'string' ? option : option.categoryName
-                      }
-                      isOptionEqualToValue={(option, value) =>
-                        option.categoryId === value.categoryId
-                      }
-                      renderInput={(params) => (
-                        <TextField
-                          {...params}
-                          label="Product Category *"
-                          size="small"
-                          error={!!errors.productCategory}
-                          helperText={errors.productCategory?.message}
-                        />
-                      )}
-                      onChange={(_, newValue) => {
-                        if (newValue) {
-                          field.onChange(newValue.categoryCode);
-                        } else {
-                          field.onChange('');
-                        }
-                      }}
-                      fullWidth
-                    />
-                  )}
-                />
-              </Grid>
-              
-              {/* Product Type */}
-              <Grid size={{ xs: 12, sm: 12, md: 6, lg: 4 }}>
-                <Controller
-                  name="productType"
-                  control={control}
-                  render={({ field }) => (
-                    <TextField
-                      {...field}
-                      label="Product Type *"
-                      fullWidth
-                      size="small"
-                      error={!!errors.productType}
-                      helperText={errors.productType?.message}
-                      onChange={(e) => {
-                        field.onChange(e);
-                      }}
-                    />
-                  )}
-                />
-              </Grid>
-              
               {/* Product Description */}
-              <Grid size={{ xs: 12, sm: 12, md: 6, lg: 8 }}>
+              <Grid size={{ xs: 12, sm: 12, md: 6 }}>
                 <Controller
                   name="productDescription"
                   control={control}
