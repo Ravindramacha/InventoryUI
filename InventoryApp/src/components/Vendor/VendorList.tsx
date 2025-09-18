@@ -23,7 +23,7 @@ import VendorDetails from './VendorDetails';
 type Mode = 'add' | 'edit' | 'view';
 
 interface VendorListProps {
-  onEdit?: (data: ReadVendorFormModel) => void;
+  onEdit?: (data: ReadVendorFormModel | null) => void;
 }
 
 type Order = 'asc' | 'desc';
@@ -60,22 +60,8 @@ const VendorList: React.FC<VendorListProps> = ({ onEdit }) => {
   }
 
   function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
-    let aValue = a[orderBy];
-    let bValue = b[orderBy];
-
-    // Handle nested properties for productType, productGroup, and productCategory
-    if (orderBy === ('productType' as keyof T))
-      aValue = (a as any).productType.productTypeDesc;
-    if (orderBy === ('productGroup' as keyof T))
-      aValue = (a as any).productGroup.productGroupDesc;
-    if (orderBy === ('productCategory' as keyof T))
-      aValue = (a as any).productCategory.productCategoryDesc;
-    if (orderBy === ('productType' as keyof T))
-      bValue = (b as any).productType.productTypeDesc;
-    if (orderBy === ('productGroup' as keyof T))
-      bValue = (b as any).productGroup.productGroupDesc;
-    if (orderBy === ('productCategory' as keyof T))
-      bValue = (b as any).productCategory.productCategoryDesc;
+    const aValue = a[orderBy];
+    const bValue = b[orderBy];
 
     if (bValue < aValue) {
       return -1;
@@ -267,7 +253,7 @@ const VendorList: React.FC<VendorListProps> = ({ onEdit }) => {
           <VendorDetails
             onBack={() => setSelectedRow(null)}
             onEdit={(vendor) =>
-              onEdit ? onEdit(vendor) : handleOpenDrawer('edit', vendor)
+              onEdit ? onEdit(vendor) : vendor && handleOpenDrawer('edit', vendor)
             }
             vendorId={selectedRow.vendorId}
           />
