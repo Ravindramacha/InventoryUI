@@ -15,7 +15,7 @@ import {
 } from '@mui/material';
 import { Add } from '@mui/icons-material';
 import { useGetAllVendorForm } from '../../api/ApiQueries';
-import ProductMasterView from '../Configuration/Product/ProductMasterView';
+import ProductMasterView from '../Configuration/ProductGroup/ProductMasterView';
 import type { ReadVendorFormModel } from '../../Models/VendorModel';
 import VendorFormV2 from '../VendorFormV2/VendorFormV2';
 import type { VendorFormType } from '../VendorFormV2/VendorFormSchema';

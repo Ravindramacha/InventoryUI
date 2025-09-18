@@ -16,8 +16,8 @@ import {
 import { Add } from '@mui/icons-material';
 import { useGetAllProductMasterForm } from '../../api/ApiQueries';
 import type { ReadProductMasterForm } from '../../Models/MaterialModel';
-import ProductMasterView from '../Configuration/Product/ProductMasterView';
-import ProductDetails from '../Configuration/Product/ProductDetails';
+import ProductMasterView from '../Configuration/ProductGroup/ProductMasterView';
+import ProductDetails from '../Configuration/ProductGroup/ProductDetails';
 import ApplicationForm from '../common/ApplicationForm';
 
 type Mode = 'add' | 'edit' | 'view';

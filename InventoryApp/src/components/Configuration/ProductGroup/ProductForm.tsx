@@ -96,7 +96,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
           size="small"
           sx={{ borderRadius: '8px', minWidth: '100px' }}
         >
-          Cancel
+          Back
         </Button>
       </Box>
       

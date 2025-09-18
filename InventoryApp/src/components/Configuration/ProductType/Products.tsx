@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useNotification } from '../../context/NotificationContext';
+import { useNotification } from '../../../context/NotificationContext';
 import {
   Button,
   Dialog,
@@ -24,8 +24,8 @@ import AddIcon from '@mui/icons-material/Add';
 import type {
   PostProductType,
   ProductTypeModel,
-} from '../../Models/MaterialModel';
-import { usePostProductType, useProductTypes } from '../../api/ApiQueries';
+} from '../../../Models/MaterialModel';
+import { usePostProductType, useProductTypes } from '../../../api/ApiQueries';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import type { AlertColor } from '@mui/material/Alert';

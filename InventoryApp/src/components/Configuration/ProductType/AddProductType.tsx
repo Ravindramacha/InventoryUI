@@ -13,8 +13,8 @@ import {
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
-import { usePostProductType } from '../../api/ApiQueries';
-import type { PostProductType } from '../../Models/MaterialModel';
+import { usePostProductType } from '../../../api/ApiQueries';
+import type { PostProductType } from '../../../Models/MaterialModel';
 import { 
   useForm, 
   FormProvider, 
