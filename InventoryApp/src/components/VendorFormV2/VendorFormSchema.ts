@@ -77,7 +77,7 @@ export const VendorFormSchema = z.object({
   comments: z.string().optional().nullable(),
 
   salesStatusId: z.number().nullable(),
-  paymentId: z.number().optional().nullable(),
+  paymentId: z.string().optional().nullable(),
 
   taxInformationDto: z.array(TaxInformationSchema).min(1, "Add at least 1 tax record"),
   bankDetailDto: z.array(BankSchema).min(1, "Add at least 1 bank record"),

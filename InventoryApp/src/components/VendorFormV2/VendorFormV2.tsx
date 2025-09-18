@@ -166,6 +166,8 @@ const VendorFormV2: React.FC<VendorFormPageProps> = ({
       });
       hasError = true;
     }
+    
+    // Payment ID is now a text field, no validation required
 
     // Validate phone numbers
     if (data.phoneNumber1 && !/^[0-9+\-()\s]+$/.test(data.phoneNumber1)) {
@@ -237,7 +239,7 @@ const VendorFormV2: React.FC<VendorFormPageProps> = ({
       phoneNumber1: data.phoneNumber1 ?? "",
       phoneNumber2: data.phoneNumber2 ?? "",
       phoneNumber3: data.phoneNumber3 ?? "",
-      paymentId: data.paymentId ?? null,
+      paymentId: data.paymentId ? Number(data.paymentId) : null,
       fax: data.fax ?? "",
       email1: data.email1 ?? "",
       email2: data.email2 ?? "",
@@ -924,9 +926,13 @@ const VendorFormV2: React.FC<VendorFormPageProps> = ({
                     {...field}
                     fullWidth
                     size="small"
+                    type="text"
                     label="Payment Terms"
                     error={!!errors.paymentId}
                     helperText={errors.paymentId?.message}
+                    onChange={(e) => {
+                      field.onChange(e.target.value); // Keep as string value
+                    }}
                   />
                 )}
               />
