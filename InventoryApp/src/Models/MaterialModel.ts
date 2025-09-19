@@ -53,6 +53,9 @@ export interface ProductTypeModel {
 export interface PostProductType {
   productTypeCode: string;
   productTypeDesc: string;
+  productDescription?: string;
+  productCategory?: string;
+  productType?: string;
   TranscationById: number; // Assuming this is the user ID performing the transaction
 }
 

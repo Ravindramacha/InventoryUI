@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   Stack,
   TextField,
@@ -31,14 +31,17 @@ const TaxInformation: React.FC<TaxInformationProps> = ({
   ];
 
   const [rows, setRows] = useState<TaxInformationModel[]>(initialRows);
-  console.log(rows);
+  // console.log(rows);
   const [nextId, setNextId] = useState(
     initialRows.length > 0 ? Math.max(...initialRows.map(r => r.id)) + 1 : 1
   );
 
-  useEffect(() => {
-    onChange?.(rows);
-  }, [rows, onChange]);
+  // Only call onChange when rows actually change due to user interaction
+  // Not on every render or when the component receives new props
+  const notifyChanges = (updatedRows: TaxInformationModel[]) => {
+    setRows(updatedRows);
+    onChange?.(updatedRows);
+  };
 
 const handleChange = <K extends keyof TaxInformationModel>(
   id: number,
@@ -48,7 +51,7 @@ const handleChange = <K extends keyof TaxInformationModel>(
   const updated = rows.map((row) =>
     row.id === id ? { ...row, [field]: value } : row
   );
-  setRows(updated);
+  notifyChanges(updated);
 };
 
   const handleAddRow = (index: number) => {
@@ -67,14 +70,14 @@ const handleChange = <K extends keyof TaxInformationModel>(
         newRow,
         ...rows.slice(index + 1),
       ];
-      setRows(updated);
+      notifyChanges(updated);
     }
   };
 
   const handleDeleteRow = (id: number) => {
     if (rows.length === 1) return;
     const updated = rows.filter((row) => row.id !== id);
-    setRows(updated);
+    notifyChanges(updated);
   };
 
   return (

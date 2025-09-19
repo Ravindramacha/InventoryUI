@@ -3,7 +3,6 @@ import {
   TextField,
   Button,
   Typography,
-  Grid,
   Box,
   Autocomplete,
   Alert,
@@ -11,10 +10,10 @@ import {
   CircularProgress,
   Backdrop,
 } from "@mui/material";
+import Grid from "@mui/material/Grid";
 import {
   countryList,
   stateList,
-  type BankDetailDto,
   type TaxInformationDto,
 } from "../../Models/VendorModel";
 //import TaxInformation from "../Vendor/TaxInformation";
@@ -53,54 +52,93 @@ const VendorFormV2: React.FC<VendorFormPageProps> = ({
   vendorId = 0,
 }) => {
   const queryClient = useQueryClient();
+  
+  // Helper function to validate and filter numeric input
+  const handleNumericInput = (
+    e: React.ChangeEvent<HTMLInputElement>, 
+    allowedChars: RegExp, 
+    fieldName: string,
+    setError: any
+  ) => {
+    const value = e.target.value;
+    
+    if (value && !allowedChars.test(value)) {
+      // Instead of modifying the input directly, let React-Hook-Form handle it
+      // Set a manual error for immediate feedback
+      setError(fieldName, {
+        type: "manual",
+        message: "Invalid characters detected"
+      });
+      
+      // Remove the last character that was invalid
+      e.target.value = value.slice(0, -1);
+    }
+  };
 
   const initialTaxInformationRows: TaxInformationDto[] = [
     { id: Date.now(), countryId: null, category: "", name: "", taxNumber: "" },
   ];
 
-  const initialBankRows: BankDetailDto[] = [
+  const initialBankRows = [
     {
       id: Date.now(),
       bankName: "",
       accountNumber: "",
+      primary: false,
       routingNumber: "",
       accountName: "",
       phoneNumber: "",
-      primary: false,
-    },
+    }
   ];
-
-  const defaultValues: VendorFormType = {
-    ...(initialData ?? {
-      vendorId: 0,
-      companyName1: "",
-      companyName2: "",
-      dba: "",
-      keyWord: "",
-      houseNumber: "",
-      streetName: "",
-      buildingName: "",
-      landmark: "",
-      countryId: null,
-      stateId: null,
-      zipCode: "",
-      digiPin: "",
-      mapsUrl: "",
-      languageId: null,
-      phoneNumber1: "",
-      phoneNumber2: "",
-      phoneNumber3: "",
-      fax: "",
-      email1: "",
-      email2: "",
-      email3: "",
-      comments: "",
-      salesStatusId: null,
-      paymentId: null,
-      taxInformationDto: initialTaxInformationRows,
-      bankDetailDto: initialBankRows,
-    }),
-  };
+ 
+  // Process initialData to ensure all fields have the correct types
+  const processedInitialData = initialData ? {
+    ...initialData,
+    // Ensure paymentId is a string
+    paymentId: initialData.paymentId !== null && initialData.paymentId !== undefined
+      ? String(initialData.paymentId)
+      : null,
+      
+    // Ensure other nullable fields are properly handled
+    countryId: initialData.countryId ?? null,
+    stateId: initialData.stateId ?? null,
+    languageId: initialData.languageId ?? null,
+    salesStatusId: initialData.salesStatusId ?? null,
+  } : null;
+  
+  // Log processed initial data to ensure payment ID is correct
+  console.log("Processed initialData:", processedInitialData);
+  
+  // Fix the defaultValues issue by using a type assertion
+  const defaultValues = (processedInitialData ? processedInitialData : {
+    vendorId: 0,
+    companyName1: "",
+    companyName2: "",
+    dba: "",
+    keyWord: "",
+    houseNumber: "",
+    streetName: "",
+    buildingName: "",
+    landmark: "",
+    countryId: null,
+    stateId: null,
+    zipCode: "",
+    digiPin: "",
+    mapsUrl: "",
+    languageId: null,
+    phoneNumber1: "",
+    phoneNumber2: "",
+    phoneNumber3: "",
+    fax: "",
+    email1: "",
+    email2: "",
+    email3: "",
+    comments: "",
+    salesStatusId: null,
+    paymentId: null,
+    taxInformationDto: initialTaxInformationRows,
+    bankDetailDto: initialBankRows
+  }) as VendorFormType;
 
   const methods = useForm<VendorFormType>({
     resolver: zodResolver(VendorFormSchema) as any,
@@ -108,7 +146,7 @@ const VendorFormV2: React.FC<VendorFormPageProps> = ({
     mode: "onTouched",
   });
 
-  const { control, handleSubmit, reset, watch, setValue, formState } = methods;
+  const { control, handleSubmit, reset, watch, formState, setError } = methods;
   const { errors, isSubmitting } = formState;
 
   const selectedCountryId = watch("countryId");
@@ -118,6 +156,7 @@ const VendorFormV2: React.FC<VendorFormPageProps> = ({
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error">("success");
   const [backdropOpen, setBackdropOpen] = useState(false);
+  const [isSubmittingForm, setIsSubmittingForm] = useState(false);
 
   const { data: salesStatuses = [] } = useSalesStatus();
   const { data: languages = [] } = useLanguages();
@@ -125,8 +164,84 @@ const VendorFormV2: React.FC<VendorFormPageProps> = ({
   const { mutate: updateMutate } = usePutVendorForm();
   const { mutate } = usePostVendorForm();
 
+  // Helper function to validate all numeric fields
+  const validateNumericFields = (data: VendorFormType) => {
+    let hasError = false;
+
+    // Validate zip code
+    if (data.zipCode && !/^[0-9-\s]+$/.test(data.zipCode)) {
+      setError("zipCode", {
+        type: "manual",
+        message: "Zip Code must contain only digits, hyphens, and spaces"
+      });
+      hasError = true;
+    }
+
+    // Validate digi pin
+    if (data.digiPin && !/^[0-9]*$/.test(data.digiPin)) {
+      setError("digiPin", {
+        type: "manual",
+        message: "Digi Pin must contain only digits"
+      });
+      hasError = true;
+    }
+    
+    // Payment ID is now a text field, no validation required
+
+    // Validate phone numbers
+    if (data.phoneNumber1 && !/^[0-9+\-()\s]+$/.test(data.phoneNumber1)) {
+      setError("phoneNumber1", {
+        type: "manual",
+        message: "Phone Number must contain only digits and symbols like +, -, (, )"
+      });
+      hasError = true;
+    }
+
+    // Validate bank account details
+    data.bankDetailDto.forEach((bank, index) => {
+      if (bank.accountNumber && !/^[0-9]+$/.test(bank.accountNumber)) {
+        setError(`bankDetailDto.${index}.accountNumber`, {
+          type: "manual",
+          message: "Account Number must contain only digits"
+        });
+        hasError = true;
+      }
+      
+      if (bank.routingNumber && !/^[0-9]*$/.test(bank.routingNumber)) {
+        setError(`bankDetailDto.${index}.routingNumber`, {
+          type: "manual",
+          message: "Routing Number must contain only digits"
+        });
+        hasError = true;
+      }
+    });
+
+    // Validate tax information
+    data.taxInformationDto.forEach((tax, index) => {
+      if (tax.taxNumber && !/^[0-9a-zA-Z\-]*$/.test(tax.taxNumber)) {
+        setError(`taxInformationDto.${index}.taxNumber`, {
+          type: "manual",
+          message: "Tax Number must contain only alphanumeric characters and hyphens"
+        });
+        hasError = true;
+      }
+    });
+
+    return !hasError; // Return true if all validations pass
+  };
+
   const onSubmit = (data: VendorFormType) => {
+    // Run additional validations before submitting
+    if (!validateNumericFields(data)) {
+      setSnackbarMessage("Please correct validation errors before submitting");
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
+      return;
+    }
+    
+    // Show both the backdrop and set submission state to true
     setBackdropOpen(true);
+    setIsSubmittingForm(true);
     // Ensure all string fields are not null/undefined
     const submitData = {
       ...data,
@@ -145,7 +260,7 @@ const VendorFormV2: React.FC<VendorFormPageProps> = ({
       phoneNumber1: data.phoneNumber1 ?? "",
       phoneNumber2: data.phoneNumber2 ?? "",
       phoneNumber3: data.phoneNumber3 ?? "",
-      paymentId: data.paymentId ?? null,
+      paymentId: data.paymentId ? Number(data.paymentId) : null,
       fax: data.fax ?? "",
       email1: data.email1 ?? "",
       email2: data.email2 ?? "",
@@ -174,17 +289,25 @@ const VendorFormV2: React.FC<VendorFormPageProps> = ({
         {
           onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["GetVendorFormById", vendorId] });
+            queryClient.invalidateQueries({ queryKey: ["readVendorForm"] }); // Also invalidate vendor list
             setSnackbarMessage("Vendor Form updated successfully!");
             setSnackbarSeverity("success");
             setSnackbarOpen(true);
-            if (onCancel) onCancel();
+            
+            // Short delay to show success message before redirecting
+            setTimeout(() => {
+              if (onCancel) onCancel();
+            }, 1000);
           },
           onError: (error: any) => {
             setSnackbarMessage(`Failed to update: ${error?.message ?? "Unknown error"}`);
             setSnackbarSeverity("error");
             setSnackbarOpen(true);
           },
-          onSettled: () => setBackdropOpen(false),
+          onSettled: () => {
+            setBackdropOpen(false);
+            setIsSubmittingForm(false);
+          },
         }
       );
     } else {
@@ -195,14 +318,21 @@ const VendorFormV2: React.FC<VendorFormPageProps> = ({
           setSnackbarSeverity("success");
           setSnackbarOpen(true);
           reset(defaultValues);
-          if (onCancel) onCancel();
+          
+          // Short delay to show success message before redirecting
+          setTimeout(() => {
+            if (onCancel) onCancel();
+          }, 1000);
         },
         onError: (error: any) => {
           setSnackbarMessage(`Failed to submit: ${error?.message ?? "Unknown error"}`);
           setSnackbarSeverity("error");
           setSnackbarOpen(true);
         },
-        onSettled: () => setBackdropOpen(false),
+        onSettled: () => {
+          setBackdropOpen(false);
+          setIsSubmittingForm(false);
+        },
       });
     }
   };
@@ -224,6 +354,7 @@ const VendorFormV2: React.FC<VendorFormPageProps> = ({
           variant="outlined"
           color="primary"
           onClick={onCancel}
+          disabled={isSubmittingForm}
           size="small"
           sx={{ borderRadius: "8px", minWidth: "100px" }}
         >
@@ -235,13 +366,13 @@ const VendorFormV2: React.FC<VendorFormPageProps> = ({
         <form onSubmit={handleSubmit(onSubmit)}>
           <Grid container spacing={2}>
             {/* ---------------- NAME ---------------- */}
-            <Grid  size={{ xs: 12}} >
+            <Grid size={{ xs:12}}>
               <Typography variant="body1" gutterBottom>
                 Name
               </Typography>
             </Grid>
 
-            <Grid size={{ xs: 12, sm: 12, md: 6, lg: 4 }} >
+            <Grid size={{ xs: 12, sm: 12, md: 6, lg: 4 }}>
               <Controller
                 name="companyName1"
                 control={control}
@@ -327,6 +458,10 @@ const VendorFormV2: React.FC<VendorFormPageProps> = ({
                     label="House Number"
                     error={!!errors.houseNumber}
                     helperText={errors.houseNumber?.message}
+                    inputProps={{ 
+                      pattern: "[0-9a-zA-Z\\-/\s]+",
+                      title: "House Number can contain only alphanumeric characters, hyphens, and slashes"
+                    }}
                   />
                 )}
               />
@@ -448,6 +583,29 @@ const VendorFormV2: React.FC<VendorFormPageProps> = ({
                     label="Zip Code"
                     error={!!errors.zipCode}
                     helperText={errors.zipCode?.message}
+                    inputProps={{ 
+                      pattern: "[0-9-\\s]+",
+                      title: "Zip Code must contain only digits, hyphens, and spaces"
+                    }}
+                    onChange={(e) => {
+                      field.onChange(e);
+                      handleNumericInput(
+                        e as React.ChangeEvent<HTMLInputElement>, 
+                        /^[0-9\-\s]*$/, 
+                        "zipCode",
+                        setError
+                      );
+                    }}
+                    onBlur={() => {
+                      // Validate on blur as well for better UX
+                      const value = field.value;
+                      if (value && !/^[0-9\-\s]+$/.test(value)) {
+                        setError("zipCode", {
+                          type: "manual",
+                          message: "Zip Code must contain only digits, hyphens, and spaces"
+                        });
+                      }
+                    }}
                   />
                 )}
               />
@@ -464,6 +622,29 @@ const VendorFormV2: React.FC<VendorFormPageProps> = ({
                     label="Digi Pin"
                     error={!!errors.digiPin}
                     helperText={errors.digiPin?.message}
+                    inputProps={{ 
+                      pattern: "[0-9]*",
+                      title: "Digi Pin must contain only digits"
+                    }}
+                    onChange={(e) => {
+                      field.onChange(e);
+                      handleNumericInput(
+                        e as React.ChangeEvent<HTMLInputElement>, 
+                        /^[0-9]*$/,
+                        "digiPin",
+                        setError
+                      );
+                    }}
+                    onBlur={() => {
+                      // Validate on blur for better UX
+                      const value = field.value;
+                      if (value && !/^[0-9]*$/.test(value)) {
+                        setError("digiPin", {
+                          type: "manual",
+                          message: "Digi Pin must contain only digits"
+                        });
+                      }
+                    }}
                   />
                 )}
               />
@@ -533,6 +714,29 @@ const VendorFormV2: React.FC<VendorFormPageProps> = ({
                     label="Phone Number 1"
                     error={!!errors.phoneNumber1}
                     helperText={errors.phoneNumber1?.message}
+                    inputProps={{ 
+                      pattern: "[0-9+\\-()\s]+",
+                      title: "Phone Number must contain only digits and symbols like +, -, (, )"
+                    }}
+                    onChange={(e) => {
+                      field.onChange(e);
+                      handleNumericInput(
+                        e as React.ChangeEvent<HTMLInputElement>, 
+                        /^[0-9+\-()\s]*$/,
+                        "phoneNumber1",
+                        setError
+                      );
+                    }}
+                    onBlur={() => {
+                      // Validate on blur for better UX
+                      const value = field.value;
+                      if (value && !/^[0-9+\-()\s]+$/.test(value)) {
+                        setError("phoneNumber1", {
+                          type: "manual",
+                          message: "Phone Number must contain only digits and symbols like +, -, (, )"
+                        });
+                      }
+                    }}
                   />
                 )}
               />
@@ -549,6 +753,19 @@ const VendorFormV2: React.FC<VendorFormPageProps> = ({
                     label="Phone Number 2"
                     error={!!errors.phoneNumber2}
                     helperText={errors.phoneNumber2?.message}
+                    inputProps={{ 
+                      pattern: "[0-9+\\-()\s]*",
+                      title: "Phone Number must contain only digits and symbols like +, -, (, )"
+                    }}
+                    onChange={(e) => {
+                      field.onChange(e);
+                      handleNumericInput(
+                        e as React.ChangeEvent<HTMLInputElement>, 
+                        /^[0-9+\-()\s]*$/,
+                        "phoneNumber2",
+                        setError
+                      );
+                    }}
                   />
                 )}
               />
@@ -565,6 +782,19 @@ const VendorFormV2: React.FC<VendorFormPageProps> = ({
                     label="Phone Number 3"
                     error={!!errors.phoneNumber3}
                     helperText={errors.phoneNumber3?.message}
+                    inputProps={{ 
+                      pattern: "[0-9+\\-()\s]*",
+                      title: "Phone Number must contain only digits and symbols like +, -, (, )"
+                    }}
+                    onChange={(e) => {
+                      field.onChange(e);
+                      handleNumericInput(
+                        e as React.ChangeEvent<HTMLInputElement>, 
+                        /^[0-9+\-()\s]*$/, 
+                        "phoneNumber3",
+                        setError
+                      );
+                    }}
                   />
                 )}
               />
@@ -581,6 +811,19 @@ const VendorFormV2: React.FC<VendorFormPageProps> = ({
                     label="Fax"
                     error={!!errors.fax}
                     helperText={errors.fax?.message}
+                    inputProps={{ 
+                      pattern: "[0-9+\\-()\s]*",
+                      title: "Fax number must contain only digits and symbols like +, -, (, )"
+                    }}
+                    onChange={(e) => {
+                      field.onChange(e);
+                      handleNumericInput(
+                        e as React.ChangeEvent<HTMLInputElement>, 
+                        /^[0-9+\-()\s]*$/, 
+                        "fax",
+                        setError
+                      );
+                    }}
                   />
                 )}
               />
@@ -715,16 +958,24 @@ const VendorFormV2: React.FC<VendorFormPageProps> = ({
               <Controller
                 name="paymentId"
                 control={control}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    fullWidth
-                    size="small"
-                    label="Payment Terms"
-                    error={!!errors.paymentId}
-                    helperText={errors.paymentId?.message}
-                  />
-                )}
+                render={({ field }) => {
+               
+                  return (
+                    <TextField
+                      {...field}
+                      fullWidth
+                      size="small"
+                      type="text"
+                      label="Payment Terms"
+                      error={!!errors.paymentId}
+                      helperText={errors.paymentId?.message}
+                      value={field.value !== null && field.value !== undefined ? field.value : ''} // Ensure value is never null or undefined
+                      onChange={(e) => {
+                        field.onChange(e.target.value); // Keep as string value
+                      }}
+                    />
+                  );
+                }}
               />
             </Grid>
 
@@ -734,11 +985,11 @@ const VendorFormV2: React.FC<VendorFormPageProps> = ({
                 variant="contained"
                 color="primary"
                 type="submit"
-                disabled={isSubmitting}
+                disabled={isSubmitting || isSubmittingForm}
                 size="small"
                 sx={{ borderRadius: "8px", minWidth: "100px" }}
               >
-                {isSubmitting ? (
+                {isSubmitting || isSubmittingForm ? (
                   <CircularProgress size={20} color="inherit" />
                 ) : mode === "add" ? (
                   "Submit"
@@ -750,7 +1001,7 @@ const VendorFormV2: React.FC<VendorFormPageProps> = ({
                 variant="outlined"
                 color="secondary"
                 onClick={() => reset(defaultValues)}
-                disabled={isSubmitting}
+                disabled={isSubmitting || isSubmittingForm}
                 size="small"
                 sx={{ ml: 2, borderRadius: "8px", minWidth: "100px" }}
               >
@@ -759,12 +1010,17 @@ const VendorFormV2: React.FC<VendorFormPageProps> = ({
             </Grid>
           </Grid>
 
-          {/* Backdrop Loader */}
+          {/* Backdrop Loader for field validations and minor operations */}
           <Backdrop
             open={backdropOpen}
             sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
           >
-            <CircularProgress color="inherit" />
+            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+              <CircularProgress color="inherit" size={50} />
+              <Typography variant="h6" color="white">
+                {isSubmittingForm ? 'Saving vendor data...' : 'Processing...'}
+              </Typography>
+            </Box>
           </Backdrop>
 
           {/* Snackbar */}
