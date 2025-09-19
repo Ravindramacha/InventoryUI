@@ -15,14 +15,12 @@ import Product from './components/Configuration/ProductGroup/Product';
 import Home from './components/Home';
 import VendorList from './components/Vendor/VendorList';
 import VendorFormV2 from './components/VendorFormV2/VendorFormV2';
-import ChatUI from './components/ChatUI/ChatUI';
 
 const AppContent: React.FC = () => (
   <Routes>
     <Route path="/login" element={<SignIn />} />
     <Route element={<MainLayout />}>
       <Route path="/home" element={<Home />} />
-      <Route path="/chat" element={<ChatUI />} />
       <Route path="/profile" element={<Profile />} />
       <Route path="/profile/update" element={<ProfileUpdate />} />
       <Route path="/notifications" element={<NotificationList />} />
