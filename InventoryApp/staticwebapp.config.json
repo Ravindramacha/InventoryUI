@@ -15,7 +15,8 @@
   "routes": [
     {
       "route": "/api/*",
-      "rewrite": "https://inventory-webapi-dev.azurewebsites.net/api/{*path}"
+      "rewrite": "https://inventory-webapi-dev.azurewebsites.net/api/{*path}",
+      "allowedRoles": ["anonymous"]
     }
   ]
 }
