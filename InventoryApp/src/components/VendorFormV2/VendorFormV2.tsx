@@ -75,40 +75,28 @@ const VendorFormV2: React.FC<VendorFormPageProps> = ({
     }
   };
 
-  const initialTaxInformationRows: TaxInformationDto[] = [
-    { id: Date.now(), countryId: null, category: "", name: "", taxNumber: "" },
-  ];
-
-  const initialBankRows = [
-    {
-      id: Date.now(),
-      bankName: "",
-      accountNumber: "",
-      primary: false,
-      routingNumber: "",
-      accountName: "",
-      phoneNumber: "",
-    }
-  ];
  
   // Process initialData to ensure all fields have the correct types
   const processedInitialData = initialData ? {
     ...initialData,
-    // Ensure paymentId is a string
     paymentId: initialData.paymentId !== null && initialData.paymentId !== undefined
       ? String(initialData.paymentId)
       : null,
-      
-    // Ensure other nullable fields are properly handled
     countryId: initialData.countryId ?? null,
     stateId: initialData.stateId ?? null,
     languageId: initialData.languageId ?? null,
     salesStatusId: initialData.salesStatusId ?? null,
+    taxInformationDto: (initialData.taxInformationDto || []).map((row) => ({
+      ...row,
+      id: typeof row.id === 'number' && !isNaN(row.id) ? row.id : Date.now(),
+    })),
+    bankDetailDto: (initialData.bankDetailDto || []).map((row) => ({
+      ...row,
+      id: typeof row.id === 'number' && !isNaN(row.id) ? row.id : Date.now(),
+      primary: typeof row.primary === 'boolean' ? row.primary : false,
+    })),
   } : null;
-  
-  // Log processed initial data to ensure payment ID is correct
-  console.log("Processed initialData:", processedInitialData);
-  
+    
   // Fix the defaultValues issue by using a type assertion
   const defaultValues = (processedInitialData ? processedInitialData : {
     vendorId: 0,
@@ -136,9 +124,22 @@ const VendorFormV2: React.FC<VendorFormPageProps> = ({
     comments: "",
     salesStatusId: null,
     paymentId: null,
-    taxInformationDto: initialTaxInformationRows,
-    bankDetailDto: initialBankRows
+    taxInformationDto: [
+      { id: Date.now(), countryId: null, category: "", name: "", taxNumber: "" }
+    ].map(row => ({
+      ...row,
+      id: typeof row.id === 'number' && !isNaN(row.id) ? row.id : Date.now(),
+    })),
+    bankDetailDto: [
+      { id: Date.now(), bankName: "", accountNumber: "", primary: false, routingNumber: "", accountName: "", phoneNumber: "" }
+    ].map(row => ({
+      ...row,
+      id: typeof row.id === 'number' && !isNaN(row.id) ? row.id : Date.now(),
+      primary: typeof row.primary === 'boolean' ? row.primary : false,
+    })),
   }) as VendorFormType;
+
+  // Debug: log the final defaultValues
 
   const methods = useForm<VendorFormType>({
     resolver: zodResolver(VendorFormSchema) as any,
@@ -146,7 +147,7 @@ const VendorFormV2: React.FC<VendorFormPageProps> = ({
     mode: "onTouched",
   });
 
-  const { control, handleSubmit, reset, watch, formState, setError } = methods;
+  const { control, handleSubmit, reset, watch, formState, setError, trigger } = methods;
   const { errors, isSubmitting } = formState;
 
   const selectedCountryId = watch("countryId");
@@ -230,19 +231,23 @@ const VendorFormV2: React.FC<VendorFormPageProps> = ({
     return !hasError; // Return true if all validations pass
   };
 
-  const onSubmit = (data: VendorFormType) => {
-    // Run additional validations before submitting
+  const onSubmit = async (data: VendorFormType) => {
     if (!validateNumericFields(data)) {
       setSnackbarMessage("Please correct validation errors before submitting");
       setSnackbarSeverity("error");
       setSnackbarOpen(true);
       return;
     }
-    
-    // Show both the backdrop and set submission state to true
+    // Double-check react-hook-form validation
+    const valid = await trigger();
+    if (!valid) {
+      setSnackbarMessage("Form validation failed. Please check all fields.");
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
+      return;
+    }
     setBackdropOpen(true);
     setIsSubmittingForm(true);
-    // Ensure all string fields are not null/undefined
     const submitData = {
       ...data,
       dba: data.dba ?? "",
@@ -281,7 +286,6 @@ const VendorFormV2: React.FC<VendorFormPageProps> = ({
         phoneNumber: row.phoneNumber ?? "",
         primary: row.primary ?? false,
       })),
-      // Add other fields as needed
     };
     if (mode === "edit" && vendorId) {
       updateMutate(
@@ -289,12 +293,10 @@ const VendorFormV2: React.FC<VendorFormPageProps> = ({
         {
           onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["GetVendorFormById", vendorId] });
-            queryClient.invalidateQueries({ queryKey: ["readVendorForm"] }); // Also invalidate vendor list
+            queryClient.invalidateQueries({ queryKey: ["readVendorForm"] });
             setSnackbarMessage("Vendor Form updated successfully!");
             setSnackbarSeverity("success");
             setSnackbarOpen(true);
-            
-            // Short delay to show success message before redirecting
             setTimeout(() => {
               if (onCancel) onCancel();
             }, 1000);
@@ -318,8 +320,6 @@ const VendorFormV2: React.FC<VendorFormPageProps> = ({
           setSnackbarSeverity("success");
           setSnackbarOpen(true);
           reset(defaultValues);
-          
-          // Short delay to show success message before redirecting
           setTimeout(() => {
             if (onCancel) onCancel();
           }, 1000);
@@ -363,7 +363,18 @@ const VendorFormV2: React.FC<VendorFormPageProps> = ({
       </Box>
 
       <FormProvider {...methods}>
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={(e) => {
+          // Log formState.errors to debug validation
+          // formState is not directly available here, so use methods.formState
+          // But formState may not be up-to-date synchronously, so use setTimeout
+          setTimeout(() => {
+            // eslint-disable-next-line no-undef
+            const errors = methods.formState.errors;
+          }, 0);
+          handleSubmit((data) => {
+            onSubmit(data);
+          })(e);
+        }}>
           <Grid container spacing={2}>
             {/* ---------------- NAME ---------------- */}
             <Grid size={{ xs:12}}>
